@@ -21,13 +21,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-05)
 
 **Core value:** Zuverlässige, native iOS-Steuerung von Valetudo-Robotern ohne Cloud-Abhängigkeit
-**Current focus:** v4.0.1 Hotfix für OTA-Flow live (Commit b754e24), nächste App-Store-Submission als v1.0.1
+**Current focus:** v1.0 (Build 99) ist im App Store live. Nächste Submission wäre v1.0.1.
 
 ## Current Position
 
 Milestone: v4.0.1 (OTA Hotfix) — COMPLETED
 Last phase: 34 (OTA Flow Bugfixes) — Install-Button, Auto-Refresh nach Reboot, Leave-Warning
-Status: Hotfix gepusht (b754e24), live an zwei Robotern verifiziert; App-Store-Submission noch ausstehend
+Status: Hotfix gepusht (b754e24), live an zwei Robotern verifiziert. App-Store-Submission erfolgt: v1.0 / Build 99 ist seit 2025-12-20 READY_FOR_SALE.
 Last activity: 2026-05-27 -- OTA Hotfix shipped
 
 Progress: [██████████] 100%
@@ -75,5 +75,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-05-27
-Stopped at: v4.0.1 OTA Hotfix verifiziert und gepusht (b754e24) — App-Store-Submission als v1.0.1 noch ausstehend
+Stopped at: v4.0.1 OTA Hotfix verifiziert und gepusht (b754e24) — ausgeliefert als App-Store-Build 99 (v1.0, READY_FOR_SALE)
 Resume file: None
