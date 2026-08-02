@@ -53,3 +53,13 @@ fastlane/test_output
 .env
 .env.local
 *.local
+
+# Node / Next.js (AppStore/screenshots)
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Build-Artefakte / Tooling-Reste
+*.xcresult
+.playwright-mcp/
