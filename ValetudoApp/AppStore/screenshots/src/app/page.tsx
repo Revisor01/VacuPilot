@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
+import { createRoot } from "react-dom/client";
 import { toPng } from "html-to-image";
 
 const THEME = {
@@ -16,7 +17,7 @@ const THEME = {
 const CANVAS_W = 1320;
 const CANVAS_H = 2868;
 
-type Layout = "headline-top" | "mock-left" | "mock-right" | "mock-podest";
+type Layout = "headline-top" | "mock-left" | "mock-right";
 
 type Slide = {
   id: string;
@@ -443,184 +444,69 @@ function SlideCanvas({ slide }: { slide: Slide }) {
           </div>
         </>
       )}
-
-      {slide.layout === "mock-podest" && (
-        <>
-          {/* Extra bright highlight blob right under the device — the "podest" */}
-          <div
-            style={{
-              position: "absolute",
-              top: 1450,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 1400,
-              height: 1400,
-              borderRadius: "50%",
-              background: THEME.blobLight,
-              filter: "blur(180px)",
-              opacity: 0.6,
-              zIndex: 1,
-            }}
-          />
-          {/* Headline top */}
-          <div
-            style={{
-              position: "absolute",
-              top: 220,
-              left: 0,
-              right: 0,
-              padding: "0 100px",
-              textAlign: "center",
-              zIndex: 3,
-            }}
-          >
-            <h1
-              style={{
-                fontSize: 150,
-                fontWeight: 800,
-                lineHeight: 1.0,
-                letterSpacing: "-0.025em",
-                color: THEME.textPrimary,
-                margin: 0,
-              }}
-            >
-              <MultilineText text={slide.headline} />
-            </h1>
-          </div>
-          {/* Mock centered, sitting on the highlight */}
-          <div
-            style={{
-              position: "absolute",
-              top: 700,
-              left: "50%",
-              transform: "translateX(-50%)",
-              zIndex: 3,
-            }}
-          >
-            <DeviceMockup screenshot={slide.screenshot} scaleOverride={0.71} />
-          </div>
-          {/* Subline bottom */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 180,
-              left: 0,
-              right: 0,
-              padding: "0 120px",
-              textAlign: "center",
-              zIndex: 3,
-            }}
-          >
-            <p
-              style={{
-                fontSize: 76,
-                fontWeight: 400,
-                lineHeight: 1.2,
-                color: THEME.textSecondary,
-                margin: 0,
-                maxWidth: 1150,
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              <MultilineText text={slide.subline} />
-            </p>
-          </div>
-        </>
-      )}
-
-      {slide.layout === "mock-edge" && (
-        <>
-          {/* Mock rotated 90° landscape, stretching edge-to-edge, cropped both sides */}
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%) rotate(-90deg)",
-              zIndex: 2,
-            }}
-          >
-            <DeviceMockup screenshot={slide.screenshot} scaleOverride={0.91} />
-          </div>
-          {/* Headline top */}
-          <div
-            style={{
-              position: "absolute",
-              top: 220,
-              left: 0,
-              right: 0,
-              padding: "0 100px",
-              textAlign: "center",
-              zIndex: 3,
-            }}
-          >
-            <h1
-              style={{
-                fontSize: 150,
-                fontWeight: 800,
-                lineHeight: 1.0,
-                letterSpacing: "-0.025em",
-                color: THEME.textPrimary,
-                margin: 0,
-              }}
-            >
-              <MultilineText text={slide.headline} />
-            </h1>
-          </div>
-          {/* Subline bottom */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: 200,
-              left: 0,
-              right: 0,
-              padding: "0 120px",
-              textAlign: "center",
-              zIndex: 3,
-            }}
-          >
-            <p
-              style={{
-                fontSize: 76,
-                fontWeight: 400,
-                lineHeight: 1.2,
-                color: THEME.textSecondary,
-                margin: 0,
-                maxWidth: 1150,
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              <MultilineText text={slide.subline} />
-            </p>
-          </div>
-        </>
-      )}
     </div>
   );
 }
 
+// Render ONE slide at full 1320x2868 into a throwaway offscreen mount,
+// export it, then tear it down. This guarantees at most one full-size,
+// heavily-blurred canvas exists in the DOM at any moment — the previous
+// version kept all 27 mounted permanently, which melted the GPU/compositor.
+async function renderAndExport(slide: Slide): Promise<void> {
+  const host = document.createElement("div");
+  host.style.cssText =
+    "position:fixed;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;opacity:0;z-index:-1";
+  document.body.appendChild(host);
+
+  const stage = document.createElement("div");
+  stage.style.cssText = `width:${CANVAS_W}px;height:${CANVAS_H}px`;
+  host.appendChild(stage);
+
+  const root = createRoot(stage);
+  try {
+    // Mount and wait for React to commit + images to decode.
+    await new Promise<void>((resolve) => {
+      root.render(<SlideCanvas slide={slide} />);
+      // Two RAFs ensure layout/paint settled before we snapshot.
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+    // Give <img> screenshots a beat to load (they're local, usually instant).
+    const imgs = Array.from(stage.querySelectorAll("img"));
+    await Promise.all(
+      imgs.map((img) =>
+        img.complete
+          ? Promise.resolve()
+          : new Promise<void>((res) => {
+              img.onload = () => res();
+              img.onerror = () => res();
+            })
+      )
+    );
+
+    const dataUrl = await toPng(stage, {
+      pixelRatio: 1,
+      cacheBust: true,
+      width: CANVAS_W,
+      height: CANVAS_H,
+    });
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `${slide.id}-${slide.locale}.png`;
+    a.click();
+  } finally {
+    root.unmount();
+    host.remove();
+  }
+}
+
 export default function Home() {
-  const refs = useRef<Record<string, HTMLDivElement | null>>({});
   const [busy, setBusy] = useState<string | null>(null);
 
   async function exportSlide(slide: Slide) {
     const key = `${slide.id}-${slide.locale}`;
-    const el = refs.current[key];
-    if (!el) return;
     setBusy(key);
     try {
-      const dataUrl = await toPng(el, {
-        pixelRatio: 1,
-        cacheBust: true,
-        width: CANVAS_W,
-        height: CANVAS_H,
-      });
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `${slide.id}-${slide.locale}.png`;
-      a.click();
+      await renderAndExport(slide);
     } finally {
       setBusy(null);
     }
@@ -648,7 +534,17 @@ export default function Home() {
         {SLIDES.map((slide) => {
           const key = `${slide.id}-${slide.locale}`;
           return (
-            <div key={key}>
+            // content-visibility:auto skips rendering/compositing of off-screen
+            // tiles entirely until they scroll near the viewport — keeps the
+            // initial paint cheap on low-RAM machines. intrinsicSize reserves
+            // layout space so the scrollbar stays stable.
+            <div
+              key={key}
+              style={{
+                contentVisibility: "auto",
+                containIntrinsicSize: `${CANVAS_W * 0.25 + 80}px ${CANVAS_H * 0.25 + 80}px`,
+              }}
+            >
               <div
                 style={{
                   background: "#1e293b",
@@ -679,7 +575,10 @@ export default function Home() {
                   {busy === key ? "Exportiere…" : "Export PNG"}
                 </button>
               </div>
-              {/* Visible scaled preview — purely for viewing */}
+              {/* Visible scaled preview — purely for viewing.
+                  `contain: strict` isolates each preview's compositing so the
+                  browser can cache it as one layer instead of recompositing
+                  every blob blur of all 27 tiles on each frame. */}
               <div
                 style={{
                   width: CANVAS_W * 0.25,
@@ -687,6 +586,7 @@ export default function Home() {
                   overflow: "hidden",
                   background: "#0b1220",
                   borderRadius: 8,
+                  contain: "strict",
                 }}
               >
                 <div
@@ -695,43 +595,12 @@ export default function Home() {
                     height: CANVAS_H,
                     transform: "scale(0.25)",
                     transformOrigin: "top left",
+                    contain: "layout paint",
                   }}
                 >
                   <SlideCanvas slide={slide} />
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Hidden full-size render nodes — used ONLY for html-to-image export.
-          Positioned offscreen but fully rendered at 1320x2868. */}
-      <div
-        aria-hidden
-        style={{
-          position: "fixed",
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
-          overflow: "visible",
-          opacity: 0,
-          pointerEvents: "none",
-          zIndex: -1,
-        }}
-      >
-        {SLIDES.map((slide) => {
-          const key = `${slide.id}-${slide.locale}`;
-          return (
-            <div
-              key={`export-${key}`}
-              ref={(el) => {
-                refs.current[key] = el;
-              }}
-              style={{ width: CANVAS_W, height: CANVAS_H }}
-            >
-              <SlideCanvas slide={slide} />
             </div>
           );
         })}
