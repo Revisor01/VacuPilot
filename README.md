@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="AppIcon.png" alt="VacuPilot" width="128" height="128">
+  <img src="ValetudoApp/ValetudoApp/Media.xcassets/AppIcon.appiconset/Untitled-iOS-Default-1024x1024@1x.png" alt="VacuPilot" width="128" height="128">
 </p>
 
 <h1 align="center">VacuPilot</h1>
@@ -77,7 +77,7 @@
 
 ### App Store
 
-Coming soon.
+**[Download on the App Store »](https://apps.apple.com/app/id6756815432)**
 
 ### TestFlight (Public Beta)
 
@@ -118,9 +118,11 @@ VacuPilot works with all robot vacuums running a compatible open-source firmware
 
 ## Version History
 
+See [CHANGELOG.md](CHANGELOG.md) for the full history.
+
 | Version | Date | Highlights |
 |---------|------|------------|
-| **v1.0.0** | 2026-04 | Initial App Store release — multi-robot control, live interactive map, room/zone cleaning with order, firmware updates, background monitoring, VoiceOver accessibility, EN/DE/FR localization |
+| **v1.0.0** (Build 99) | 2025-12 | Initial App Store release — multi-robot control, live interactive map, room/zone cleaning with order, firmware updates, background monitoring, VoiceOver accessibility, EN/DE/FR localization |
 
 ## Architecture
 

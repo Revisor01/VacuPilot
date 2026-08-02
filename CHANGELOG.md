@@ -31,6 +31,15 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
   Implementierungsauftrag — `SupportManager.swift` existiert), loses `AppIcon.png`
   (liegt im Asset-Katalog), XCResult-Archiv von Build 11, `.playwright-mcp/`-Logs.
 
+### Behoben
+
+- README: Icon-Verweis zeigte auf das entfernte `AppIcon.png` (kaputtes Bild),
+  jetzt auf den Asset-Katalog. App-Store-Abschnitt sagte „Coming soon“, obwohl
+  die App live ist — Store-Link ergänzt. Release-Datum in der Versionstabelle
+  von 2026-04 auf 2025-12 korrigiert.
+- `.planning/STATE.md`: Notiz „App-Store-Submission noch ausstehend“ entsprach
+  nicht der Realität (v1.0/Build 99 seit 2025-12-20 READY_FOR_SALE).
+
 ### Sicherheit
 
 - Dependabot-Alerts, automatische Security-Updates und CodeQL-Code-Scanning
