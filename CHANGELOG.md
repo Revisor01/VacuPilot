@@ -15,21 +15,26 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ### Geändert
 
-- Screenshot-Generator (`ValetudoApp/AppStore/screenshots`): Export rendert die
-  Slides jetzt on-demand über `createRoot` statt 27 permanent versteckter
-  Vollformat-Nodes im DOM zu halten. Vorschau-Kacheln nutzen
-  `content-visibility: auto` und `contain`, wodurch die Seite auf Rechnern mit
-  wenig RAM nicht mehr einfriert.
 - Build-Nummer im Repo auf den tatsächlich ausgelieferten Stand gezogen
   (`CURRENT_PROJECT_VERSION` 97 → 99), `MARKETING_VERSION` auf `1.0.0`
   normalisiert.
 
 ### Entfernt
 
-- Layouts `mock-podest` und `mock-edge` aus dem Screenshot-Generator.
+- **Screenshot-Generator `ValetudoApp/AppStore/`** (Next.js-App inkl. 27
+  Store-Screenshots): Grafik-Erstellung liegt zentral in
+  `~/Documents/social-posts-studio` (Projekt `valetudios.json`, Assets unter
+  `public/apps/valetudios/`). Alle Screenshots waren dort byte-identisch
+  vorhanden. Damit entfallen zugleich sämtliche 22 Dependabot-Alerts, die
+  ausschließlich aus dessen `next`-Abhängigkeit stammten.
 - Altlasten aus dem Repo-Root: `SUPPORT-AUFTRAG.md` (umgesetzter
   Implementierungsauftrag — `SupportManager.swift` existiert), loses `AppIcon.png`
   (liegt im Asset-Katalog), XCResult-Archiv von Build 11, `.playwright-mcp/`-Logs.
+
+### Sicherheit
+
+- Dependabot-Alerts, automatische Security-Updates und CodeQL-Code-Scanning
+  für das Repository aktiviert.
 
 ## [1.0.0] — 2025-12-20
 
