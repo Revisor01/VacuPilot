@@ -13,6 +13,11 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Sonstiges
+
+- Festgehalten, mit welchen Firmware-Versionen die App getestet ist und welche
+  Neuerungen neuerer Firmware noch nicht abgedeckt sind.
+
 ### Geändert
 
 - Build-Nummer im Repo auf den tatsächlich ausgelieferten Stand gezogen
