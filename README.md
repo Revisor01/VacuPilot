@@ -73,6 +73,9 @@
 - Compatible open-source vacuum firmware (2024.06.0+) with local REST API
 - Robot reachable on local network (or via VPN)
 
+See [COMPATIBILITY.md](COMPATIBILITY.md) for the tested firmware versions per
+app release and which newer firmware features are not covered yet.
+
 ## Installation
 
 ### App Store
