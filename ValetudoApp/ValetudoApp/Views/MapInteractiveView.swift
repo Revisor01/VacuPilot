@@ -339,6 +339,10 @@ struct InteractiveMapView: View {
             textureInterval = 3  // Vertical lines every 3 pixels
             isHorizontal = false
             isVertical = true
+        case "carpet", "carpet_low", "carpet_high":
+            textureInterval = 2  // Dense grid, reads as a woven surface
+            isHorizontal = true
+            isVertical = true
         default:
             // Generic or unknown - just draw plain pixels
             textureInterval = 0

@@ -13,6 +13,16 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Hinzugefügt
+
+- Teppich als Bodenbelag für Räume — in den drei Abstufungen Teppich,
+  kurzflorig und hochflorig, mit eigener Darstellung in der Karte.
+
+### Behoben
+
+- Bodenbeläge, die die App noch nicht kennt, werden jetzt lesbar angezeigt statt
+  weggelassen. Bisher blieb ein Raum mit einem neueren Belag ohne Angabe.
+
 ### Sonstiges
 
 - Festgehalten, mit welchen Firmware-Versionen die App getestet ist und welche

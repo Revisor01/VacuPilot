@@ -411,6 +411,8 @@ final class MapViewModel {
                         textureInterval = 3; isHorizontal = true; isVertical = false
                     case "wood_vertical":
                         textureInterval = 3; isHorizontal = false; isVertical = true
+                    case "carpet", "carpet_low", "carpet_high":
+                        textureInterval = 2; isHorizontal = true; isVertical = true
                     default:
                         textureInterval = 0; isHorizontal = false; isVertical = false
                     }

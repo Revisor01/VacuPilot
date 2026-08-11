@@ -638,10 +638,10 @@ struct SegmentMaterialSheet: View {
                             selectedMaterial = material
                         } label: {
                             HStack {
-                                Image(systemName: FloorMaterial(rawValue: material)?.icon ?? "square.fill")
+                                Image(systemName: FloorMaterial.icon(for: material))
                                     .foregroundStyle(.orange)
                                     .frame(width: 24)
-                                Text(FloorMaterial(rawValue: material)?.displayName ?? material)
+                                Text(FloorMaterial.displayName(for: material))
                                     .foregroundStyle(.primary)
                                 Spacer()
                                 if selectedMaterial == material {
