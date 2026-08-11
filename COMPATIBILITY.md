@@ -56,6 +56,21 @@ Türschwellen, Vorhänge und Rampen können in der Karte markiert werden, damit 
 Roboter sie anders befährt. Die App zeigt diese Markierungen weder an noch lässt
 sie sich anlegen. Herstellerabhängig, bisher nur auf einem Teil der Geräte.
 
+Technisch sind sie keine neue Art von Kartenobjekt, sondern drei zusätzliche
+Werte im vorhandenen `type`-Feld der Karten-Entitäten: `threshold` und `curtain`
+als Linie (zwei Punkte), `ramp` als Viereck (vier Punkte, nicht
+achsenparallel). Aufbau, Einheit (cm) und Punktformat sind identisch zu
+`virtual_wall` und `no_go_area`. Zum Anzeigen genügt also, diese Werte
+mitzuzeichnen — dafür fehlt allerdings die Grundlage, siehe unten.
+
+Zum Setzen dient `PUT /api/v2/robot/capabilities/MapAnnotationsCapability`. Der
+Rumpf ist ein reines Array, dessen Punkte hier abweichend als `{x, y}`-Objekte
+notiert werden — nicht als flache Zahlenliste wie in der Karte. Der Aufruf
+ersetzt immer den kompletten Bestand: Was nicht mitgeschickt wird, ist danach
+gelöscht. Ein Lese-Endpunkt existiert nicht; der Stand kommt ausschließlich aus
+der Karte. `GET …/MapAnnotationsCapability/properties` liefert, welche der drei
+Arten der jeweilige Roboter kann.
+
 **Aufgeräumte Sperrzonen-Oberfläche** — reine Weboberfläche, ohne Auswirkung
 auf die App.
 
@@ -102,9 +117,18 @@ Nach Wichtigkeit, unter Berücksichtigung dessen, was hier prüfbar ist:
    aufnehmen, inklusive Symbol und Übersetzungen. Kleiner Eingriff, aber ohne
    Dreame-Gerät nur gegen nachgestellte Antworten prüfbar, nicht am echten
    Roboter. Nach Punkt 2 einsortiert, weil dieser den Schaden bereits abfängt.
-4. **Karten-Anmerkungen** — größeres Vorhaben (Kartendarstellung und
-   Bearbeitung) und hier ebenfalls nicht am Gerät prüfbar. Lohnt eine eigene
-   Planungsphase, sobald ein passender Roboter zur Verfügung steht.
+4. **Karten-Anmerkungen** — eigene Planungsphase. Ohne Dreame-Gerät nicht am
+   Roboter prüfbar, wohl aber gegen einen nachgestellten Server: Die App spricht
+   nur HTTP, und das Format ist vollständig dokumentiert (siehe oben). Ein
+   Server, der eine Karte mit den drei Werten ausliefert und den PUT annimmt,
+   reicht für Entwicklung und Prüfung der Darstellung.
+
+   Zum Anknüpfen ist einiges da: Sperrzonen und virtuelle Wände werden bereits
+   gezeichnet und lassen sich anlegen und löschen. Sie kommen allerdings aus
+   einem eigenen Abruf der Sperrzonen und nicht aus den Karten-Entitäten;
+   Anmerkungen kämen dagegen mit der Karte. Die Darstellung kann sich an den
+   vorhandenen Linien und Flächen orientieren, die Datenherkunft ist eine
+   andere.
 
 Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
 gibt es in 2026.08.0 unverändert.

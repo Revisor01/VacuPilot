@@ -86,7 +86,7 @@ struct LayerMetaData: Codable {
     let segmentId: String?
     let name: String?
     let active: Bool?
-    let material: String?  // Floor material: generic, tile, wood, wood_horizontal, wood_vertical
+    let material: String?  // Floor material, see FloorMaterial
 }
 
 // MARK: - Floor Material Types
@@ -96,6 +96,9 @@ enum FloorMaterial: String, CaseIterable, Codable {
     case wood = "wood"
     case woodHorizontal = "wood_horizontal"
     case woodVertical = "wood_vertical"
+    case carpet = "carpet"
+    case carpetLow = "carpet_low"
+    case carpetHigh = "carpet_high"
 
     var displayName: String {
         switch self {
@@ -104,6 +107,9 @@ enum FloorMaterial: String, CaseIterable, Codable {
         case .wood: return String(localized: "material.wood")
         case .woodHorizontal: return String(localized: "material.wood_horizontal")
         case .woodVertical: return String(localized: "material.wood_vertical")
+        case .carpet: return String(localized: "material.carpet")
+        case .carpetLow: return String(localized: "material.carpet_low")
+        case .carpetHigh: return String(localized: "material.carpet_high")
         }
     }
 
@@ -114,7 +120,26 @@ enum FloorMaterial: String, CaseIterable, Codable {
         case .wood: return "line.3.horizontal"
         case .woodHorizontal: return "line.3.horizontal"
         case .woodVertical: return "line.3.horizontal"
+        case .carpet, .carpetLow, .carpetHigh: return "square.grid.3x3.fill"
         }
+    }
+
+    /// Anzeigename für einen Materialwert der Firmware. Unbekannte Werte, wie sie
+    /// neuere Firmware liefern kann, werden lesbar aufbereitet statt verworfen —
+    /// aus `carpet_extra_high` wird so "Carpet extra high".
+    static func displayName(for rawValue: String) -> String {
+        if let known = FloorMaterial(rawValue: rawValue) {
+            return known.displayName
+        }
+        return rawValue
+            .replacingOccurrences(of: "_", with: " ")
+            .localizedCapitalized
+    }
+
+    /// Symbol für einen Materialwert der Firmware, mit neutralem Rückfallwert
+    /// für unbekannte Werte.
+    static func icon(for rawValue: String) -> String {
+        FloorMaterial(rawValue: rawValue)?.icon ?? "square.fill"
     }
 }
 

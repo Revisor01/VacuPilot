@@ -49,4 +49,39 @@ final class MapLayerTests: XCTestCase {
         let layer = try makeLayer(json: #"{"compressedPixels": [3, 7, 1]}"#)
         XCTAssertEqual(layer.decompressedPixels, [3, 7])
     }
+
+    // MARK: - FloorMaterial
+
+    func testCarpetMaterialsAreKnown() {
+        // Carpet variants were added to the firmware in 2026.07.0
+        XCTAssertEqual(FloorMaterial(rawValue: "carpet"), .carpet)
+        XCTAssertEqual(FloorMaterial(rawValue: "carpet_low"), .carpetLow)
+        XCTAssertEqual(FloorMaterial(rawValue: "carpet_high"), .carpetHigh)
+    }
+
+    func testKnownMaterialUsesLocalizedName() {
+        // A known value must never fall through to the humanized raw value
+        XCTAssertEqual(FloorMaterial.displayName(for: "carpet"), FloorMaterial.carpet.displayName)
+        XCTAssertEqual(FloorMaterial.displayName(for: "wood_horizontal"), FloorMaterial.woodHorizontal.displayName)
+    }
+
+    func testUnknownMaterialIsHumanizedRatherThanDropped() {
+        // Newer firmware may introduce materials this build has never seen.
+        // They must stay visible instead of vanishing from the UI.
+        XCTAssertEqual(FloorMaterial.displayName(for: "carpet_extra_high"), "Carpet Extra High")
+        XCTAssertEqual(FloorMaterial.displayName(for: "linoleum"), "Linoleum")
+    }
+
+    func testUnknownMaterialFallsBackToNeutralIcon() {
+        XCTAssertEqual(FloorMaterial.icon(for: "linoleum"), "square.fill")
+        XCTAssertEqual(FloorMaterial.icon(for: "carpet"), FloorMaterial.carpet.icon)
+    }
+
+    func testUnknownMaterialDecodesWithoutFailing() throws {
+        // metaData.material is a free-form String, so an unknown value must not
+        // break decoding of the whole layer.
+        let layer = try makeLayer(json: #"{"compressedPixels": [1, 1, 1], "metaData": {"material": "carpet_extra_high"}}"#)
+        XCTAssertEqual(layer.metaData?.material, "carpet_extra_high")
+        XCTAssertEqual(layer.decompressedPixels, [1, 1])
+    }
 }
