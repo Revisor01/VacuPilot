@@ -163,8 +163,8 @@ class RobotState:
             "CleanRouteControlCapability": "standard",
             "SpeakerVolumeControlCapability": "medium",
             "AutoEmptyDockAutoEmptyIntervalControlCapability": "normal",
-            "AutoEmptyDockAutoEmptyDurationControlCapability": "normal",
-            "MopDockMopDryingTimeControlCapability": "two_hours",
+            "AutoEmptyDockAutoEmptyDurationControlCapability": "auto",
+            "MopDockMopDryingTimeControlCapability": "2h",
             "MopDockMopWashTemperatureControlCapability": "warm",
         }
         self.updater = {
@@ -341,10 +341,12 @@ PRESET_LISTS = {
     "CarpetSensorModeControlCapability": ["off", "avoid", "lift"],
     "CleanRouteControlCapability": ["standard", "intensive", "deep"],
     "SpeakerVolumeControlCapability": ["off", "low", "medium", "high", "max"],
-    "AutoEmptyDockAutoEmptyIntervalControlCapability": ["frequent", "normal", "infrequent"],
-    "AutoEmptyDockAutoEmptyDurationControlCapability": ["short", "normal", "long"],
-    "MopDockMopDryingTimeControlCapability": ["two_hours", "three_hours", "four_hours"],
-    "MopDockMopWashTemperatureControlCapability": ["cold", "warm", "hot"],
+    # Die folgenden Werte stammen aus den Core-Enums der Firmware — nicht raten,
+    # sie weichen von den sonst üblichen Intensitätsnamen ab.
+    "AutoEmptyDockAutoEmptyIntervalControlCapability": ["off", "infrequent", "normal", "frequent"],
+    "AutoEmptyDockAutoEmptyDurationControlCapability": ["auto", "short", "medium", "long"],
+    "MopDockMopDryingTimeControlCapability": ["2h", "3h", "4h", "cold"],
+    "MopDockMopWashTemperatureControlCapability": ["cold", "warm", "hot", "scalding"],
 }
 
 
@@ -468,6 +470,26 @@ class Handler(BaseHTTPRequestHandler):
                                            "signal": -48, "ips": ["192.168.0.123"]},
                                "ssid": "Simulation"})
 
+        # Die Dock-Fähigkeiten nutzen /properties mit eigenen Schlüsseln und
+        # eigene Wertnamen — nicht das übliche presets/name-Muster.
+        DOCK_PROPS = {
+            "AutoEmptyDockAutoEmptyIntervalControlCapability": ("supportedIntervals", "interval"),
+            "AutoEmptyDockAutoEmptyDurationControlCapability": ("supportedDurations", "duration"),
+            "MopDockMopDryingTimeControlCapability": ("supportedDurations", "duration"),
+            "MopDockMopWashTemperatureControlCapability": ("supportedTemperatures", "temperature"),
+        }
+
+        m = re.match(r"^/robot/capabilities/(\w+)/properties$", p)
+        if m and m.group(1) in DOCK_PROPS:
+            key, _field = DOCK_PROPS[m.group(1)]
+            return self._send({key: PRESET_LISTS[m.group(1)]})
+
+        m = re.match(r"^/robot/capabilities/(\w+)$", p)
+        if m and m.group(1) in DOCK_PROPS:
+            _key, field = DOCK_PROPS[m.group(1)]
+            with STATE.lock:
+                return self._send({field: STATE.presets[m.group(1)]})
+
         # presets/<Capability>
         m = re.match(r"^/robot/capabilities/(\w+)/presets$", p)
         if m and m.group(1) in PRESET_LISTS:
@@ -560,6 +582,17 @@ class Handler(BaseHTTPRequestHandler):
 
         if p == "/updater":
             return self._send(None, 200)
+
+        # Dock-Fähigkeiten: eigener Feldname statt "name"
+        m = re.match(r"^/robot/capabilities/(\w+)$", p)
+        if m:
+            cap = m.group(1)
+            for field in ("interval", "duration", "temperature"):
+                if field in body:
+                    with STATE.lock:
+                        STATE.presets[cap] = body[field]
+                    print(f"    -> {cap}: {field} = {body[field]}")
+                    return self._send(None, 200)
 
         # Presets: {"name": "..."}
         m = re.match(r"^/robot/capabilities/(\w+)/preset$", p) or \

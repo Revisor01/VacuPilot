@@ -110,7 +110,7 @@ struct StationSettingsView: View {
                     if hasMopDockDryingTime && !mopDockDryingTimePresets.isEmpty {
                         Picker(selection: $currentMopDockDryingTime) {
                             ForEach(mopDockDryingTimePresets, id: \.self) { preset in
-                                Text(preset.capitalized).tag(preset)
+                                Text(displayNameForDryingTime(preset)).tag(preset)
                             }
                         } label: {
                             HStack {
@@ -184,10 +184,11 @@ struct StationSettingsView: View {
         if hasMopDockWashTemperature {
             do {
                 mopDockWashTemperaturePresets = try await api.getMopDockWashTemperaturePresets()
-                if let tempAttr = robotManager.robotStates[robot.id]?.attributes.first(where: {
-                    $0.__class == "PresetSelectionStateAttribute" && $0.type == "mop_dock_mop_cleaning_water_temperature"
-                }) {
-                    currentWashTemperature = tempAttr.value ?? ""
+                // The capability reports its own current value; there is no
+                // matching state attribute for it.
+                currentWashTemperature = (try? await api.getMopDockWashTemperature()) ?? ""
+                if currentWashTemperature.isEmpty, let first = mopDockWashTemperaturePresets.first {
+                    currentWashTemperature = first
                 }
             } catch {
                 if !DebugConfig.showAllCapabilities { hasMopDockWashTemperature = false }
@@ -203,11 +204,7 @@ struct StationSettingsView: View {
         if hasMopDockDryingTime {
             do {
                 mopDockDryingTimePresets = try await api.getMopDockDryingTimePresets()
-                if let attr = robotManager.robotStates[robot.id]?.attributes.first(where: {
-                    $0.__class == "PresetSelectionStateAttribute" && $0.type == "mop_dock_mop_drying_time"
-                }) {
-                    currentMopDockDryingTime = attr.value ?? ""
-                }
+                currentMopDockDryingTime = (try? await api.getMopDockDryingTime()) ?? ""
                 if currentMopDockDryingTime.isEmpty, let first = mopDockDryingTimePresets.first {
                     currentMopDockDryingTime = first
                 }
@@ -222,11 +219,7 @@ struct StationSettingsView: View {
         if hasAutoEmptyDockDuration {
             do {
                 autoEmptyDockDurationPresets = try await api.getAutoEmptyDockDurationPresets()
-                if let attr = robotManager.robotStates[robot.id]?.attributes.first(where: {
-                    $0.__class == "PresetSelectionStateAttribute" && $0.type == "auto_empty_dock_auto_empty_duration"
-                }) {
-                    currentAutoEmptyDockDuration = attr.value ?? ""
-                }
+                currentAutoEmptyDockDuration = (try? await api.getAutoEmptyDockDuration()) ?? ""
                 if currentAutoEmptyDockDuration.isEmpty, let first = autoEmptyDockDurationPresets.first {
                     currentAutoEmptyDockDuration = first
                 }
@@ -279,8 +272,33 @@ struct StationSettingsView: View {
             return String(localized: "settings.wash_temp.warm")
         case "hot":
             return String(localized: "settings.wash_temp.hot")
+        case "scalding":
+            return String(localized: "settings.wash_temp.scalding")
+        case "boiling":
+            return String(localized: "settings.wash_temp.boiling")
         default:
-            return preset.capitalized.replacingOccurrences(of: "_", with: " ")
+            return humanized(preset)
+        }
+    }
+
+    /// Last resort for values this build does not know: readable, not raw.
+    private func humanized(_ preset: String) -> String {
+        preset.replacingOccurrences(of: "_", with: " ").localizedCapitalized
+    }
+
+    /// Drying time is reported as "2h", "3h", "4h" or "cold" — not as words.
+    private func displayNameForDryingTime(_ preset: String) -> String {
+        switch preset.lowercased() {
+        case "2h":
+            return String(localized: "drying_time.2h")
+        case "3h":
+            return String(localized: "drying_time.3h")
+        case "4h":
+            return String(localized: "drying_time.4h")
+        case "cold":
+            return String(localized: "drying_time.cold")
+        default:
+            return humanized(preset)
         }
     }
 
@@ -293,20 +311,20 @@ struct StationSettingsView: View {
         }
     }
 
+    /// The firmware reports "auto", "short", "medium" or "long" here — the
+    /// intensity names used elsewhere do not apply.
     private func displayNameForAutoEmptyDockDuration(_ preset: String) -> String {
         switch preset.lowercased() {
-        case "min", "minimum":
-            return String(localized: "preset.min")
-        case "low":
-            return String(localized: "preset.low")
+        case "auto":
+            return String(localized: "empty_duration.auto")
+        case "short":
+            return String(localized: "empty_duration.short")
         case "medium":
-            return String(localized: "preset.medium")
-        case "high":
-            return String(localized: "preset.high")
-        case "max", "maximum":
-            return String(localized: "preset.max")
+            return String(localized: "empty_duration.medium")
+        case "long":
+            return String(localized: "empty_duration.long")
         default:
-            return preset.capitalized.replacingOccurrences(of: "_", with: " ")
+            return humanized(preset)
         }
     }
 }

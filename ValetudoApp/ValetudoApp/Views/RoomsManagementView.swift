@@ -21,6 +21,8 @@ struct RoomsManagementView: View {
     // Material editing
     @State private var showMaterialSheet = false
     @State private var materialSegment: Segment?
+    /// Floor material per segment id, read from the map layers.
+    @State private var segmentMaterials: [String: String] = [:]
 
     // Join segments
     @State private var showJoinSheet = false
@@ -69,9 +71,22 @@ struct RoomsManagementView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(segment.displayName)
                                     .font(.body)
-                                Text("ID: \(segment.id)")
+                                // Show the floor material rather than the raw id:
+                                // it is the useful piece of information here, and
+                                // it makes clear the material can be changed.
+                                if hasSegmentMaterial, let material = materialForSegment(segment.id) {
+                                    Label {
+                                        Text(FloorMaterial.displayName(for: material))
+                                    } icon: {
+                                        Image(systemName: FloorMaterial.icon(for: material))
+                                    }
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                } else {
+                                    Text("ID: \(segment.id)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
 
                             Spacer()
@@ -85,6 +100,7 @@ struct RoomsManagementView: View {
                                         .foregroundStyle(.orange)
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityLabel(String(localized: "material.select"))
                             }
 
                             if hasSegmentRename {
@@ -201,6 +217,8 @@ struct RoomsManagementView: View {
             try await api.setSegmentMaterial(segmentId: segment.id, material: material)
             showMaterialSheet = false
             materialSegment = nil
+            // Reflect the change in the list right away
+            segmentMaterials[segment.id] = material
         } catch {
             logger.error("Failed to set segment material: \(error.localizedDescription, privacy: .public)")
         }
@@ -216,6 +234,29 @@ struct RoomsManagementView: View {
         } catch {
             logger.error("Failed to load segments: \(error.localizedDescription, privacy: .public)")
         }
+
+        await loadMaterials()
+    }
+
+    /// The segment list carries no material, so it is read from the map layers.
+    private func loadMaterials() async {
+        guard hasSegmentMaterial, let api = api else { return }
+        do {
+            let map = try await api.getMap()
+            var found: [String: String] = [:]
+            for layer in map.layers ?? [] where layer.type == "segment" {
+                if let id = layer.metaData?.segmentId, let material = layer.metaData?.material {
+                    found[id] = material
+                }
+            }
+            segmentMaterials = found
+        } catch {
+            logger.error("Failed to load segment materials: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    private func materialForSegment(_ id: String) -> String? {
+        segmentMaterials[id]
     }
 
     private func renameSegment(_ segment: Segment) async {
