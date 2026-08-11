@@ -187,4 +187,94 @@ enum MapEntityType: String {
     case noMopArea = "no_mop_area"
     case goToTarget = "go_to_target"
     case activeZone = "active_zone"
+    // Map annotations, added in firmware 2026.07.0. These are plain map
+    // entities like the ones above, not a separate kind of object.
+    case threshold
+    case curtain
+    case ramp
+}
+
+// MARK: - Map Annotations
+
+/// Kinds of map annotation. Which ones a robot accepts is reported by
+/// `MapAnnotationsCapability/properties`.
+enum MapAnnotationType: String, CaseIterable, Codable {
+    case threshold
+    case curtain
+    case ramp
+
+    var displayName: String {
+        switch self {
+        case .threshold: return String(localized: "annotation.threshold")
+        case .curtain: return String(localized: "annotation.curtain")
+        case .ramp: return String(localized: "annotation.ramp")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .threshold: return "rectangle.split.3x1"
+        case .curtain: return "curtains.closed"
+        case .ramp: return "triangle"
+        }
+    }
+
+    /// Thresholds and curtains are lines (2 points), ramps are quads (4 points).
+    var pointCount: Int {
+        self == .ramp ? 4 : 2
+    }
+}
+
+/// A map annotation as the app works with it.
+///
+/// Note the asymmetry in the firmware API: annotations are *read* from the map
+/// entities as a flat `[x, y, x, y, …]` array, but *written* back as an array
+/// of `{x, y}` objects. `init(entity:)` handles the former, `points` the latter.
+struct MapAnnotation: Identifiable, Equatable {
+    var id = UUID()
+    var type: MapAnnotationType
+    var points: [ZonePoint]
+
+    init(type: MapAnnotationType, points: [ZonePoint]) {
+        self.type = type
+        self.points = points
+    }
+
+    /// Builds an annotation from a map entity, or returns nil if the entity is
+    /// not an annotation or carries an unusable number of coordinates.
+    init?(entity: MapEntity) {
+        guard let rawType = entity.type,
+              let type = MapAnnotationType(rawValue: rawType),
+              let coords = entity.points,
+              coords.count == type.pointCount * 2 else {
+            return nil
+        }
+
+        self.type = type
+        self.points = stride(from: 0, to: coords.count, by: 2).map {
+            ZonePoint(x: coords[$0], y: coords[$0 + 1])
+        }
+    }
+}
+
+/// Request body for `PUT …/MapAnnotationsCapability`.
+///
+/// The endpoint replaces the entire set, so every annotation that should
+/// survive has to be part of the request.
+struct MapAnnotationRequest: Codable {
+    let type: String
+    let points: [ZonePoint]
+
+    init(_ annotation: MapAnnotation) {
+        self.type = annotation.type.rawValue
+        self.points = annotation.points
+    }
+}
+
+struct MapAnnotationsProperties: Codable {
+    let supportedAnnotationTypes: [String]
+
+    var supportedTypes: [MapAnnotationType] {
+        supportedAnnotationTypes.compactMap { MapAnnotationType(rawValue: $0) }
+    }
 }

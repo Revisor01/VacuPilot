@@ -378,6 +378,20 @@ extension ValetudoAPI {
         try await requestVoid("/robot/capabilities/CombinedVirtualRestrictionsCapability", body: body)
     }
 
+    // MARK: - Map Annotations
+    func getMapAnnotationsProperties() async throws -> MapAnnotationsProperties {
+        try await request("/robot/capabilities/MapAnnotationsCapability/properties")
+    }
+
+    /// Replaces all map annotations on the robot.
+    ///
+    /// There is no endpoint to read them back — they arrive with the map. The
+    /// PUT is replace-all, so callers must pass the complete set.
+    func setMapAnnotations(_ annotations: [MapAnnotation]) async throws {
+        let body = try JSONEncoder().encode(annotations.map { MapAnnotationRequest($0) })
+        try await requestVoid("/robot/capabilities/MapAnnotationsCapability", body: body)
+    }
+
     // MARK: - Map Segment Edit
     func joinSegments(segmentAId: String, segmentBId: String) async throws {
         let body = try JSONEncoder().encode(JoinSegmentsRequest(segmentAId: segmentAId, segmentBId: segmentBId))

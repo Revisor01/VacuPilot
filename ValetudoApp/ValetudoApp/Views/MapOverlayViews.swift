@@ -171,6 +171,42 @@ extension MapContentView {
             .position(screenPos)
         }
     }
+
+    // MARK: - Annotation Delete Overlay
+
+    @ViewBuilder
+    func annotationDeleteOverlay(params: MapParams, annotations: [MapAnnotation], viewSize: CGSize) -> some View {
+        let ps = CGFloat(viewModel.map?.pixelSize ?? 5)
+
+        ForEach(annotations) { annotation in
+            // Place the button at the centre of the annotation's points
+            let sumX = annotation.points.reduce(0) { $0 + $1.x }
+            let sumY = annotation.points.reduce(0) { $0 + $1.y }
+            let count = max(annotation.points.count, 1)
+            let centerX = CGFloat(sumX) / CGFloat(count) / ps * params.scale + params.offsetX
+            let centerY = CGFloat(sumY) / CGFloat(count) / ps * params.scale + params.offsetY
+            let screenPos = mapToScreenCoords(CGPoint(x: centerX, y: centerY), viewSize: viewSize)
+
+            Button {
+                Task {
+                    await viewModel.deleteAnnotation(annotation)
+                }
+            } label: {
+                ZStack {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 44, height: 44)
+                        .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+                    Image(systemName: "xmark")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.green)
+                }
+            }
+            .accessibilityLabel(String(localized: "annotation.delete"))
+            .buttonStyle(.plain)
+            .position(screenPos)
+        }
+    }
 }
 
 // MARK: - Map Sheets Modifier

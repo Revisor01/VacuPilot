@@ -77,6 +77,67 @@ final class MapLayerTests: XCTestCase {
         XCTAssertEqual(FloorMaterial.icon(for: "carpet"), FloorMaterial.carpet.icon)
     }
 
+    // MARK: - Map Annotations
+
+    private func makeEntity(json: String) throws -> MapEntity {
+        try JSONDecoder().decode(MapEntity.self, from: json.data(using: .utf8)!)
+    }
+
+    func testThresholdParsesFromFlatPointArray() throws {
+        // Annotations arrive as regular map entities with a flat [x,y,x,y] array
+        let entity = try makeEntity(json: #"{"__class": "LineMapEntity", "type": "threshold", "points": [100, 200, 300, 400]}"#)
+        let annotation = MapAnnotation(entity: entity)
+
+        XCTAssertEqual(annotation?.type, .threshold)
+        XCTAssertEqual(annotation?.points, [ZonePoint(x: 100, y: 200), ZonePoint(x: 300, y: 400)])
+    }
+
+    func testRampParsesFourCorners() throws {
+        let entity = try makeEntity(json: #"{"__class": "PolygonMapEntity", "type": "ramp", "points": [10, 20, 30, 20, 30, 40, 10, 40]}"#)
+        let annotation = MapAnnotation(entity: entity)
+
+        XCTAssertEqual(annotation?.type, .ramp)
+        XCTAssertEqual(annotation?.points.count, 4)
+        XCTAssertEqual(annotation?.points.last, ZonePoint(x: 10, y: 40))
+    }
+
+    func testNonAnnotationEntityIsIgnored() throws {
+        // virtual_wall has the same shape but is not an annotation
+        let entity = try makeEntity(json: #"{"__class": "LineMapEntity", "type": "virtual_wall", "points": [1, 2, 3, 4]}"#)
+        XCTAssertNil(MapAnnotation(entity: entity))
+    }
+
+    func testAnnotationWithWrongPointCountIsRejected() throws {
+        // A ramp needs 4 points; 2 would silently render as a broken shape
+        let entity = try makeEntity(json: #"{"__class": "PolygonMapEntity", "type": "ramp", "points": [1, 2, 3, 4]}"#)
+        XCTAssertNil(MapAnnotation(entity: entity))
+
+        let truncated = try makeEntity(json: #"{"__class": "LineMapEntity", "type": "curtain", "points": [1, 2, 3]}"#)
+        XCTAssertNil(MapAnnotation(entity: truncated))
+    }
+
+    func testAnnotationEncodesAsObjectPoints() throws {
+        // Writing uses {x, y} objects, not the flat array used for reading
+        let annotation = MapAnnotation(type: .curtain, points: [ZonePoint(x: 5, y: 6), ZonePoint(x: 7, y: 8)])
+        let data = try JSONEncoder().encode([MapAnnotationRequest(annotation)])
+        let decoded = try JSONSerialization.jsonObject(with: data) as? [[String: Any]]
+
+        XCTAssertEqual(decoded?.count, 1)
+        XCTAssertEqual(decoded?.first?["type"] as? String, "curtain")
+        let points = decoded?.first?["points"] as? [[String: Any]]
+        XCTAssertEqual(points?.count, 2)
+        XCTAssertEqual(points?.first?["x"] as? Int, 5)
+        XCTAssertEqual(points?.first?["y"] as? Int, 6)
+    }
+
+    func testUnsupportedAnnotationTypeIsDroppedFromProperties() throws {
+        // A firmware newer than this build may report kinds we cannot draw
+        let json = #"{"supportedAnnotationTypes": ["threshold", "skylight", "ramp"]}"#
+        let props = try JSONDecoder().decode(MapAnnotationsProperties.self, from: json.data(using: .utf8)!)
+
+        XCTAssertEqual(props.supportedTypes, [.threshold, .ramp])
+    }
+
     func testUnknownMaterialDecodesWithoutFailing() throws {
         // metaData.material is a free-form String, so an unknown value must not
         // break decoding of the whole layer.

@@ -14,7 +14,10 @@ struct InteractiveMapView: View {
     var drawnNoGoAreas: [NoGoArea] = []
     var drawnNoMopAreas: [NoMopArea] = []
     var drawnVirtualWalls: [VirtualWall] = []
+    var drawnAnnotations: [MapAnnotation] = []
     var existingRestrictions: VirtualRestrictions?
+    var existingAnnotations: [MapAnnotation] = []
+    var annotationTypeToDraw: MapAnnotationType = .threshold
     var currentDrawStart: CGPoint?
     var currentDrawEnd: CGPoint?
     var editMode: MapEditMode = .none
@@ -112,6 +115,11 @@ struct InteractiveMapView: View {
                 }
             }
 
+            // DYNAMIC: Existing map annotations
+            for annotation in existingAnnotations {
+                drawAnnotation(context: context, annotation: annotation, params: p, pixelSize: pixelSize, isNew: false)
+            }
+
             // DYNAMIC: New zones/restrictions + drawing preview
             for zone in drawnZones {
                 drawCleaningZone(context: context, zone: zone, params: p, pixelSize: pixelSize)
@@ -124,6 +132,9 @@ struct InteractiveMapView: View {
             }
             for wall in drawnVirtualWalls {
                 drawVirtualWall(context: context, wall: wall, params: p, pixelSize: pixelSize, isNew: true)
+            }
+            for annotation in drawnAnnotations {
+                drawAnnotation(context: context, annotation: annotation, params: p, pixelSize: pixelSize, isNew: true)
             }
 
             if let start = currentDrawStart, let end = currentDrawEnd, editMode != .goTo && editMode != .savePreset {
@@ -340,7 +351,9 @@ struct InteractiveMapView: View {
             isHorizontal = false
             isVertical = true
         case "carpet", "carpet_low", "carpet_high":
-            textureInterval = 2  // Dense grid, reads as a woven surface
+            // Dense grid: reads as a woven surface next to the wider tile grid.
+            // See the note on accentColor below — carpet needs more contrast.
+            textureInterval = 3
             isHorizontal = true
             isVertical = true
         default:
@@ -350,7 +363,10 @@ struct InteractiveMapView: View {
             isVertical = false
         }
 
-        let accentColor = color.opacity(0.85)  // Slightly darker for texture lines
+        // Carpet shares the grid shape with tile, so it leans on contrast rather
+        // than pattern to stay distinguishable.
+        let isCarpet = material == "carpet" || material == "carpet_low" || material == "carpet_high"
+        let accentColor = color.opacity(isCarpet ? 0.6 : 0.85)
 
         while i < pixels.count - 1 {
             let px = pixels[i]
@@ -576,6 +592,47 @@ struct InteractiveMapView: View {
         context.stroke(path, with: .color(.purple), style: StrokeStyle(lineWidth: isNew ? 4 : 3))
     }
 
+    private func drawAnnotation(context: GraphicsContext, annotation: MapAnnotation, params: MapParams, pixelSize: Int, isNew: Bool) {
+        let ps = CGFloat(pixelSize)
+        let screenPoints = annotation.points.map {
+            CGPoint(
+                x: CGFloat($0.x) / ps * params.scale + params.offsetX,
+                y: CGFloat($0.y) / ps * params.scale + params.offsetY
+            )
+        }
+        guard let first = screenPoints.first else { return }
+
+        let color = annotationColor(annotation.type)
+        var path = Path()
+        path.move(to: first)
+        for point in screenPoints.dropFirst() {
+            path.addLine(to: point)
+        }
+
+        switch annotation.type {
+        case .threshold, .curtain:
+            // Curtains are drawn dashed to tell them apart from thresholds
+            let dash: [CGFloat] = annotation.type == .curtain ? [6, 4] : []
+            context.stroke(
+                path,
+                with: .color(color),
+                style: StrokeStyle(lineWidth: isNew ? 4 : 3, dash: dash)
+            )
+        case .ramp:
+            path.closeSubpath()
+            context.fill(path, with: .color(color.opacity(isNew ? 0.4 : 0.3)))
+            context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: 2))
+        }
+    }
+
+    private func annotationColor(_ type: MapAnnotationType) -> Color {
+        switch type {
+        case .threshold: return .green
+        case .curtain: return .teal
+        case .ramp: return .indigo
+        }
+    }
+
     private func drawCurrentDrawing(context: GraphicsContext, start: CGPoint, end: CGPoint, mode: MapEditMode, size: CGSize) {
         let color: Color
         switch mode {
@@ -586,10 +643,15 @@ struct InteractiveMapView: View {
         case .goTo: color = .blue
         case .savePreset: color = .yellow
         case .splitRoom: color = .red
-        case .roomEdit, .deleteRestriction, .none: return
+        case .annotation: color = annotationColor(annotationTypeToDraw)
+        case .roomEdit, .deleteRestriction, .deleteAnnotation, .none: return
         }
 
-        if mode == .virtualWall || mode == .splitRoom {
+        let drawsLine = mode == .virtualWall
+            || mode == .splitRoom
+            || (mode == .annotation && annotationTypeToDraw != .ramp)
+
+        if drawsLine {
             // Draw line with start and end markers
             var path = Path()
             path.move(to: start)
