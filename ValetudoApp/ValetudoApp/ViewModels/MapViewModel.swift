@@ -45,6 +45,8 @@ final class MapViewModel {
     var hasGoTo = false
     var hasSegmentRename = false
     var hasSegmentEdit = false
+    var hasMapAnnotations = false
+    var supportedAnnotationTypes: [MapAnnotationType] = []
 
     // MARK: - Edit Mode State
     var editMode: MapEditMode = .none
@@ -52,10 +54,25 @@ final class MapViewModel {
     var drawnNoGoAreas: [NoGoArea] = []
     var drawnNoMopAreas: [NoMopArea] = []
     var drawnVirtualWalls: [VirtualWall] = []
+    var drawnAnnotations: [MapAnnotation] = []
+    /// Which kind of annotation the next drawn shape becomes.
+    var annotationTypeToDraw: MapAnnotationType = .threshold
 
     // MARK: - Existing Restrictions
     var existingRestrictions: VirtualRestrictions?
     var restrictionToDelete: RestrictionIdentifier?
+
+    // MARK: - Existing Annotations
+    var annotationToDelete: MapAnnotation?
+
+    /// Annotations currently set on the robot.
+    ///
+    /// The firmware has no endpoint to read these back — they arrive as part of
+    /// the map. Deriving them from `map` rather than storing a copy keeps them
+    /// in step with every map refresh automatically.
+    var existingAnnotations: [MapAnnotation] {
+        (map?.entities ?? []).compactMap { MapAnnotation(entity: $0) }
+    }
 
     // MARK: - Room Editing State
     var showRenameSheet = false
@@ -137,8 +154,21 @@ final class MapViewModel {
             hasGoTo = capabilities.contains("GoToLocationCapability")
             hasSegmentRename = capabilities.contains("MapSegmentRenameCapability")
             hasSegmentEdit = capabilities.contains("MapSegmentEditCapability")
+            hasMapAnnotations = capabilities.contains("MapAnnotationsCapability")
         } catch {
             logger.warning("loadMap: Capability check failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        if hasMapAnnotations && supportedAnnotationTypes.isEmpty {
+            do {
+                supportedAnnotationTypes = try await api.getMapAnnotationsProperties().supportedTypes
+                if let first = supportedAnnotationTypes.first,
+                   !supportedAnnotationTypes.contains(annotationTypeToDraw) {
+                    annotationTypeToDraw = first
+                }
+            } catch {
+                logger.error("Annotation properties failed: \(error, privacy: .public)")
+            }
         }
 
         if hasVirtualRestrictions {
@@ -412,12 +442,15 @@ final class MapViewModel {
                     case "wood_vertical":
                         textureInterval = 3; isHorizontal = false; isVertical = true
                     case "carpet", "carpet_low", "carpet_high":
-                        textureInterval = 2; isHorizontal = true; isVertical = true
+                        // Denser than tile, and with more contrast below, so the
+                        // two grids stay tellable apart
+                        textureInterval = 3; isHorizontal = true; isVertical = true
                     default:
                         textureInterval = 0; isHorizontal = false; isVertical = false
                     }
 
-                    let accentColor = baseColor.withAlphaComponent(0.85 * 0.6)
+                    let isCarpet = material == "carpet" || material == "carpet_low" || material == "carpet_high"
+                    let accentColor = baseColor.withAlphaComponent((isCarpet ? 0.6 : 0.85) * 0.6)
 
                     var i = 0
                     while i < pixels.count - 1 {
@@ -725,6 +758,63 @@ final class MapViewModel {
         }
     }
 
+    // MARK: - Map Annotations
+
+    /// Sends the given annotations to the robot and refreshes the map.
+    ///
+    /// The endpoint replaces the whole set, so `annotations` must be the
+    /// complete list — anything left out is deleted on the robot. Since there
+    /// is no way to read annotations back other than the map, the map is
+    /// reloaded afterwards to reflect what actually stuck.
+    private func writeAnnotations(_ annotations: [MapAnnotation]) async -> Bool {
+        guard let api = api else { return false }
+
+        do {
+            try await api.setMapAnnotations(annotations)
+            if let refreshed = try? await api.getMap() {
+                map = refreshed
+                rebuildSegmentPixelSets()
+                updateCachedSegmentInfos()
+                if lastRenderSize.width > 0 {
+                    rebuildStaticLayerImage(size: lastRenderSize)
+                }
+                await MapCacheService.shared.save(refreshed, for: robot.id)
+            }
+            return true
+        } catch {
+            logger.error("setMapAnnotations FAILED: \(error, privacy: .public)")
+            errorRouter?.show(error)
+            return false
+        }
+    }
+
+    func saveAnnotations() async {
+        guard !drawnAnnotations.isEmpty else { return }
+
+        let combined = existingAnnotations + drawnAnnotations
+        logger.debug("saveAnnotations: existing=\(self.existingAnnotations.count, privacy: .public), new=\(self.drawnAnnotations.count, privacy: .public)")
+
+        if await writeAnnotations(combined) {
+            drawnAnnotations.removeAll()
+        }
+    }
+
+    func deleteAnnotation(_ annotation: MapAnnotation) async {
+        // Match on type and coordinates: the id is local to this app and is not
+        // preserved by the robot.
+        let remaining = existingAnnotations.filter {
+            !($0.type == annotation.type && $0.points == annotation.points)
+        }
+
+        guard remaining.count != existingAnnotations.count else {
+            logger.warning("deleteAnnotation: annotation no longer present, skipping")
+            return
+        }
+
+        _ = await writeAnnotations(remaining)
+        annotationToDelete = nil
+    }
+
     // MARK: - Edit Mode Control
     func cancelEditMode() {
         editMode = .none
@@ -732,9 +822,11 @@ final class MapViewModel {
         drawnNoGoAreas.removeAll()
         drawnNoMopAreas.removeAll()
         drawnVirtualWalls.removeAll()
+        drawnAnnotations.removeAll()
         splitSegmentId = nil
         selectedSegmentIds.removeAll()
         restrictionToDelete = nil
+        annotationToDelete = nil
     }
 
     func confirmEditMode(currentDrawStart: CGPoint?, currentDrawEnd: CGPoint?) async {
@@ -790,6 +882,15 @@ final class MapViewModel {
                 } catch {
                     logger.error("Delete restriction FAILED: \(error, privacy: .public)")
                 }
+            }
+
+        case .annotation:
+            logger.debug("confirmEditMode: Annotations mode, drawn=\(self.drawnAnnotations.count, privacy: .public)")
+            await saveAnnotations()
+
+        case .deleteAnnotation:
+            if let toDelete = annotationToDelete {
+                await deleteAnnotation(toDelete)
             }
 
         case .goTo, .savePreset, .roomEdit, .splitRoom, .none:

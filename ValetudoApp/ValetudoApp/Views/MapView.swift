@@ -12,6 +12,8 @@ enum MapEditMode: Equatable {
     case roomEdit       // Edit rooms (rename, join, split)
     case splitRoom      // Draw split line on selected room
     case deleteRestriction // Tap to delete restriction
+    case annotation     // Draw map annotations (threshold, curtain, ramp)
+    case deleteAnnotation // Tap to delete a map annotation
 }
 
 // MARK: - Restriction Identifier
@@ -227,7 +229,10 @@ struct MapContentView: View {
                                 drawnNoGoAreas: viewModel.drawnNoGoAreas,
                                 drawnNoMopAreas: viewModel.drawnNoMopAreas,
                                 drawnVirtualWalls: viewModel.drawnVirtualWalls,
+                                drawnAnnotations: viewModel.drawnAnnotations,
                                 existingRestrictions: viewModel.existingRestrictions,
+                                existingAnnotations: viewModel.existingAnnotations,
+                                annotationTypeToDraw: viewModel.annotationTypeToDraw,
                                 currentDrawStart: currentDrawStart,
                                 currentDrawEnd: currentDrawEnd,
                                 editMode: viewModel.editMode,
@@ -260,6 +265,11 @@ struct MapContentView: View {
                             // Restriction delete targets
                             if viewModel.editMode == .deleteRestriction, let p = params, let restrictions = viewModel.existingRestrictions {
                                 restrictionDeleteOverlay(params: p, restrictions: restrictions, viewSize: geometry.size)
+                            }
+
+                            // Annotation delete targets
+                            if viewModel.editMode == .deleteAnnotation, let p = params {
+                                annotationDeleteOverlay(params: p, annotations: viewModel.existingAnnotations, viewSize: geometry.size)
                             }
 
                             // Offline banner

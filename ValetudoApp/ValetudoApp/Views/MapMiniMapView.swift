@@ -49,6 +49,13 @@ struct MiniMapView: View {
                 }
             }
 
+            // Draw map annotations (these come with the map, not with restrictions)
+            for entity in map.entities ?? [] {
+                if let annotation = MapAnnotation(entity: entity) {
+                    drawAnnotation(context: context, annotation: annotation, params: params, pixelSize: CGFloat(pixelSize))
+                }
+            }
+
             // Draw entities
             if let entities = map.entities {
                 // Draw path first (under robot)
@@ -64,6 +71,37 @@ struct MiniMapView: View {
             }
         }
         .background(Color(.systemGray6))
+    }
+
+    private func drawAnnotation(context: GraphicsContext, annotation: MapAnnotation, params: MapParams, pixelSize: CGFloat) {
+        let screenPoints = annotation.points.map {
+            CGPoint(
+                x: CGFloat($0.x) / pixelSize * params.scale + params.offsetX,
+                y: CGFloat($0.y) / pixelSize * params.scale + params.offsetY
+            )
+        }
+        guard let first = screenPoints.first else { return }
+
+        let color: Color
+        switch annotation.type {
+        case .threshold: color = .green
+        case .curtain: color = .teal
+        case .ramp: color = .indigo
+        }
+
+        var path = Path()
+        path.move(to: first)
+        for point in screenPoints.dropFirst() {
+            path.addLine(to: point)
+        }
+
+        if annotation.type == .ramp {
+            path.closeSubpath()
+            context.fill(path, with: .color(color.opacity(0.3)))
+        } else {
+            let dash: [CGFloat] = annotation.type == .curtain ? [4, 3] : []
+            context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: 2, dash: dash))
+        }
     }
 
     private func drawVirtualWall(context: GraphicsContext, wall: VirtualWall, params: MapParams, pixelSize: CGFloat) {

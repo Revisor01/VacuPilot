@@ -12,6 +12,7 @@ eingetragen. Wenn ein neues Firmware-Release erscheint, kommt es unter
 
 | VacuPilot | Build | Datum | Minimum | Getestet gegen | Nachweis |
 |---|---|---|---|---|---|
+| 1.1.0 | 100 | 2026-08-12 | 2024.06.0 | noch offen | Umsetzung nach Firmware-Quelltext und Schnittstellen-Doku von 2026.08.0; Praxistest steht aus |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live-OTA-Test zweier Roboter (Phase 34, 2026-05-27) |
 
 **Minimum 2024.06.0** ist die dokumentierte Untergrenze (README, STACK.md). Sie ist
@@ -36,25 +37,25 @@ Testprotokoll gegen eine bestimmte Firmware. Die Angabe oben beschreibt den
 Firmware-Stand, gegen den der aktuelle Repo-Code zuletzt lief — nicht den Stand
 zum Zeitpunkt der Store-Auslieferung.
 
-## Offene Firmware-Neuerungen
+## Firmware-Neuerungen seit 2026.05.0
 
-Seit dem letzten getesteten Stand (2026.05.0) sind zwei Firmware-Releases
-erschienen. Beide sind ungetestet.
+Zwei Firmware-Releases sind seit dem letzten Praxistest erschienen. Was davon in
+1.1.0 abgedeckt ist, steht jeweils dabei.
 
 ### 2026.07.0 (2026-07-23)
 
-**Teppich als Bodenbelag für Räume** — betrifft die App direkt.
-Räume können jetzt zusätzlich als Teppich markiert werden, in drei Abstufungen
-(kurzflorig, hochflorig, allgemein). VacuPilot kennt bisher nur die fünf Werte
-generic, tile, wood, wood_horizontal und wood_vertical. Ein Teppich-Wert wird
-weder angezeigt noch als Auswahl angeboten. Absturzgefahr besteht nicht — das
-Material wird als freier Text gelesen und nur für die Anzeige gedeutet — aber ein
-Raum, der am Roboter als Teppich gesetzt ist, erscheint in der App ohne Belag.
+**Teppich als Bodenbelag für Räume** — in 1.1.0 umgesetzt.
+Räume können zusätzlich als Teppich markiert werden, in drei Abstufungen
+(kurzflorig, hochflorig, allgemein). Die App kennt diese Werte jetzt, zeigt sie
+an und bietet sie zur Auswahl an. Zusätzlich werden Beläge, die die App noch
+nicht kennt, lesbar dargestellt statt weggelassen — vorher blieb ein Raum mit
+einem neueren Belag ohne Angabe.
 
-**Karten-Anmerkungen** — neue Funktion, in der App nicht vorhanden.
+**Karten-Anmerkungen** — in 1.1.0 umgesetzt.
 Türschwellen, Vorhänge und Rampen können in der Karte markiert werden, damit der
-Roboter sie anders befährt. Die App zeigt diese Markierungen weder an noch lässt
-sie sich anlegen. Herstellerabhängig, bisher nur auf einem Teil der Geräte.
+Roboter sie anders befährt. Die App zeigt sie an, lässt sie einzeichnen und
+wieder löschen; angeboten wird nur, was der jeweilige Roboter meldet.
+Herstellerabhängig, bisher nur auf einem Teil der Geräte.
 
 Technisch sind sie keine neue Art von Kartenobjekt, sondern drei zusätzliche
 Werte im vorhandenen `type`-Feld der Karten-Entitäten: `threshold` und `curtain`

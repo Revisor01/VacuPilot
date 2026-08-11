@@ -224,6 +224,29 @@ extension MapContentView {
             )
             viewModel.drawnVirtualWalls.append(wall)
 
+        case .annotation:
+            let type = viewModel.annotationTypeToDraw
+            let points: [ZonePoint]
+            switch type {
+            case .threshold, .curtain:
+                // A line: drawn from start to end as-is
+                points = [
+                    ZonePoint(x: apiStartX, y: apiStartY),
+                    ZonePoint(x: apiEndX, y: apiEndY)
+                ]
+            case .ramp:
+                // A quad: the drag spans the rectangle, corners clockwise from
+                // top-left. The firmware also accepts rotated quads, but the
+                // app only offers axis-aligned ones.
+                points = [
+                    ZonePoint(x: minX, y: minY),
+                    ZonePoint(x: maxX, y: minY),
+                    ZonePoint(x: maxX, y: maxY),
+                    ZonePoint(x: minX, y: maxY)
+                ]
+            }
+            viewModel.drawnAnnotations.append(MapAnnotation(type: type, points: points))
+
         case .goTo:
             // Tap places/moves marker to new position
             viewModel.goToMarkerPosition = start
@@ -242,7 +265,7 @@ extension MapContentView {
             // Split line drawing is handled, don't clear yet
             return
 
-        case .roomEdit, .deleteRestriction, .none:
+        case .roomEdit, .deleteRestriction, .deleteAnnotation, .none:
             break
         }
 

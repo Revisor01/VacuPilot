@@ -231,6 +231,30 @@ extension MapContentView {
                         }
                     }
                 }
+
+                if viewModel.hasMapAnnotations {
+                    // One button per annotation kind the robot supports
+                    ForEach(viewModel.supportedAnnotationTypes, id: \.self) { type in
+                        MapControlButton(
+                            title: type.displayName,
+                            icon: type.icon,
+                            color: .green
+                        ) {
+                            viewModel.annotationTypeToDraw = type
+                            viewModel.editMode = .annotation
+                        }
+                    }
+
+                    if !viewModel.existingAnnotations.isEmpty {
+                        MapControlButton(
+                            title: String(localized: "annotation.delete"),
+                            icon: "trash",
+                            color: .gray
+                        ) {
+                            viewModel.editMode = .deleteAnnotation
+                        }
+                    }
+                }
             }
         }
         .padding(.horizontal)
@@ -548,6 +572,8 @@ extension MapContentView {
         case .roomEdit: return String(localized: "rooms.select_to_edit")
         case .splitRoom: return String(localized: "rooms.split_hint")
         case .deleteRestriction: return String(localized: "map.delete_hint")
+        case .annotation: return String(localized: "annotation.draw_hint")
+        case .deleteAnnotation: return String(localized: "annotation.delete_hint")
         case .none: return ""
         }
     }
@@ -561,6 +587,8 @@ extension MapContentView {
         case .roomEdit: return ""
         case .splitRoom: return String(localized: "rooms.split_action")
         case .deleteRestriction: return String(localized: "settings.save")
+        case .annotation: return String(localized: "settings.save")
+        case .deleteAnnotation: return String(localized: "settings.save")
         case .none: return ""
         }
     }
@@ -576,6 +604,8 @@ extension MapContentView {
         case .roomEdit: return .indigo
         case .splitRoom: return .orange
         case .deleteRestriction: return .red
+        case .annotation: return .green
+        case .deleteAnnotation: return .red
         case .none: return .gray
         }
     }
@@ -591,6 +621,8 @@ extension MapContentView {
         case .roomEdit: return false
         case .splitRoom: return currentDrawStart != nil && currentDrawEnd != nil
         case .deleteRestriction: return viewModel.restrictionToDelete != nil
+        case .annotation: return !viewModel.drawnAnnotations.isEmpty
+        case .deleteAnnotation: return viewModel.annotationToDelete != nil
         case .none: return false
         }
     }

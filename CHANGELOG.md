@@ -11,28 +11,31 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
-## [Unreleased]
+## [1.1.0] - 2026-08-12
 
 ### Hinzugefügt
 
 - Teppich als Bodenbelag für Räume — in den drei Abstufungen Teppich,
   kurzflorig und hochflorig, mit eigener Darstellung in der Karte.
+- Markierungen in der Karte: Türschwellen, Vorhänge und Rampen lassen sich
+  anzeigen, einzeichnen und wieder löschen. Welche Arten zur Auswahl stehen,
+  richtet sich nach dem jeweiligen Roboter.
 
 ### Behoben
 
 - Bodenbeläge, die die App noch nicht kennt, werden jetzt lesbar angezeigt statt
   weggelassen. Bisher blieb ein Raum mit einem neueren Belag ohne Angabe.
 
-### Sonstiges
-
-- Festgehalten, mit welchen Firmware-Versionen die App getestet ist und welche
-  Neuerungen neuerer Firmware noch nicht abgedeckt sind.
-
 ### Geändert
 
 - Build-Nummer im Repo auf den tatsächlich ausgelieferten Stand gezogen
   (`CURRENT_PROJECT_VERSION` 97 → 99), `MARKETING_VERSION` auf `1.0.0`
   normalisiert.
+
+### Sonstiges
+
+- Festgehalten, mit welchen Firmware-Versionen die App getestet ist und welche
+  Neuerungen neuerer Firmware noch nicht abgedeckt sind.
 
 ### Entfernt
 
