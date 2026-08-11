@@ -65,20 +65,50 @@ auf die App.
 Roboter mit Kamera können ein Livebild senden, standardmäßig abgeschaltet und
 bewusst nur nach ausdrücklicher Freigabe nutzbar. Die App unterstützt das nicht.
 
+## Womit getestet werden kann
+
+Die Testgeräte sind zwei Roborock S5 Max. Das begrenzt, was überhaupt praktisch
+prüfbar ist:
+
+- **Bodenbeläge** — nicht prüfbar. Der S5 Max meldet die zugehörige Fähigkeit
+  gar nicht erst; sie ist bei Roborock erst ab G10S/S8 vorhanden. Selbst dort
+  gäbe es keine Teppich-Werte, sondern nur generic, tile und die beiden
+  Holzrichtungen. Teppich existiert bislang ausschließlich bei Dreame.
+- **Karten-Anmerkungen** — nicht prüfbar. Nur bei Dreame umgesetzt (Türschwellen
+  ab L10s Ultra, zusätzlich Vorhänge und Rampen ab X/L40). Für Roborock gibt es
+  keine Umsetzung.
+- **Alles Übrige** — prüfbar. Verbindung, Karte, Räume, Zonen, Zeitpläne und der
+  Update-Ablauf laufen auf dem S5 Max und decken den Großteil der App ab.
+
+Für die beiden nicht prüfbaren Punkte wäre ein Dreame-Gerät nötig; ein neuerer
+Roborock hilft nur beim Bodenbelag und auch dort nicht beim Teppich. Solange
+kein solches Gerät vorhanden ist, bleiben beide Punkte nach Code und
+Fremdmeldungen umgesetzt statt selbst verifiziert — das ist beim Eintragen in
+die Matrix so zu kennzeichnen.
+
 ## Was für ein nächstes Release zu tun ist
 
-Nach Wichtigkeit:
+Nach Wichtigkeit, unter Berücksichtigung dessen, was hier prüfbar ist:
 
-1. **Teppich-Böden ergänzen** — die drei Teppich-Werte in Anzeige und Auswahl
-   aufnehmen, inklusive Symbol und Übersetzungen. Kleiner Eingriff, klarer Gewinn:
-   ohne ihn zeigt die App für betroffene Räume schlicht nichts an.
-2. **Unbekannte Bodenbeläge abfangen** — statt einen unbekannten Wert wegzulassen,
-   ihn neutral darstellen. Dann fällt die App bei künftigen Firmware-Erweiterungen
-   nicht mehr stumm aus.
-3. **Gegen 2026.08.0 gegentesten** — Verbindung, Karte, Räume und Update-Ablauf
-   einmal durchspielen und das Ergebnis hier eintragen.
-4. **Karten-Anmerkungen** — größeres Vorhaben (Kartendarstellung und Bearbeitung),
-   lohnt eine eigene Planungsphase.
+1. **Gegen 2026.08.0 gegentesten** — auf dem vorhandenen S5 Max: Verbindung,
+   Karte, Räume, Zonen, Zeitpläne, Update-Ablauf. Ergebnis in die Matrix
+   eintragen. Der einzige Punkt, der vollständig selbst verifizierbar ist, und
+   damit der erste.
+2. **Unbekannte Bodenbeläge abfangen** — statt einen unbekannten Wert
+   wegzulassen, ihn neutral darstellen. Wirkt für jeden künftigen neuen Wert,
+   nicht nur für Teppich, und ist ohne passendes Gerät prüfbar, indem eine
+   Antwort mit unbekanntem Material nachgestellt wird.
+3. **Teppich-Böden ergänzen** — die drei Teppich-Werte in Anzeige und Auswahl
+   aufnehmen, inklusive Symbol und Übersetzungen. Kleiner Eingriff, aber ohne
+   Dreame-Gerät nur gegen nachgestellte Antworten prüfbar, nicht am echten
+   Roboter. Nach Punkt 2 einsortiert, weil dieser den Schaden bereits abfängt.
+4. **Karten-Anmerkungen** — größeres Vorhaben (Kartendarstellung und
+   Bearbeitung) und hier ebenfalls nicht am Gerät prüfbar. Lohnt eine eigene
+   Planungsphase, sobald ein passender Roboter zur Verfügung steht.
+
+Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
+gibt es in 2026.08.0 unverändert.
+
 ## Bewusst nicht geplant
 
 **Kamera-Livebild.** Wird nicht umgesetzt — Entscheidung vom 2026-08-11. Der
@@ -87,5 +117,5 @@ Aufwand steht in keinem Verhältnis zum Nutzen: ein Videostrom im MPEG1-Format
 Datenschutz- und Store-Fragen. Die Funktion ist auch in der Firmware selbst
 bewusst als Ausnahme angelegt, die man aktiv einschalten muss.
 
-Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
-gibt es in 2026.08.0 unverändert.
+Hinzu kommt: Der vorhandene S5 Max hat gar keine Kamera, die Funktion wäre hier
+also nicht einmal testbar.
