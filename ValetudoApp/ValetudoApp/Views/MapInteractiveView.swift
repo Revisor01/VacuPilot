@@ -156,6 +156,9 @@ struct InteractiveMapView: View {
             }
         }
         .overlay {
+            annotationLabelsOverlay
+        }
+        .overlay {
             orderBadgesOverlay
         }
         .accessibilityElement(children: .ignore)
@@ -201,9 +204,18 @@ struct InteractiveMapView: View {
                                     .font(.system(size: 14))
                                     .foregroundStyle(.white, .blue)
                             }
-                            Text(info.name)
-                                .font(.system(size: 11, weight: .semibold))
-                                .foregroundStyle(isSelected ? .white : .primary)
+                            VStack(spacing: 1) {
+                                Text(info.name)
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundStyle(isSelected ? .white : .primary)
+                                // The floor texture alone is hard to tell apart,
+                                // so the material is named here as well.
+                                if let material = info.material, material != "generic" {
+                                    Text(FloorMaterial.displayName(for: material))
+                                        .font(.system(size: 9))
+                                        .foregroundStyle(isSelected ? .white.opacity(0.85) : .secondary)
+                                }
+                            }
                         }
                         .padding(.horizontal, 8)
                         .padding(.vertical, 5)
@@ -221,6 +233,53 @@ struct InteractiveMapView: View {
                         : String(localized: "map.room_select_hint"))
                     .buttonStyle(.plain)
                     .position(x: x, y: y)
+                }
+            }
+        }
+    }
+
+    // MARK: - Annotation Labels
+
+    /// Names each annotation on the map. The shapes alone are hard to tell
+    /// apart, and a threshold is a thin line that is awkward to hit — the
+    /// label doubles as a comfortable tap target.
+    @ViewBuilder
+    private var annotationLabelsOverlay: some View {
+        let all = existingAnnotations + drawnAnnotations
+        // In delete mode the delete buttons sit in these same spots, so the
+        // labels step aside.
+        if !all.isEmpty, editMode != .deleteAnnotation {
+            GeometryReader { geometry in
+                let params = calculateMapParams(
+                    layers: map.layers ?? [],
+                    pixelSize: map.pixelSize ?? 5,
+                    size: geometry.size
+                )
+
+                if let p = params {
+                    let ps = CGFloat(map.pixelSize ?? 5)
+                    ForEach(all) { annotation in
+                        let sumX = annotation.points.reduce(0) { $0 + $1.x }
+                        let sumY = annotation.points.reduce(0) { $0 + $1.y }
+                        let count = max(annotation.points.count, 1)
+                        let x = CGFloat(sumX) / CGFloat(count) / ps * p.scale + p.offsetX
+                        let y = CGFloat(sumY) / CGFloat(count) / ps * p.scale + p.offsetY
+
+                        HStack(spacing: 3) {
+                            Image(systemName: annotation.type.icon)
+                                .font(.system(size: 9, weight: .semibold))
+                            Text(annotation.type.displayName)
+                                .font(.system(size: 9, weight: .medium))
+                        }
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(Color(.systemBackground).opacity(0.9))
+                        .foregroundStyle(annotationColor(annotation.type))
+                        .clipShape(Capsule())
+                        .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
+                        .position(x: x, y: y)
+                        .allowsHitTesting(false)
+                    }
                 }
             }
         }

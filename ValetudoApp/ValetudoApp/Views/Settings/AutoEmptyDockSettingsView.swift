@@ -28,7 +28,7 @@ struct AutoEmptyDockSettingsView: View {
                             Task { await selectPreset(preset) }
                         } label: {
                             HStack {
-                                Text(preset.capitalized.replacingOccurrences(of: "_", with: " "))
+                                Text(displayNameForInterval(preset))
                                     .foregroundStyle(.primary)
                                 Spacer()
                                 if selectedPreset == preset {
@@ -61,8 +61,27 @@ struct AutoEmptyDockSettingsView: View {
 
         do {
             presets = try await api.getAutoEmptyDockIntervalPresets()
+            // Mark the value the robot is actually set to, so the checkmark is
+            // right before anything is changed.
+            selectedPreset = (try? await api.getAutoEmptyDockInterval()) ?? selectedPreset
         } catch {
             logger.error("Failed to load auto empty dock presets: \(error, privacy: .public)")
+        }
+    }
+
+    /// The firmware reports "off", "infrequent", "normal" or "frequent".
+    private func displayNameForInterval(_ preset: String) -> String {
+        switch preset.lowercased() {
+        case "off":
+            return String(localized: "empty_interval.off")
+        case "infrequent":
+            return String(localized: "empty_interval.infrequent")
+        case "normal":
+            return String(localized: "empty_interval.normal")
+        case "frequent":
+            return String(localized: "empty_interval.frequent")
+        default:
+            return preset.replacingOccurrences(of: "_", with: " ").localizedCapitalized
         }
     }
 

@@ -11,6 +11,8 @@ struct SegmentInfo: Identifiable {
     let name: String
     let midX: Int
     let midY: Int
+    /// Raw floor material, nil when the robot reports none for this room.
+    var material: String?
 }
 
 // MARK: - MapViewModel
@@ -360,7 +362,8 @@ final class MapViewModel {
             let name = segments.first { $0.id == segmentId }?.displayName
                 ?? layer.metaData?.name
                 ?? String(localized: "map.room") + " \(segmentId)"
-            infos.append(SegmentInfo(id: segmentId, name: name, midX: finalMidX, midY: finalMidY))
+            infos.append(SegmentInfo(id: segmentId, name: name, midX: finalMidX,
+                                     midY: finalMidY, material: layer.metaData?.material))
         }
         cachedSegmentInfos = infos
     }

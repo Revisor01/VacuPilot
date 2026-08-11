@@ -414,22 +414,40 @@ extension ValetudoAPI {
     }
 
     // MARK: - Auto Empty Dock
+    //
+    // These four dock capabilities do not follow the usual preset pattern:
+    // the list of choices comes from `/properties` under its own key, and the
+    // value is read and written as `interval` / `duration` / `temperature`
+    // rather than `name`. There is no `/presets` and no `/preset` route here.
+
     func getAutoEmptyDockIntervalPresets() async throws -> [String] {
-        try await request("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability/presets")
+        let props: AutoEmptyIntervalProperties = try await request("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability/properties")
+        return props.supportedIntervals
+    }
+
+    func getAutoEmptyDockInterval() async throws -> String {
+        let response: AutoEmptyIntervalResponse = try await request("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability")
+        return response.interval
     }
 
     func setAutoEmptyDockInterval(preset: String) async throws {
-        let body = try JSONEncoder().encode(PresetControlRequest(name: preset))
-        try await requestVoid("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability/preset", body: body)
+        let body = try JSONEncoder().encode(["interval": preset])
+        try await requestVoid("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability", body: body)
     }
 
     func getAutoEmptyDockDurationPresets() async throws -> [String] {
-        try await request("/robot/capabilities/AutoEmptyDockAutoEmptyDurationControlCapability/presets")
+        let props: AutoEmptyDurationProperties = try await request("/robot/capabilities/AutoEmptyDockAutoEmptyDurationControlCapability/properties")
+        return props.supportedDurations
+    }
+
+    func getAutoEmptyDockDuration() async throws -> String {
+        let response: DurationResponse = try await request("/robot/capabilities/AutoEmptyDockAutoEmptyDurationControlCapability")
+        return response.duration
     }
 
     func setAutoEmptyDockDuration(preset: String) async throws {
-        let body = try JSONEncoder().encode(PresetControlRequest(name: preset))
-        try await requestVoid("/robot/capabilities/AutoEmptyDockAutoEmptyDurationControlCapability/preset", body: body)
+        let body = try JSONEncoder().encode(["duration": preset])
+        try await requestVoid("/robot/capabilities/AutoEmptyDockAutoEmptyDurationControlCapability", body: body)
     }
 
     func triggerAutoEmptyDock() async throws {
@@ -576,21 +594,33 @@ extension ValetudoAPI {
 
     // MARK: - Mop Dock Wash Temperature
     func getMopDockWashTemperaturePresets() async throws -> [String] {
-        try await request("/robot/capabilities/MopDockMopWashTemperatureControlCapability/presets")
+        let props: WashTemperatureProperties = try await request("/robot/capabilities/MopDockMopWashTemperatureControlCapability/properties")
+        return props.supportedTemperatures
+    }
+
+    func getMopDockWashTemperature() async throws -> String {
+        let response: TemperatureResponse = try await request("/robot/capabilities/MopDockMopWashTemperatureControlCapability")
+        return response.temperature
     }
 
     func setMopDockWashTemperature(preset: String) async throws {
-        let body = try JSONEncoder().encode(PresetControlRequest(name: preset))
-        try await requestVoid("/robot/capabilities/MopDockMopWashTemperatureControlCapability/preset", body: body)
+        let body = try JSONEncoder().encode(["temperature": preset])
+        try await requestVoid("/robot/capabilities/MopDockMopWashTemperatureControlCapability", body: body)
     }
 
     func getMopDockDryingTimePresets() async throws -> [String] {
-        try await request("/robot/capabilities/MopDockMopDryingTimeControlCapability/presets")
+        let props: DryingTimeProperties = try await request("/robot/capabilities/MopDockMopDryingTimeControlCapability/properties")
+        return props.supportedDurations
+    }
+
+    func getMopDockDryingTime() async throws -> String {
+        let response: DurationResponse = try await request("/robot/capabilities/MopDockMopDryingTimeControlCapability")
+        return response.duration
     }
 
     func setMopDockDryingTime(preset: String) async throws {
-        let body = try JSONEncoder().encode(PresetControlRequest(name: preset))
-        try await requestVoid("/robot/capabilities/MopDockMopDryingTimeControlCapability/preset", body: body)
+        let body = try JSONEncoder().encode(["duration": preset])
+        try await requestVoid("/robot/capabilities/MopDockMopDryingTimeControlCapability", body: body)
     }
 
     // MARK: - Map Segment Material Control
@@ -845,6 +875,39 @@ extension ValetudoAPI {
 }
 
 // MARK: - Robot Properties Models
+// MARK: - Dock Capability Models
+//
+// These capabilities each use their own field name instead of the shared
+// `name` used by ordinary presets.
+
+struct AutoEmptyIntervalProperties: Codable {
+    let supportedIntervals: [String]
+}
+
+struct AutoEmptyIntervalResponse: Codable {
+    let interval: String
+}
+
+struct AutoEmptyDurationProperties: Codable {
+    let supportedDurations: [String]
+}
+
+struct DryingTimeProperties: Codable {
+    let supportedDurations: [String]
+}
+
+struct DurationResponse: Codable {
+    let duration: String
+}
+
+struct WashTemperatureProperties: Codable {
+    let supportedTemperatures: [String]
+}
+
+struct TemperatureResponse: Codable {
+    let temperature: String
+}
+
 struct RobotProperties: Codable {
     let firmwareVersion: String?
     let model: String?
