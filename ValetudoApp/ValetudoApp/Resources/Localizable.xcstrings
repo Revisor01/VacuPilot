@@ -648,6 +648,29 @@
         }
       }
     },
+    "annotation.menu": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markierung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annotation"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annotation"
+          }
+        }
+      }
+    },
     "annotation.ramp": {
       "extractionState": "manual",
       "localizations": {

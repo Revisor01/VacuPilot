@@ -352,9 +352,21 @@ PRESET_LISTS = {
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
+    # Ein hängender Client soll den Thread nicht ewig belegen
+    timeout = 30
 
     def log_message(self, fmt, *args):
         print(f"  {self.command:6s} {self.path}")
+
+    def handle_one_request(self):
+        """Abgebrochene Verbindungen sind hier Normalfall, kein Fehler."""
+        try:
+            super().handle_one_request()
+        except (ConnectionResetError, BrokenPipeError, TimeoutError, OSError):
+            self.close_connection = True
+
+    def handle_expect_100(self):
+        return True
 
     # -- Hilfsmittel -------------------------------------------------------
 
@@ -635,16 +647,21 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Connection", "keep-alive")
         self.end_headers()
         is_map = "map" in path
+        # Nach einer Weile beenden, damit tote Verbindungen nicht dauerhaft
+        # einen Thread belegen. Die App verbindet sich von selbst neu.
+        deadline = time.time() + 600
         try:
-            while True:
+            while time.time() < deadline:
                 payload = STATE.build_map() if is_map else STATE.attributes()
                 name = "MapUpdated" if is_map else "StateAttributesUpdated"
                 chunk = f"event: {name}\ndata: {json.dumps(payload)}\n\n".encode()
                 self.wfile.write(chunk)
                 self.wfile.flush()
                 time.sleep(2)
-        except (BrokenPipeError, ConnectionResetError):
+        except (BrokenPipeError, ConnectionResetError, TimeoutError, OSError):
             pass
+        finally:
+            self.close_connection = True
 
 
 def local_ip():
