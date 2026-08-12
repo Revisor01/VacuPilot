@@ -428,7 +428,9 @@ struct InteractiveMapView: View {
             accentStrength = 1.0
         }
 
-        let accentColor = color.opacity(accentStrength)
+        // Darken, don't fade: a more transparent colour reads as *lighter*
+        // against the floor and the stripes vanish.
+        let accentColor = Color(MapViewModel.darken(UIColor(color), by: accentStrength))
 
         while i < pixels.count - 1 {
             let px = pixels[i]

@@ -381,6 +381,15 @@ final class MapViewModel {
         UIColor(red: 0.78, green: 0.88, blue: 0.72, alpha: 1),
     ]
 
+    /// Multiplies the RGB channels by `factor`, keeping the alpha value.
+    /// `factor` below 1 darkens; the alpha stays put so the stripe does not
+    /// turn lighter against the floor underneath.
+    nonisolated static func darken(_ color: UIColor, by factor: CGFloat) -> UIColor {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        guard color.getRed(&r, green: &g, blue: &b, alpha: &a) else { return color }
+        return UIColor(red: r * factor, green: g * factor, blue: b * factor, alpha: a)
+    }
+
     nonisolated private static func segmentUIColor(segmentId: String?) -> UIColor {
         if let id = segmentId, let num = Int(id) {
             return segmentUIColors[num % segmentUIColors.count]
@@ -464,7 +473,10 @@ final class MapViewModel {
                         accentStrength = 1.0
                     }
 
-                    let accentColor = baseColor.withAlphaComponent(accentStrength * 0.6)
+                    // Darken the room colour instead of making it more
+                    // transparent: on the light floor, a more transparent
+                    // colour comes out *lighter* and the stripes disappear.
+                    let accentColor = MapViewModel.darken(baseColor, by: accentStrength)
 
                     var i = 0
                     while i < pixels.count - 1 {
