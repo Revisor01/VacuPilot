@@ -434,26 +434,37 @@ final class MapViewModel {
                     let baseColor = MapViewModel.segmentUIColor(segmentId: layer.metaData?.segmentId).withAlphaComponent(0.6)
                     let material = layer.metaData?.material
 
+                    // A map pixel is about two screen points across, so fine
+                    // hatching blurs into an even wash and every material ends
+                    // up looking the same. The stripes are therefore spaced
+                    // widely, and the contrast — not the spacing — carries the
+                    // difference.
                     let textureInterval: Int
                     let isHorizontal: Bool
                     let isVertical: Bool
+                    let accentStrength: CGFloat
                     switch material {
                     case "tile":
-                        textureInterval = 4; isHorizontal = true; isVertical = true
+                        // Wide grid, faint: reads as tiles
+                        textureInterval = 8; isHorizontal = true; isVertical = true
+                        accentStrength = 0.75
                     case "wood", "wood_horizontal":
-                        textureInterval = 3; isHorizontal = true; isVertical = false
+                        textureInterval = 6; isHorizontal = true; isVertical = false
+                        accentStrength = 0.75
                     case "wood_vertical":
-                        textureInterval = 3; isHorizontal = false; isVertical = true
+                        textureInterval = 6; isHorizontal = false; isVertical = true
+                        accentStrength = 0.75
                     case "carpet", "carpet_low", "carpet_high":
-                        // Denser than tile, and with more contrast below, so the
-                        // two grids stay tellable apart
-                        textureInterval = 3; isHorizontal = true; isVertical = true
+                        // Narrow diagonal-free grid with strong contrast: the
+                        // densest and darkest of the three, hard to confuse
+                        textureInterval = 4; isHorizontal = true; isVertical = true
+                        accentStrength = 0.45
                     default:
                         textureInterval = 0; isHorizontal = false; isVertical = false
+                        accentStrength = 1.0
                     }
 
-                    let isCarpet = material == "carpet" || material == "carpet_low" || material == "carpet_high"
-                    let accentColor = baseColor.withAlphaComponent((isCarpet ? 0.6 : 0.85) * 0.6)
+                    let accentColor = baseColor.withAlphaComponent(accentStrength * 0.6)
 
                     var i = 0
                     while i < pixels.count - 1 {

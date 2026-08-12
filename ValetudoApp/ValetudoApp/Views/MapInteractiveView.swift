@@ -391,41 +391,44 @@ struct InteractiveMapView: View {
         let pixelScale = params.scale * CGFloat(pixelSize)
         var i = 0
 
-        // Determine texture pattern based on material
+        // See the note in MapViewModel: at roughly two screen points per map
+        // pixel, tight hatching turns into an even wash. Wide spacing plus
+        // differing contrast is what stays readable.
         let textureInterval: Int
         let isHorizontal: Bool
         let isVertical: Bool
+        let accentStrength: Double
 
         switch material {
         case "tile":
-            textureInterval = 4  // Grid pattern every 4 pixels
+            textureInterval = 8
             isHorizontal = true
             isVertical = true
+            accentStrength = 0.75
         case "wood", "wood_horizontal":
-            textureInterval = 3  // Horizontal lines every 3 pixels
+            textureInterval = 6
             isHorizontal = true
             isVertical = false
+            accentStrength = 0.75
         case "wood_vertical":
-            textureInterval = 3  // Vertical lines every 3 pixels
+            textureInterval = 6
             isHorizontal = false
             isVertical = true
+            accentStrength = 0.75
         case "carpet", "carpet_low", "carpet_high":
-            // Dense grid: reads as a woven surface next to the wider tile grid.
-            // See the note on accentColor below — carpet needs more contrast.
-            textureInterval = 3
+            textureInterval = 4
             isHorizontal = true
             isVertical = true
+            accentStrength = 0.45
         default:
             // Generic or unknown - just draw plain pixels
             textureInterval = 0
             isHorizontal = false
             isVertical = false
+            accentStrength = 1.0
         }
 
-        // Carpet shares the grid shape with tile, so it leans on contrast rather
-        // than pattern to stay distinguishable.
-        let isCarpet = material == "carpet" || material == "carpet_low" || material == "carpet_high"
-        let accentColor = color.opacity(isCarpet ? 0.6 : 0.85)
+        let accentColor = color.opacity(accentStrength)
 
         while i < pixels.count - 1 {
             let px = pixels[i]

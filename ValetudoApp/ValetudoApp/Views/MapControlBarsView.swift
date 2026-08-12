@@ -6,9 +6,6 @@ struct MapControlButton: View {
     let icon: String
     let color: Color
     var badge: String? = nil
-    /// Buttons in a scrolling row need a width of their own; the ones that
-    /// share a fixed row keep stretching to fill it.
-    var fixedWidth: CGFloat? = nil
     let action: () async -> Void
 
     var body: some View {
@@ -23,8 +20,7 @@ struct MapControlButton: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
             }
-            .frame(maxWidth: fixedWidth == nil ? .infinity : nil)
-            .frame(width: fixedWidth)
+            .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background(color.opacity(0.15))
             .foregroundStyle(color)
@@ -101,10 +97,6 @@ extension MapContentView {
             }
         }
     }
-
-    /// Width of the buttons in the scrolling edit row. Sized so roughly four
-    /// fit on screen, which signals that the row continues.
-    private var editButtonWidth: CGFloat { 84 }
 
     @ViewBuilder
     var normalControlBar: some View {
@@ -191,92 +183,95 @@ extension MapContentView {
             }
             .padding(.horizontal)
 
-            // This row grows with the robot's capabilities — annotations alone
-            // can add four buttons — so it scrolls instead of squeezing them.
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    if viewModel.hasSegmentRename || viewModel.hasSegmentEdit {
-                        MapControlButton(
-                            title: String(localized: "rooms.edit"),
-                            icon: "square.and.pencil",
-                            color: .indigo,
-                            fixedWidth: editButtonWidth
-                        ) {
-                            viewModel.editMode = .roomEdit
-                        }
+            HStack(spacing: 12) {
+                if viewModel.hasSegmentRename || viewModel.hasSegmentEdit {
+                    MapControlButton(
+                        title: String(localized: "rooms.edit"),
+                        icon: "square.and.pencil",
+                        color: .indigo
+                    ) {
+                        viewModel.editMode = .roomEdit
+                    }
+                }
+
+                if viewModel.hasZoneCleaning {
+                    MapControlButton(
+                        title: String(localized: "map.zone"),
+                        icon: "rectangle.dashed",
+                        color: .orange
+                    ) {
+                        viewModel.editMode = .zone
+                    }
+                }
+
+                if viewModel.hasVirtualRestrictions {
+                    MapControlButton(
+                        title: String(localized: "map.nogo"),
+                        icon: "nosign",
+                        color: .red
+                    ) {
+                        viewModel.editMode = .noGoArea
                     }
 
-                    if viewModel.hasZoneCleaning {
-                        MapControlButton(
-                            title: String(localized: "map.zone"),
-                            icon: "rectangle.dashed",
-                            color: .orange,
-                            fixedWidth: editButtonWidth
-                        ) {
-                            viewModel.editMode = .zone
-                        }
+                    MapControlButton(
+                        title: String(localized: "map.wall"),
+                        icon: "line.diagonal",
+                        color: .purple
+                    ) {
+                        viewModel.editMode = .virtualWall
                     }
 
-                    if viewModel.hasVirtualRestrictions {
+                    // Delete existing restrictions
+                    if viewModel.existingRestrictions != nil {
                         MapControlButton(
-                            title: String(localized: "map.nogo"),
-                            icon: "nosign",
-                            color: .red,
-                            fixedWidth: editButtonWidth
+                            title: String(localized: "map.delete"),
+                            icon: "trash",
+                            color: .gray
                         ) {
-                            viewModel.editMode = .noGoArea
-                        }
-
-                        MapControlButton(
-                            title: String(localized: "map.wall"),
-                            icon: "line.diagonal",
-                            color: .purple,
-                            fixedWidth: editButtonWidth
-                        ) {
-                            viewModel.editMode = .virtualWall
-                        }
-
-                        // Delete existing restrictions
-                        if viewModel.existingRestrictions != nil {
-                            MapControlButton(
-                                title: String(localized: "map.delete"),
-                                icon: "trash",
-                                color: .gray,
-                                fixedWidth: editButtonWidth
-                            ) {
-                                viewModel.editMode = .deleteRestriction
-                            }
+                            viewModel.editMode = .deleteRestriction
                         }
                     }
+                }
 
-                    if viewModel.hasMapAnnotations {
-                        // One button per annotation kind the robot supports
+                // All annotation kinds live behind one menu — as separate
+                // buttons they would squeeze the whole row.
+                if viewModel.hasMapAnnotations, !viewModel.supportedAnnotationTypes.isEmpty {
+                    Menu {
                         ForEach(viewModel.supportedAnnotationTypes, id: \.self) { type in
-                            MapControlButton(
-                                title: type.displayName,
-                                icon: type.icon,
-                                color: .green,
-                                fixedWidth: editButtonWidth
-                            ) {
+                            Button {
                                 viewModel.annotationTypeToDraw = type
                                 viewModel.editMode = .annotation
+                            } label: {
+                                Label(type.displayName, systemImage: type.icon)
                             }
                         }
 
                         if !viewModel.existingAnnotations.isEmpty {
-                            MapControlButton(
-                                title: String(localized: "annotation.delete"),
-                                icon: "trash",
-                                color: .gray,
-                                fixedWidth: editButtonWidth
-                            ) {
+                            Divider()
+                            Button(role: .destructive) {
                                 viewModel.editMode = .deleteAnnotation
+                            } label: {
+                                Label(String(localized: "annotation.delete"), systemImage: "trash")
                             }
                         }
+                    } label: {
+                        VStack(spacing: 4) {
+                            Image(systemName: "mappin.and.ellipse")
+                                .font(.title2)
+                            Text(String(localized: "annotation.menu"))
+                                .font(.caption2)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.6)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.green.opacity(0.15))
+                        .foregroundStyle(Color.green)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
-                .padding(.horizontal)
             }
+            .padding(.horizontal)
         }
         .padding(.vertical, 12)
         .background(Color(.systemBackground))
