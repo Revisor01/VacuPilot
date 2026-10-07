@@ -12,7 +12,7 @@ eingetragen. Wenn ein neues Firmware-Release erscheint, kommt es unter
 
 | VacuPilot | Build | Datum | Minimum | Getestet gegen | Nachweis |
 |---|---|---|---|---|---|
-| 1.1.0 | 100 | 2026-08-12 | 2024.06.0 | noch offen | Umsetzung nach Firmware-Quelltext und Schnittstellen-Doku von 2026.08.0; Praxistest steht aus |
+| 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | noch offen | Umsetzung nach Firmware-Quelltext und Schnittstellen-Doku von 2026.08.0 sowie Hauptzweig bis 2026-09-25; Praxistest steht aus |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live-OTA-Test zweier Roboter (Phase 34, 2026-05-27) |
 
 **Minimum 2024.06.0** ist die dokumentierte Untergrenze (README, STACK.md). Sie ist
@@ -80,6 +80,30 @@ auf die App.
 **Kamera-Livebild** — neue Funktion, in der App nicht vorhanden.
 Roboter mit Kamera können ein Livebild senden, standardmäßig abgeschaltet und
 bewusst nur nach ausdrücklicher Freigabe nutzbar. Die App unterstützt das nicht.
+
+### Hauptzweig nach 2026.08.0 (Stand 2026-10-07, noch kein Release)
+
+Bis zum 2026-10-07 ist kein neues Firmware-Release erschienen. Im Hauptzweig
+liegen aber Änderungen, die mit dem nächsten Release kommen — eine davon hätte
+die App getroffen:
+
+**MQTT-Einstellungen ohne Schnittstellen-Schalter** — in 1.1.0 abgefangen.
+Die Schalter für Home Assistant, Homie und „Kartendaten bereitstellen“
+entfallen (Commits `5772c9c`, 2026-09-04, und `31bbc50`, 2026-09-25). Die
+Firmware löscht die Felder `interfaces` und `customizations.provideMapData`
+beim Start aus der Konfiguration und lehnt sie beim Speichern ab
+(`additionalProperties: false` → HTTP 400). Bis 1.0.0 waren beide Felder in der
+App Pflicht: Auf neuer Firmware ließe sich die MQTT-Seite weder laden noch
+speichern. 1.1.0 behandelt sie als optional, blendet die Schalter aus, wenn die
+Firmware sie nicht mehr meldet, und schickt sie dann nicht mit. **1.0.0 im
+Store ist davon betroffen**, sobald das nächste Firmware-Release erscheint.
+
+Beim Prüfen aufgefallen: Die App schickte `optionalExposedCapabilities` beim
+Speichern nicht zurück; die Firmware setzt das Feld dann auf eine leere Liste.
+Seit 1.1.0 wird es unverändert durchgereicht.
+
+Sonst nur Weboberfläche (Analytics-Seite, Bild-im-Bild-Größe), Herstellerfixes
+für Dreame und Midea ohne geänderte Schnittstelle sowie Dokumentation.
 
 ## Womit getestet werden kann
 

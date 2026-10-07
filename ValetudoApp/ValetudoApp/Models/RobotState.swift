@@ -602,8 +602,11 @@ struct MQTTConfig: Codable {
     var enabled: Bool
     var connection: MQTTConnection
     var identity: MQTTIdentity
-    var interfaces: MQTTInterfaces
+    /// Entfällt in Firmware nach 2026.08.0 — dann nil und beim Speichern nicht mitgeschickt.
+    var interfaces: MQTTInterfaces?
     var customizations: MQTTCustomizations
+    /// Muss beim Speichern zurückgeschickt werden, sonst setzt der Server es auf [].
+    var optionalExposedCapabilities: [String]?
 
     struct MQTTConnection: Codable {
         var host: String
@@ -649,7 +652,8 @@ struct MQTTConfig: Codable {
 
     struct MQTTCustomizations: Codable {
         var topicPrefix: String
-        var provideMapData: Bool
+        /// Entfällt in Firmware nach 2026.08.0.
+        var provideMapData: Bool?
     }
 }
 

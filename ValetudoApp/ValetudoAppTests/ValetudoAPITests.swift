@@ -85,4 +85,68 @@ final class ValetudoAPITests: XCTestCase {
         XCTAssertEqual(attribute.__class, "StatusStateAttribute")
         XCTAssertEqual(attribute.value, "docked")
     }
+
+    // MARK: - MQTT-Konfiguration (Firmware vor und nach Entfernen von interfaces/provideMapData)
+
+    private let mqttConfigJSONLegacy = """
+    {"enabled":true,
+     "connection":{"host":"broker.local","port":1883,
+       "tls":{"enabled":false,"ca":"","ignoreCertificateErrors":false},
+       "authentication":{"credentials":{"enabled":false,"username":"","password":""}}},
+     "identity":{"identifier":"robot"},
+     "customizations":{"topicPrefix":"valetudo","provideMapData":false},
+     "interfaces":{"homie":{"enabled":true,"cleanAttributesOnShutdown":false},
+                   "homeassistant":{"enabled":false,"cleanAutoconfOnShutdown":true}},
+     "optionalExposedCapabilities":[]}
+    """
+
+    private let mqttConfigJSONCurrent = """
+    {"enabled":true,
+     "connection":{"host":"broker.local","port":1883,
+       "tls":{"enabled":false,"ca":"","ignoreCertificateErrors":false},
+       "authentication":{"credentials":{"enabled":false,"username":"","password":""}}},
+     "identity":{"identifier":"robot"},
+     "customizations":{"topicPrefix":"valetudo"},
+     "optionalExposedCapabilities":["SpeakerTestCapability"]}
+    """
+
+    func testDecodeMQTTConfigLegacyKeepsInterfaces() throws {
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONLegacy.utf8))
+        XCTAssertEqual(config.interfaces?.homie.enabled, true)
+        XCTAssertEqual(config.interfaces?.homeassistant.enabled, false)
+        XCTAssertEqual(config.customizations.provideMapData, false)
+    }
+
+    func testDecodeMQTTConfigWithoutInterfacesAndProvideMapData() throws {
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONCurrent.utf8))
+        XCTAssertNil(config.interfaces)
+        XCTAssertNil(config.customizations.provideMapData)
+        XCTAssertEqual(config.connection.host, "broker.local")
+        XCTAssertEqual(config.customizations.topicPrefix, "valetudo")
+    }
+
+    /// Neuere Firmware lehnt unbekannte Felder beim Speichern ab (HTTP 400).
+    func testEncodeMQTTConfigOmitsFieldsTheFirmwareDoesNotKnow() throws {
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONCurrent.utf8))
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(config)) as? [String: Any])
+        XCTAssertNil(json["interfaces"])
+        let customizations = try XCTUnwrap(json["customizations"] as? [String: Any])
+        XCTAssertEqual(Set(customizations.keys), ["topicPrefix"])
+    }
+
+    /// Ältere Firmware verlangt die Felder weiterhin — sie müssen zurückgeschickt werden.
+    func testEncodeMQTTConfigKeepsFieldsForOlderFirmware() throws {
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONLegacy.utf8))
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(config)) as? [String: Any])
+        XCTAssertNotNil(json["interfaces"])
+        let customizations = try XCTUnwrap(json["customizations"] as? [String: Any])
+        XCTAssertEqual(customizations["provideMapData"] as? Bool, false)
+    }
+
+    /// Fehlt das Feld beim Speichern, setzt der Server es auf [] — freigegebene Fähigkeiten gingen verloren.
+    func testEncodeMQTTConfigKeepsOptionalExposedCapabilities() throws {
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONLegacy.utf8))
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(config)) as? [String: Any])
+        XCTAssertEqual(json["optionalExposedCapabilities"] as? [String], ["SpeakerTestCapability"])
+    }
 }
