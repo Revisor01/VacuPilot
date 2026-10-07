@@ -84,12 +84,19 @@ struct MQTTSettingsView: View {
                     Text(String(localized: "mqtt.identifier_desc"))
                 }
 
-                Section {
-                    Toggle("Home Assistant", isOn: $homeAssistant)
-                    Toggle("Homie", isOn: $homie)
-                    Toggle(String(localized: "mqtt.provide_map"), isOn: $provideMapData)
-                } header: {
-                    Label(String(localized: "mqtt.interfaces"), systemImage: "square.stack.3d.up")
+                // Neuere Firmware kennt diese Schalter nicht mehr
+                if config?.interfaces != nil || config?.customizations.provideMapData != nil {
+                    Section {
+                        if config?.interfaces != nil {
+                            Toggle("Home Assistant", isOn: $homeAssistant)
+                            Toggle("Homie", isOn: $homie)
+                        }
+                        if config?.customizations.provideMapData != nil {
+                            Toggle(String(localized: "mqtt.provide_map"), isOn: $provideMapData)
+                        }
+                    } header: {
+                        Label(String(localized: "mqtt.interfaces"), systemImage: "square.stack.3d.up")
+                    }
                 }
 
                 Section {
@@ -145,9 +152,9 @@ struct MQTTSettingsView: View {
                 password = loadedPassword == "<redacted>" ? "" : loadedPassword
                 useAuth = config.connection.authentication.credentials.enabled
                 identifier = config.identity.identifier
-                homeAssistant = config.interfaces.homeassistant.enabled
-                homie = config.interfaces.homie.enabled
-                provideMapData = config.customizations.provideMapData
+                homeAssistant = config.interfaces?.homeassistant.enabled ?? true
+                homie = config.interfaces?.homie.enabled ?? false
+                provideMapData = config.customizations.provideMapData ?? true
             }
         } catch {
             logger.error("Failed to load MQTT config: \(error, privacy: .public)")
@@ -166,9 +173,11 @@ struct MQTTSettingsView: View {
         config.connection.authentication.credentials.username = username
         config.connection.authentication.credentials.password = password
         config.identity.identifier = identifier
-        config.interfaces.homeassistant.enabled = homeAssistant
-        config.interfaces.homie.enabled = homie
-        config.customizations.provideMapData = provideMapData
+        config.interfaces?.homeassistant.enabled = homeAssistant
+        config.interfaces?.homie.enabled = homie
+        if config.customizations.provideMapData != nil {
+            config.customizations.provideMapData = provideMapData
+        }
 
         do {
             try await api.setMQTTConfig(config)

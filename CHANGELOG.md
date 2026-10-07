@@ -11,7 +11,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
-## [1.1.0] - 2026-08-12
+## [1.1.0] - 2026-10-07
 
 ### Hinzugefügt
 
@@ -25,6 +25,10 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 - Bodenbeläge, die die App noch nicht kennt, werden jetzt lesbar angezeigt statt
   weggelassen. Bisher blieb ein Raum mit einem neueren Belag ohne Angabe.
+- MQTT-Einstellungen bleiben auch mit der kommenden Firmware ladbar und
+  speicherbar; Schalter, die die Firmware nicht mehr kennt, werden ausgeblendet.
+- Beim Speichern der MQTT-Einstellungen gingen zusätzlich freigegebene
+  Roboter-Funktionen verloren — sie bleiben jetzt erhalten.
 
 ### Geändert
 
