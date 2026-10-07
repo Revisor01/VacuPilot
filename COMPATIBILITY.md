@@ -12,7 +12,7 @@ eingetragen. Wenn ein neues Firmware-Release erscheint, kommt es unter
 
 | VacuPilot | Build | Datum | Minimum | Getestet gegen | Nachweis |
 |---|---|---|---|---|---|
-| 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | noch offen | Umsetzung nach Firmware-Quelltext und Schnittstellen-Doku von 2026.08.0 sowie Hauptzweig bis 2026-09-25; Praxistest steht aus |
+| 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | 2026.08.0 | Praxistest auf Roborock S5 Max (Build 103); Teppich und Karten-Markierungen nur gegen simulierten Roboter, MQTT-Änderung des Hauptzweigs nach Quelltext |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live-OTA-Test zweier Roboter (Phase 34, 2026-05-27) |
 
 **Minimum 2024.06.0** ist die dokumentierte Untergrenze (README, STACK.md). Sie ist
