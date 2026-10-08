@@ -11,6 +11,13 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
+## [1.1.1] - 2026-10-08
+
+### Behoben
+
+- Die Beschreibung im App Store zeigte Formatierungszeichen (`**`) statt
+  hervorgehobener Überschriften. An der App selbst ändert sich nichts.
+
 ## [1.1.0] - 2026-10-07
 
 ### Hinzugefügt
