@@ -12,6 +12,7 @@ eingetragen. Wenn ein neues Firmware-Release erscheint, kommt es unter
 
 | VacuPilot | Build | Datum | Minimum | Getestet gegen | Nachweis |
 |---|---|---|---|---|---|
+| 1.1.2 | 107 | 2026-10-22 | 2024.06.0 | 2026.10.0 (nach Quelltext) | Kein Gerätetest; Schnittstellen-Abgleich 2026.08.0 → 2026.10.0, neue Anzeigen nur durch Komponententests |
 | 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | 2026.08.0 | Praxistest auf Roborock S5 Max (Build 103); Teppich und Karten-Markierungen nur gegen simulierten Roboter, MQTT-Änderung des Hauptzweigs nach Quelltext |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live-OTA-Test zweier Roboter (Phase 34, 2026-05-27) |
 
@@ -39,7 +40,7 @@ zum Zeitpunkt der Store-Auslieferung.
 
 ## Firmware-Neuerungen seit 2026.05.0
 
-Zwei Firmware-Releases sind seit dem letzten Praxistest erschienen. Was davon in
+Drei Firmware-Releases sind seit dem Praxistest von 1.0 erschienen. Was davon in
 1.1.0 abgedeckt ist, steht jeweils dabei.
 
 ### 2026.07.0 (2026-07-23)
@@ -81,29 +82,50 @@ auf die App.
 Roboter mit Kamera können ein Livebild senden, standardmäßig abgeschaltet und
 bewusst nur nach ausdrücklicher Freigabe nutzbar. Die App unterstützt das nicht.
 
-### Hauptzweig nach 2026.08.0 (Stand 2026-10-07, noch kein Release)
+### 2026.10.0 (2026-10-18)
 
-Bis zum 2026-10-07 ist kein neues Firmware-Release erschienen. Im Hauptzweig
-liegen aber Änderungen, die mit dem nächsten Release kommen — eine davon hätte
-die App getroffen:
+Die Release-Notes drehen sich vor allem um neue Geräte (Mova V50 und Z60) und
+die neue Root-Infrastruktur. Für die App relevant ist wenig, aber das Wenige
+lohnt sich:
 
 **MQTT-Einstellungen ohne Schnittstellen-Schalter** — in 1.1.0 abgefangen.
-Die Schalter für Home Assistant, Homie und „Kartendaten bereitstellen“
-entfallen (Commits `5772c9c`, 2026-09-04, und `31bbc50`, 2026-09-25). Die
-Firmware löscht die Felder `interfaces` und `customizations.provideMapData`
-beim Start aus der Konfiguration und lehnt sie beim Speichern ab
-(`additionalProperties: false` → HTTP 400). Bis 1.0.0 waren beide Felder in der
-App Pflicht: Auf neuer Firmware ließe sich die MQTT-Seite weder laden noch
-speichern. 1.1.0 behandelt sie als optional, blendet die Schalter aus, wenn die
-Firmware sie nicht mehr meldet, und schickt sie dann nicht mit. **1.0.0 im
-Store ist davon betroffen**, sobald das nächste Firmware-Release erscheint.
+Jetzt im Release: Die Schalter für Home Assistant, Homie und „Kartendaten
+bereitstellen“ entfallen (Commits `5772c9c` und `31bbc50`). Die Firmware löscht
+die Felder `interfaces` und `customizations.provideMapData` beim Start aus der
+Konfiguration und lehnt sie beim Speichern ab (`additionalProperties: false` →
+HTTP 400). 1.1.0 behandelt sie als optional, blendet die Schalter aus und
+schickt sie nicht mit. **Wer noch 1.0 nutzt, kann die MQTT-Seite auf
+2026.10.0 weder laden noch speichern**; seit 2026-10-08 ist 1.1.1 im Store.
 
 Beim Prüfen aufgefallen: Die App schickte `optionalExposedCapabilities` beim
 Speichern nicht zurück; die Firmware setzt das Feld dann auf eine leere Liste.
 Seit 1.1.0 wird es unverändert durchgereicht.
 
-Sonst nur Weboberfläche (Analytics-Seite, Bild-im-Bild-Größe), Herstellerfixes
-für Dreame und Midea ohne geänderte Schnittstelle sowie Dokumentation.
+**Neue Trockenzeiten der Mopp-Station** — im Hauptzweig nach 1.1.1 umgesetzt.
+`MopDockMopDryingTimeControlCapability` kennt zusätzlich `5h` und `quiet`
+(leises Trocknen, Mova V50/Z60). Die App zeigte bisher „5H“ und das englische
+„Quiet“; jetzt übersetzt. Künftige Stundenwerte (`6h`) erscheinen lesbar als
+„6 h“.
+
+**Auflockerer der Walzenmopp-Station** (Mova Z60) — im Hauptzweig nach 1.1.1
+umgesetzt. Neues Verbrauchsteil, gemeldet als `brush`/`secondary` in Minuten.
+Typ und Unterart gab es schon, nur hatte die App für `secondary` (sowie
+`dock`, `wheel`, `detergent`) keine Übersetzung und zeigte „Bürste
+(Secondary)“; `all` wird jetzt wie in der Weboberfläche ausgeblendet. Der
+Prozentbalken rechnet mit der Annahme 200 h wie bei Seitenbürsten — die
+tatsächliche Lebensdauer des Auflockerers ist nicht dokumentiert.
+
+**Mova V50/Z60** — keine neue Schnittstelle. Die Dreame-Klassen mit
+Versionszusatz (`…CapabilityV2`) sind Herstellerumsetzungen hinter den
+bekannten Fähigkeitsnamen; die App sieht nur die Namen.
+
+Sonst nur Weboberfläche (Analytics-Seite, Bild-im-Bild-Größe), zwei neue
+Dreame-Fehlercodes (kommen als Text vom Roboter, keine App-Änderung nötig),
+Midea-Stabilität, Speicherbereinigung und Kamera-Livebild-Feinschliff.
+
+Schnittstellen-Abgleich 2026.08.0 → 2026.10.0 (`backend/lib/webserver`,
+`entities`, `core`, `res`): außer den beiden Punkten oben und dem
+Kamera-Router keine Änderung.
 
 ## Womit getestet werden kann
 
@@ -128,35 +150,19 @@ die Matrix so zu kennzeichnen.
 
 ## Was für ein nächstes Release zu tun ist
 
-Nach Wichtigkeit, unter Berücksichtigung dessen, was hier prüfbar ist:
+Die Punkte für 1.1.0 (Gegentest 2026.08.0, unbekannte Bodenbeläge, Teppich,
+Karten-Anmerkungen) sind erledigt. Für das nächste Release:
 
-1. **Gegen 2026.08.0 gegentesten** — auf dem vorhandenen S5 Max: Verbindung,
-   Karte, Räume, Zonen, Zeitpläne, Update-Ablauf. Ergebnis in die Matrix
-   eintragen. Der einzige Punkt, der vollständig selbst verifizierbar ist, und
-   damit der erste.
-2. **Unbekannte Bodenbeläge abfangen** — statt einen unbekannten Wert
-   wegzulassen, ihn neutral darstellen. Wirkt für jeden künftigen neuen Wert,
-   nicht nur für Teppich, und ist ohne passendes Gerät prüfbar, indem eine
-   Antwort mit unbekanntem Material nachgestellt wird.
-3. **Teppich-Böden ergänzen** — die drei Teppich-Werte in Anzeige und Auswahl
-   aufnehmen, inklusive Symbol und Übersetzungen. Kleiner Eingriff, aber ohne
-   Dreame-Gerät nur gegen nachgestellte Antworten prüfbar, nicht am echten
-   Roboter. Nach Punkt 2 einsortiert, weil dieser den Schaden bereits abfängt.
-4. **Karten-Anmerkungen** — eigene Planungsphase. Ohne Dreame-Gerät nicht am
-   Roboter prüfbar, wohl aber gegen einen nachgestellten Server: Die App spricht
-   nur HTTP, und das Format ist vollständig dokumentiert (siehe oben). Ein
-   Server, der eine Karte mit den drei Werten ausliefert und den PUT annimmt,
-   reicht für Entwicklung und Prüfung der Darstellung.
-
-   Zum Anknüpfen ist einiges da: Sperrzonen und virtuelle Wände werden bereits
-   gezeichnet und lassen sich anlegen und löschen. Sie kommen allerdings aus
-   einem eigenen Abruf der Sperrzonen und nicht aus den Karten-Entitäten;
-   Anmerkungen kämen dagegen mit der Karte. Die Darstellung kann sich an den
-   vorhandenen Linien und Flächen orientieren, die Datenherkunft ist eine
-   andere.
+1. **Gegen 2026.10.0 gegentesten** — S5 Max per OTA auf 2026.10.0 bringen,
+   dann Verbindung, Karte, Räume, Zonen, Zeitpläne und Update-Ablauf prüfen.
+   Wichtigster Einzelpunkt: **MQTT-Seite laden und speichern**. Die Anpassung
+   aus 1.1.0 lief bisher nur gegen Quelltext und Tests — 2026.10.0 ist die
+   erste Firmware, auf der sie am echten Gerät prüfbar ist.
+2. **Neue Trockenzeiten und Verbrauchsteil-Namen** — nur gegen nachgestellte
+   Antworten prüfbar; der S5 Max hat keine Mopp-Station.
 
 Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
-gibt es in 2026.08.0 unverändert.
+gibt es in 2026.10.0 unverändert oder abwärtskompatibel.
 
 ## Bewusst nicht geplant
 

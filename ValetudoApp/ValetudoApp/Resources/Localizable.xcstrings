@@ -1084,6 +1084,52 @@
         }
       }
     },
+    "consumable.detergent": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reinigungsmittel"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detergent"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détergent"
+          }
+        }
+      }
+    },
+    "consumable.dock": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Station"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Station"
+          }
+        }
+      }
+    },
     "consumable.filter": {
       "extractionState": "stale",
       "localizations": {
@@ -1153,6 +1199,29 @@
         }
       }
     },
+    "consumable.secondary": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zweitbürste"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secondary"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secondaire"
+          }
+        }
+      }
+    },
     "consumable.sensor": {
       "extractionState": "stale",
       "localizations": {
@@ -1218,6 +1287,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "Droite"
+          }
+        }
+      }
+    },
+    "consumable.wheel": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rad"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wheel"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roue"
           }
         }
       }
@@ -2349,6 +2441,29 @@
         }
       }
     },
+    "drying_time.5h": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 Stunden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 hours"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 heures"
+          }
+        }
+      }
+    },
     "drying_time.cold": {
       "extractionState": "manual",
       "localizations": {
@@ -2391,6 +2506,29 @@
           "stringUnit": {
             "state": "translated",
             "value": "« Froid » coupe le chauffage et sèche beaucoup plus longtemps."
+          }
+        }
+      }
+    },
+    "drying_time.quiet": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leise"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quiet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silencieux"
           }
         }
       }

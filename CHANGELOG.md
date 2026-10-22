@@ -11,6 +11,15 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
+## [1.1.2] - 2026-10-22
+
+### Behoben
+
+- Die neuen Trockenzeiten der Mopp-Station („5 Stunden“ und „Leise“) werden
+  übersetzt angezeigt statt als „5H“ oder „Quiet“.
+- Verbrauchsteile wie der Auflockerer einer Walzenmopp-Station, Reinigungsmittel
+  oder Teile der Station tragen jetzt deutsche Namen statt englischer Rohwerte.
+
 ## [1.1.1] - 2026-10-08
 
 ### Behoben

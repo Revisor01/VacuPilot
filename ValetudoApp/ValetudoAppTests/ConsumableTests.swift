@@ -77,4 +77,56 @@ final class ConsumableTests: XCTestCase {
         let consumable = makeConsumable(type: "filter", value: 0, unit: "percent")
         XCTAssertEqual(consumable.iconColor, .red)
     }
+
+    // MARK: - displayName (Firmware 2026.10.0: Walzenmopp-Auflockerer als brush/secondary)
+
+    func testDisplayNameSecondaryBrushIsLocalized() {
+        let consumable = makeConsumable(type: "brush", subType: "secondary", value: 600, unit: "minutes")
+        let expected = "\(String(localized: "consumable.brush")) (\(String(localized: "consumable.secondary")))"
+        XCTAssertEqual(consumable.displayName, expected)
+        XCTAssertFalse(consumable.displayName.contains("consumable."), "Übersetzung fehlt")
+    }
+
+    func testDisplayNameHidesSubTypeAll() {
+        let consumable = makeConsumable(type: "filter", subType: "all", value: 50, unit: "percent")
+        XCTAssertEqual(consumable.displayName, String(localized: "consumable.filter"))
+    }
+
+    func testDisplayNameDetergentIsLocalized() {
+        let consumable = makeConsumable(type: "detergent", subType: "dock", value: 50, unit: "percent")
+        let expected = "\(String(localized: "consumable.detergent")) (\(String(localized: "consumable.dock")))"
+        XCTAssertEqual(consumable.displayName, expected)
+        XCTAssertFalse(consumable.displayName.contains("consumable."), "Übersetzung fehlt")
+    }
+}
+
+/// Trockenzeit-Werte der Mopp-Station. 2026.10.0 bringt "5h" und "quiet" dazu;
+/// vorher wurde "5h" zu "5H" und "quiet" blieb unübersetzt.
+final class DryingTimeDisplayNameTests: XCTestCase {
+
+    func testFiveHoursIsLocalized() {
+        let name = StationSettingsView.displayNameForDryingTime("5h")
+        XCTAssertEqual(name, String(localized: "drying_time.5h"))
+        XCTAssertNotEqual(name, "drying_time.5h", "Übersetzung fehlt")
+        XCTAssertNotEqual(name, "5H")
+    }
+
+    func testQuietIsLocalized() {
+        let name = StationSettingsView.displayNameForDryingTime("quiet")
+        XCTAssertEqual(name, String(localized: "drying_time.quiet"))
+        XCTAssertNotEqual(name, "drying_time.quiet", "Übersetzung fehlt")
+    }
+
+    func testKnownValuesUnchanged() {
+        XCTAssertEqual(StationSettingsView.displayNameForDryingTime("2h"), String(localized: "drying_time.2h"))
+        XCTAssertEqual(StationSettingsView.displayNameForDryingTime("cold"), String(localized: "drying_time.cold"))
+    }
+
+    func testUnknownHourValueStaysReadable() {
+        XCTAssertEqual(StationSettingsView.displayNameForDryingTime("6h"), "6 h")
+    }
+
+    func testUnknownWordValueIsHumanized() {
+        XCTAssertEqual(StationSettingsView.displayNameForDryingTime("extra_long"), "Extra Long")
+    }
 }
