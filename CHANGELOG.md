@@ -163,5 +163,8 @@ REST-API v2 — ohne Cloud, ohne Tracking, ohne Konto.
 - App auf iPhone-only umgestellt; `ITSAppUsesNonExemptEncryption` in
   `project.yml` verankert.
 
-[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/1.1.2...HEAD
+[1.1.2]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.2
+[1.1.1]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.1
+[1.1.0]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.0
 [1.0.0]: https://github.com/Revisor01/VacuPilot/releases/tag/v1.0.0
