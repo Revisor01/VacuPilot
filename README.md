@@ -11,7 +11,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-iOS%2017%2B-blue?logo=apple" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.0.0-green" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.2-green" alt="Version">
   <img src="https://img.shields.io/badge/Swift-5.9-orange?logo=swift" alt="Swift">
   <img src="https://img.shields.io/badge/Dependencies-Zero-brightgreen" alt="Dependencies">
   <img src="https://img.shields.io/badge/Tests-121-blue" alt="Tests">
@@ -125,6 +125,9 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| **1.1.2** (Build 107) | 2026-10 | Readable names for new mop dock drying times and consumables (firmware 2026.10.0) |
+| **1.1.1** (Build 106) | 2026-10 | Corrected App Store description |
+| **1.1.0** (Build 104) | 2026-10 | Carpet floor types, map annotations (thresholds, curtains, ramps), MQTT settings ready for newer firmware |
 | **v1.0.0** (Build 99) | 2025-12 | Initial App Store release — multi-robot control, live interactive map, room/zone cleaning with order, firmware updates, background monitoring, VoiceOver accessibility, EN/DE/FR localization |
 
 ## Architecture
