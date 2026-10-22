@@ -23,7 +23,7 @@ struct ConsumableRemaining: Codable {
 extension Consumable {
     var displayName: String {
         let base = type.localizedConsumableType
-        if let sub = subType, sub != "main" && sub != "none" {
+        if let sub = subType, sub != "main" && sub != "none" && sub != "all" {
             return "\(base) (\(sub.localizedConsumableSubType))"
         }
         return base
@@ -83,6 +83,7 @@ extension String {
         case "cleaning": return String(localized: "consumable.sensor")
         case "mop": return String(localized: "consumable.mop")
         case "bin": return String(localized: "consumable.bin")
+        case "detergent": return String(localized: "consumable.detergent")
         default: return self.capitalized
         }
     }
@@ -92,6 +93,10 @@ extension String {
         case "main": return String(localized: "consumable.main")
         case "side_right": return String(localized: "consumable.side_right")
         case "side_left": return String(localized: "consumable.side_left")
+        case "secondary": return String(localized: "consumable.secondary")
+        case "dock": return String(localized: "consumable.dock")
+        case "sensor": return String(localized: "consumable.sensor")
+        case "wheel": return String(localized: "consumable.wheel")
         case "hepa": return "HEPA"
         default: return self.capitalized
         }

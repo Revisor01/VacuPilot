@@ -110,7 +110,7 @@ struct StationSettingsView: View {
                     if hasMopDockDryingTime && !mopDockDryingTimePresets.isEmpty {
                         Picker(selection: $currentMopDockDryingTime) {
                             ForEach(mopDockDryingTimePresets, id: \.self) { preset in
-                                Text(displayNameForDryingTime(preset)).tag(preset)
+                                Text(Self.displayNameForDryingTime(preset)).tag(preset)
                             }
                         } label: {
                             HStack {
@@ -286,19 +286,28 @@ struct StationSettingsView: View {
         preset.replacingOccurrences(of: "_", with: " ").localizedCapitalized
     }
 
-    /// Drying time is reported as "2h", "3h", "4h" or "cold" — not as words.
-    private func displayNameForDryingTime(_ preset: String) -> String {
-        switch preset.lowercased() {
+    /// Drying time is reported as "2h" … "5h", "quiet" or "cold" — not as words.
+    static func displayNameForDryingTime(_ preset: String) -> String {
+        let value = preset.lowercased()
+        switch value {
         case "2h":
             return String(localized: "drying_time.2h")
         case "3h":
             return String(localized: "drying_time.3h")
         case "4h":
             return String(localized: "drying_time.4h")
+        case "5h":
+            return String(localized: "drying_time.5h")
+        case "quiet":
+            return String(localized: "drying_time.quiet")
         case "cold":
             return String(localized: "drying_time.cold")
         default:
-            return humanized(preset)
+            // Future hour values ("6h") stay readable instead of becoming "6H".
+            if value.hasSuffix("h"), let hours = Int(value.dropLast()) {
+                return "\(hours) h"
+            }
+            return preset.replacingOccurrences(of: "_", with: " ").localizedCapitalized
         }
     }
 
