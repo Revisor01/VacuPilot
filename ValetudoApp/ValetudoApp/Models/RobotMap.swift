@@ -169,6 +169,27 @@ struct EntityMetaData: Codable {
     let angle: Int?
     let id: String?       // UUID fuer ObstacleImagesCapability/img/{id}
     let label: String?    // z.B. "Pedestal (89%)"
+
+    enum CodingKeys: String, CodingKey {
+        case angle, id, label
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Normale Felder decodieren
+        self.angle = try container.decodeIfPresent(Int.self, forKey: .angle)
+        self.label = try container.decodeIfPresent(String.self, forKey: .label)
+        
+        // Die Fehlerquelle (id) abfangen: Erst String probieren, dann Int
+        if let stringId = try? container.decodeIfPresent(String.self, forKey: .id) {
+            self.id = stringId
+        } else if let intId = try? container.decodeIfPresent(Int.self, forKey: .id) {
+            self.id = String(intId)
+        } else {
+            self.id = nil
+        }
+    }
 }
 
 // MARK: - Map Layer Types
