@@ -11,7 +11,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-iOS%2017%2B-blue?logo=apple" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.2-green" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.1.3-green" alt="Version">
   <img src="https://img.shields.io/badge/Swift-5.9-orange?logo=swift" alt="Swift">
   <img src="https://img.shields.io/badge/Dependencies-Zero-brightgreen" alt="Dependencies">
   <img src="https://img.shields.io/badge/Tests-121-blue" alt="Tests">
@@ -125,6 +125,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the full history.
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| **1.1.3** (Build 108) | 2026-10 | Map loads again on Midea robots with detected carpets; a single unreadable map element no longer empties the map; carpets no longer listed as obstacles |
 | **1.1.2** (Build 107) | 2026-10 | Readable names for new mop dock drying times and consumables (firmware 2026.10.0) |
 | **1.1.1** (Build 106) | 2026-10 | Corrected App Store description |
 | **1.1.0** (Build 104) | 2026-10 | Carpet floor types, map annotations (thresholds, curtains, ramps), MQTT settings ready for newer firmware |
