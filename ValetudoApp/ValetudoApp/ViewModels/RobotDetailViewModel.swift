@@ -274,13 +274,7 @@ final class RobotDetailViewModel {
         guard let api = api else { return }
         do {
             let mapData = try await api.getMap()
-            let obstacleEntities = (mapData.entities ?? []).filter {
-                $0.metaData?.id != nil
-            }
-            obstacles = obstacleEntities.compactMap { entity in
-                guard let id = entity.metaData?.id else { return nil }
-                return (id: id, label: entity.metaData?.label)
-            }
+            obstacles = mapData.obstacles
         } catch {
             logger.debug("Failed to load obstacles from map: \(error, privacy: .public)")
         }

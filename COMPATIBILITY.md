@@ -12,6 +12,7 @@ eingetragen. Wenn ein neues Firmware-Release erscheint, kommt es unter
 
 | VacuPilot | Build | Datum | Minimum | Getestet gegen | Nachweis |
 |---|---|---|---|---|---|
+| 1.1.3 | 108 | 2026-10-24 | 2024.06.0 | 2026.10.0 (nach Quelltext) | Kein Gerätetest; Teppich-ID als Zahl (Midea, PR #4) gegen Komponententests und simulierten Roboter |
 | 1.1.2 | 107 | 2026-10-22 | 2024.06.0 | 2026.10.0 (nach Quelltext) | Kein Gerätetest; Schnittstellen-Abgleich 2026.08.0 → 2026.10.0, neue Anzeigen nur durch Komponententests |
 | 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | 2026.08.0 | Praxistest auf Roborock S5 Max (Build 103); Teppich und Karten-Markierungen nur gegen simulierten Roboter, MQTT-Änderung des Hauptzweigs nach Quelltext |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live-OTA-Test zweier Roboter (Phase 34, 2026-05-27) |
@@ -127,6 +128,31 @@ Schnittstellen-Abgleich 2026.08.0 → 2026.10.0 (`backend/lib/webserver`,
 `entities`, `core`, `res`): außer den beiden Punkten oben und dem
 Kamera-Router keine Änderung.
 
+## Abweichungen einzelner Hersteller
+
+### Midea: Teppich-Nummer als Zahl (PR #4)
+
+Gemeldet und behoben von Juli-L (Eureka J15 Pro Ultra, Firmware 2026.10.0):
+Die Karte blieb leer. Erkannte Teppiche stehen in der Karte als eigene Entität
+(`PolygonMapEntity`, Typ `carpet`), und Midea liefert deren Nummer als Zahl —
+`"metaData": {"id": 1}`. Die App erwartete dort Text, wie bei den
+Hindernis-IDs, und verwarf daran die ganze Karte. Dreame schickt dieselbe
+Nummer als Text (`"1"`). Beides steht schon in 2026.02.0 so im Quelltext;
+betroffen war also jede bisherige App-Version, nicht erst die neue Firmware.
+
+Behoben in 1.1.3:
+
+- Die id wird als Text oder Zahl gelesen (Julis Fix aus #4).
+- Ein Kartenelement, das die App nicht lesen kann, wird übersprungen und im
+  Log vermerkt, statt die ganze Karte zu verwerfen.
+- Hindernisse werden am Typ `obstacle` erkannt. Vorher zählte jede Entität mit
+  id als Hindernis, bei Dreame also auch die Teppiche.
+
+Die Teppichflächen selbst zeichnet die App nicht; die Weboberfläche tut das.
+
+Nachweis: Komponententests und der simulierte Roboter, der eine Teppichfläche
+im Midea-Format liefert. Ein Gegentest auf der J15 steht aus.
+
 ## Womit getestet werden kann
 
 Die Testgeräte sind zwei Roborock S5 Max. Das begrenzt, was überhaupt praktisch
@@ -160,6 +186,9 @@ Karten-Anmerkungen) sind erledigt. Für das nächste Release:
    erste Firmware, auf der sie am echten Gerät prüfbar ist.
 2. **Neue Trockenzeiten und Verbrauchsteil-Namen** — nur gegen nachgestellte
    Antworten prüfbar; der S5 Max hat keine Mopp-Station.
+3. **Karte auf Midea** — die Korrektur aus PR #4 (in 1.1.3) ist nur gegen
+   Tests und den simulierten Roboter geprüft. Juli kann sie auf der J15
+   bestätigen.
 
 Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
 gibt es in 2026.10.0 unverändert oder abwärtskompatibel.
