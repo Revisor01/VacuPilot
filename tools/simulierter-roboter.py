@@ -4,7 +4,8 @@ Ein simulierter Valetudo-Roboter zum Testen von VacuPilot ohne echte Hardware.
 
 Startet einen HTTP-Server, der sich wie ein Roboter mit allen Fähigkeiten
 verhält — inklusive Karte mit Räumen, Bodenbelägen (auch Teppich),
-Sperrzonen und Karten-Markierungen (Türschwelle, Vorhang, Rampe).
+Sperrzonen, Karten-Markierungen (Türschwelle, Vorhang, Rampe) und einer
+Teppichfläche im Midea-Format.
 
 Änderungen werden im Speicher gehalten: Wer einen Raum umbenennt, einen
 Bodenbelag setzt oder eine Markierung zeichnet, sieht das Ergebnis danach
@@ -233,6 +234,13 @@ class RobotState:
             if self.path:
                 entities.append({"__class": "PathMapEntity", "type": "path",
                                  "points": list(self.path), "metaData": {}})
+
+            # Teppichfläche, wie Midea sie meldet: die Nummer als Zahl, nicht
+            # als Text. Daran blieb die Karte bis 1.1.2 leer (PR #4).
+            entities.append({"__class": "PolygonMapEntity", "type": "carpet",
+                             "points": [30 * PIXEL_SIZE, 30 * PIXEL_SIZE, 60 * PIXEL_SIZE, 30 * PIXEL_SIZE,
+                                        60 * PIXEL_SIZE, 55 * PIXEL_SIZE, 30 * PIXEL_SIZE, 55 * PIXEL_SIZE],
+                             "metaData": {"id": 1}})
 
             # Sperrzonen erscheinen auch als Karten-Entitäten
             for w in self.virtual_walls:

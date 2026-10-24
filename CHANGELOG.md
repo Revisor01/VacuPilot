@@ -11,6 +11,21 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
+## [Unreleased]
+
+### Behoben
+
+- Auf Midea-Robotern wie der Eureka J15 Pro Ultra lädt die Karte wieder. Sobald
+  der Roboter Teppiche erkannt hatte, blieb sie leer: Die Firmware meldet deren
+  Nummer als Zahl statt als Text. Gefunden und behoben von
+  [Juli-L](https://github.com/Juli-L) in
+  [#4](https://github.com/Revisor01/VacuPilot/pull/4).
+- Ein einzelnes Kartenelement, das die App nicht lesen kann, wird übersprungen,
+  statt die ganze Karte leer zu lassen.
+- In der Liste der erkannten Hindernisse stehen nur noch echte Hindernisse.
+  Bisher konnten erkannte Teppiche dort als unbekannte Hindernisse ohne Foto
+  auftauchen (Dreame).
+
 ## [1.1.2] - 2026-10-22
 
 ### Behoben
