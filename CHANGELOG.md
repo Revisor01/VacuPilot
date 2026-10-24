@@ -11,7 +11,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
-## [Unreleased]
+## [1.1.3] - 2026-10-24
 
 ### Behoben
 
@@ -178,7 +178,8 @@ REST-API v2 — ohne Cloud, ohne Tracking, ohne Konto.
 - App auf iPhone-only umgestellt; `ITSAppUsesNonExemptEncryption` in
   `project.yml` verankert.
 
-[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/1.1.2...HEAD
+[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/1.1.3...HEAD
+[1.1.3]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.3
 [1.1.2]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.2
 [1.1.1]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.1
 [1.1.0]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.0
