@@ -127,6 +127,31 @@ Schnittstellen-Abgleich 2026.08.0 → 2026.10.0 (`backend/lib/webserver`,
 `entities`, `core`, `res`): außer den beiden Punkten oben und dem
 Kamera-Router keine Änderung.
 
+## Abweichungen einzelner Hersteller
+
+### Midea: Teppich-Nummer als Zahl (PR #4)
+
+Gemeldet und behoben von Juli-L (Eureka J15 Pro Ultra, Firmware 2026.10.0):
+Die Karte blieb leer. Erkannte Teppiche stehen in der Karte als eigene Entität
+(`PolygonMapEntity`, Typ `carpet`), und Midea liefert deren Nummer als Zahl —
+`"metaData": {"id": 1}`. Die App erwartete dort Text, wie bei den
+Hindernis-IDs, und verwarf daran die ganze Karte. Dreame schickt dieselbe
+Nummer als Text (`"1"`). Beides steht schon in 2026.02.0 so im Quelltext;
+betroffen war also jede bisherige App-Version, nicht erst die neue Firmware.
+
+Behoben im Hauptzweig nach 1.1.2:
+
+- Die id wird als Text oder Zahl gelesen (Julis Fix aus #4).
+- Ein Kartenelement, das die App nicht lesen kann, wird übersprungen und im
+  Log vermerkt, statt die ganze Karte zu verwerfen.
+- Hindernisse werden am Typ `obstacle` erkannt. Vorher zählte jede Entität mit
+  id als Hindernis, bei Dreame also auch die Teppiche.
+
+Die Teppichflächen selbst zeichnet die App nicht; die Weboberfläche tut das.
+
+Nachweis: Komponententests und der simulierte Roboter, der eine Teppichfläche
+im Midea-Format liefert. Ein Gegentest auf der J15 steht aus.
+
 ## Womit getestet werden kann
 
 Die Testgeräte sind zwei Roborock S5 Max. Das begrenzt, was überhaupt praktisch
@@ -160,6 +185,8 @@ Karten-Anmerkungen) sind erledigt. Für das nächste Release:
    erste Firmware, auf der sie am echten Gerät prüfbar ist.
 2. **Neue Trockenzeiten und Verbrauchsteil-Namen** — nur gegen nachgestellte
    Antworten prüfbar; der S5 Max hat keine Mopp-Station.
+3. **Karte auf Midea** — die Korrektur aus PR #4 ist nur gegen Tests und den
+   simulierten Roboter geprüft. Juli kann sie auf der J15 bestätigen.
 
 Nicht nötig: die Mindestversion anzuheben. Alles, was die App heute anspricht,
 gibt es in 2026.10.0 unverändert oder abwärtskompatibel.

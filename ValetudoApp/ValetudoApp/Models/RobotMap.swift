@@ -1,10 +1,61 @@
 import Foundation
+import os
+
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "RobotMap")
 
 struct RobotMap: Codable {
     let size: MapSize?
     let pixelSize: Int?
     let layers: [MapLayer]?
     let entities: [MapEntity]?
+
+    enum CodingKeys: String, CodingKey {
+        case size, pixelSize, layers, entities
+    }
+}
+
+// Declared in an extension so the memberwise initializer stays available.
+extension RobotMap {
+    /// Layers and entities are decoded one by one, and an element the app
+    /// cannot read is left out instead of failing the whole map. Firmware
+    /// differs between manufacturers, and a single unexpected value used to
+    /// leave the map empty (Midea sends carpet ids as numbers, see PR #4).
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        size = try container.decodeIfPresent(MapSize.self, forKey: .size)
+        pixelSize = try container.decodeIfPresent(Int.self, forKey: .pixelSize)
+        layers = try container.decodeSkippingUnreadable([MapLayer].self, forKey: .layers)
+        entities = try container.decodeSkippingUnreadable([MapEntity].self, forKey: .entities)
+    }
+}
+
+private extension KeyedDecodingContainer {
+    /// Like `decodeIfPresent` for an array, but drops elements that fail to
+    /// decode instead of failing the array.
+    func decodeSkippingUnreadable<Element: Decodable>(_ type: [Element].Type, forKey key: Key) throws -> [Element]? {
+        guard let elements = try decodeIfPresent([SkippableElement<Element>].self, forKey: key) else {
+            return nil
+        }
+        return elements.compactMap { element in
+            switch element.result {
+            case .success(let value):
+                return value
+            case .failure(let error):
+                logger.warning("Skipped unreadable map element in \(key.stringValue, privacy: .public): \(error, privacy: .public)")
+                return nil
+            }
+        }
+    }
+}
+
+/// One array element, decoded without throwing so that the array around it
+/// still decodes when this element does not.
+private struct SkippableElement<Element: Decodable>: Decodable {
+    let result: Result<Element, Error>
+
+    init(from decoder: Decoder) throws {
+        result = Result { try decoder.singleValueContainer().decode(Element.self) }
+    }
 }
 
 struct MapSize: Codable {
@@ -167,7 +218,7 @@ struct MapEntity: Codable {
 
 struct EntityMetaData: Codable {
     let angle: Int?
-    let id: String?       // UUID fuer ObstacleImagesCapability/img/{id}
+    let id: String?       // UUID fuer ObstacleImagesCapability/img/{id}, bei Teppichen deren Nummer
     let label: String?    // z.B. "Pedestal (89%)"
 
     enum CodingKeys: String, CodingKey {
@@ -208,11 +259,27 @@ enum MapEntityType: String {
     case noMopArea = "no_mop_area"
     case goToTarget = "go_to_target"
     case activeZone = "active_zone"
+    case obstacle
     // Map annotations, added in firmware 2026.07.0. These are plain map
     // entities like the ones above, not a separate kind of object.
     case threshold
     case curtain
     case ramp
+}
+
+// MARK: - Obstacles
+
+extension RobotMap {
+    /// Obstacles the robot recognized, each with the id under which
+    /// `ObstacleImagesCapability` serves its photo. Only `obstacle` entities
+    /// count: carpets carry an id in their metaData as well.
+    var obstacles: [(id: String, label: String?)] {
+        (entities ?? []).compactMap { entity in
+            guard entity.type == MapEntityType.obstacle.rawValue,
+                  let id = entity.metaData?.id else { return nil }
+            return (id: id, label: entity.metaData?.label)
+        }
+    }
 }
 
 // MARK: - Map Annotations

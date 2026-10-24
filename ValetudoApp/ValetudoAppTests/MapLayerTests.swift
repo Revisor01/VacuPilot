@@ -145,4 +145,91 @@ final class MapLayerTests: XCTestCase {
         XCTAssertEqual(layer.metaData?.material, "carpet_extra_high")
         XCTAssertEqual(layer.decompressedPixels, [1, 1])
     }
+
+    // MARK: - Map Decoding
+
+    private func makeMap(json: String) throws -> RobotMap {
+        try JSONDecoder().decode(RobotMap.self, from: json.data(using: .utf8)!)
+    }
+
+    /// Reduced map of a Eureka J15 Pro Ultra (Midea, firmware 2026.10.0), see
+    /// PR #4. Midea sends the carpet id as a number, which used to fail
+    /// decoding and leave the whole map empty.
+    private let mideaMapWithCarpet = #"""
+    {
+      "__class": "ValetudoMap",
+      "size": {"x": 1000, "y": 1000},
+      "pixelSize": 5,
+      "layers": [
+        {"__class": "MapLayer", "type": "segment", "compressedPixels": [10, 10, 3],
+         "metaData": {"segmentId": "1", "name": "Living room", "active": false, "area": 75}}
+      ],
+      "entities": [
+        {"__class": "PointMapEntity", "type": "robot_position", "points": [60, 60], "metaData": {"angle": 90}},
+        {"__class": "PolygonMapEntity", "type": "carpet", "points": [100, 100, 130, 100, 130, 130, 100, 130], "metaData": {"id": 1}}
+      ]
+    }
+    """#
+
+    func testMapWithNumericCarpetIdDecodes() throws {
+        let map = try makeMap(json: mideaMapWithCarpet)
+
+        XCTAssertEqual(map.layers?.count, 1)
+        XCTAssertEqual(map.entities?.map { $0.type }, ["robot_position", "carpet"])
+        XCTAssertEqual(map.entities?.last?.metaData?.id, "1")
+    }
+
+    func testTextCarpetIdDecodes() throws {
+        // Dreame sends the same carpet id as text
+        let entity = try makeEntity(json: #"{"__class": "PolygonMapEntity", "type": "carpet", "points": [1, 2, 3, 2, 3, 4, 1, 4], "metaData": {"id": "1"}}"#)
+        XCTAssertEqual(entity.metaData?.id, "1")
+    }
+
+    func testUnreadableEntityIsSkippedInsteadOfEmptyingMap() throws {
+        // A value of unexpected type must only cost the entity it belongs to
+        let map = try makeMap(json: #"""
+        {"pixelSize": 5, "layers": [], "entities": [
+          {"type": "robot_position", "points": [60, 60], "metaData": {"angle": 90}},
+          {"type": "charger_location", "points": [10, 10], "metaData": {"angle": "north"}}
+        ]}
+        """#)
+
+        XCTAssertEqual(map.pixelSize, 5)
+        XCTAssertEqual(map.entities?.map { $0.type }, ["robot_position"])
+    }
+
+    func testUnreadableLayerIsSkippedInsteadOfEmptyingMap() throws {
+        let map = try makeMap(json: #"""
+        {"pixelSize": 5, "entities": [], "layers": [
+          {"type": "floor", "compressedPixels": [1, 1, 2]},
+          {"type": "segment", "compressedPixels": "unexpected", "metaData": {"segmentId": "2"}}
+        ]}
+        """#)
+
+        XCTAssertEqual(map.layers?.map { $0.type }, ["floor"])
+        XCTAssertEqual(map.layers?.first?.decompressedPixels, [1, 1, 2, 1])
+    }
+
+    func testObstaclesLeaveOutCarpets() throws {
+        // Carpets carry an id too, but only obstacles have a photo behind it
+        let map = try makeMap(json: #"""
+        {"entities": [
+          {"type": "obstacle", "points": [50, 50], "metaData": {"id": "6f0c1b9e-1d1b-5c51-9d0a-2f6b8c3e4a10", "label": "Pedestal (89%)"}},
+          {"type": "carpet", "points": [100, 100, 130, 100, 130, 130, 100, 130], "metaData": {"id": 1}},
+          {"type": "carpet", "points": [200, 200, 230, 200, 230, 230, 200, 230], "metaData": {"id": "2"}}
+        ]}
+        """#)
+
+        XCTAssertEqual(map.obstacles.map { $0.id }, ["6f0c1b9e-1d1b-5c51-9d0a-2f6b8c3e4a10"])
+        XCTAssertEqual(map.obstacles.first?.label, "Pedestal (89%)")
+    }
+
+    func testMapWithCarpetSurvivesCacheRoundTrip() throws {
+        // MapCacheService writes the decoded map to disk and reads it back
+        let map = try makeMap(json: mideaMapWithCarpet)
+        let cached = try JSONDecoder().decode(RobotMap.self, from: JSONEncoder().encode(map))
+
+        XCTAssertEqual(cached.entities?.count, 2)
+        XCTAssertEqual(cached.entities?.last?.metaData?.id, "1")
+    }
 }
