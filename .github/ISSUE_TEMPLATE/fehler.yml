@@ -1,0 +1,50 @@
+name: Fehler melden
+description: Etwas funktioniert nicht wie erwartet.
+labels: ["fehler"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke für die Meldung. Bitte keine Zugangsdaten, Server-Adressen oder
+        Kontonamen eintragen; dieses Issue ist öffentlich. Sicherheitslücken
+        bitte über den Weg in SECURITY.md melden. English is welcome.
+  - type: textarea
+    id: beobachtung
+    attributes:
+      label: Beobachtung
+      description: Was ist passiert?
+    validations:
+      required: true
+  - type: textarea
+    id: erwartung
+    attributes:
+      label: Erwartung
+      description: Was hättest du stattdessen erwartet?
+    validations:
+      required: true
+  - type: textarea
+    id: schritte
+    attributes:
+      label: Schritte zum Nachvollziehen
+      placeholder: |
+        1. …
+        2. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version der App bzw. des Programms
+      placeholder: "z. B. 1.1.3 (Build 108)"
+    validations:
+      required: true
+  - type: input
+    id: server
+    attributes:
+      label: Roboter und Firmware
+      placeholder: "z. B. Dreame L10s Ultra, Valetudo 2025.10.0"
+  - type: input
+    id: geraet
+    attributes:
+      label: Gerät und Betriebssystem
+      placeholder: "z. B. iPhone 16, iOS 26.1"
