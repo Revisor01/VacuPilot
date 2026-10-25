@@ -11,12 +11,21 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-iOS%2017%2B-blue?logo=apple" alt="Platform">
-  <img src="https://img.shields.io/badge/Version-1.1.3-green" alt="Version">
+  <img src="https://img.shields.io/itunes/v/6756815432?label=App%20Store&color=green" alt="App Store version">
   <img src="https://img.shields.io/badge/Swift-5.9-orange?logo=swift" alt="Swift">
   <img src="https://img.shields.io/badge/Dependencies-Zero-brightgreen" alt="Dependencies">
-  <img src="https://img.shields.io/badge/Tests-121-blue" alt="Tests">
   <img src="https://img.shields.io/github/license/Revisor01/VacuPilot" alt="License">
 </p>
+
+## About
+
+Many robot vacuums can run an open-source firmware that replaces the vendor
+cloud with a local REST API on the robot itself. That is good for privacy,
+but the robot's own web interface is awkward on a phone.
+
+VacuPilot is a native iPhone app for exactly these robots. It talks to the
+robot directly on your network — no account, no cloud, no server in between.
+Credentials stay in the device keychain.
 
 ## Features
 
@@ -67,46 +76,27 @@
 - **Zero Dependencies** — No third-party SDKs, no supply chain risk
 - **GDPR Compliant** — All data stays on your device
 
-## Requirements
-
-- iOS 17.0+
-- Compatible open-source vacuum firmware (2024.06.0+) with local REST API
-- Robot reachable on local network (or via VPN)
-
-See [COMPATIBILITY.md](COMPATIBILITY.md) for the tested firmware versions per
-app release and which newer firmware features are not covered yet.
-
 ## Installation
 
-### App Store
+**[Download on the App Store »](https://apps.apple.com/app/id6756815432)** ·
+**[Join the TestFlight beta »](https://testflight.apple.com/join/N11Ncb1D)**
 
-**[Download on the App Store »](https://apps.apple.com/app/id6756815432)**
+Requires iOS 17 or later and a robot running a compatible open-source firmware
+(2024.06.0 or newer) that is reachable on your local network or via VPN.
 
-### TestFlight (Public Beta)
-
-Try the latest beta build directly on your iPhone:
-
-**[Join the TestFlight Beta »](https://testflight.apple.com/join/N11Ncb1D)**
-
-You'll need Apple's [TestFlight](https://apps.apple.com/app/testflight/id899247664) app installed.
-
-### Build from Source
-
-```bash
-git clone https://github.com/Revisor01/VacuPilot.git
-cd VacuPilot
-open ValetudoApp/ValetudoApp.xcodeproj
-```
-
-Build and run on your device. No external dependencies to install.
-
-## Setup
+### First steps
 
 1. Open the app
 2. Tap the scan button to discover robots automatically, or add manually by IP/hostname
 3. Optionally enable authentication if configured on your robot's firmware
 
-## Supported Robots
+## Compatibility
+
+See [COMPATIBILITY.md](COMPATIBILITY.md) for the firmware versions each app
+release was tested against and which newer firmware features are not covered
+yet.
+
+### Supported robots
 
 VacuPilot works with all robot vacuums running a compatible open-source firmware that exposes a local REST API:
 
@@ -115,21 +105,25 @@ VacuPilot works with all robot vacuums running a compatible open-source firmware
 - **Xiaomi / Viomi** — Various models
 - And many more
 
-## Screenshots
+## Versions
 
-*Coming soon*
+What changed when is listed in [CHANGELOG.md](CHANGELOG.md) (German, following
+[Keep a Changelog](https://keepachangelog.com/)). The
+[releases](https://github.com/Revisor01/VacuPilot/releases) summarise each
+version.
 
-## Version History
+## Build from source
 
-See [CHANGELOG.md](CHANGELOG.md) for the full history.
+```bash
+git clone https://github.com/Revisor01/VacuPilot.git
+cd VacuPilot
+open ValetudoApp/ValetudoApp.xcodeproj
+```
 
-| Version | Date | Highlights |
-|---------|------|------------|
-| **1.1.3** (Build 108) | 2026-10 | Map loads again on Midea robots with detected carpets; a single unreadable map element no longer empties the map; carpets no longer listed as obstacles |
-| **1.1.2** (Build 107) | 2026-10 | Readable names for new mop dock drying times and consumables (firmware 2026.10.0) |
-| **1.1.1** (Build 106) | 2026-10 | Corrected App Store description |
-| **1.1.0** (Build 104) | 2026-10 | Carpet floor types, map annotations (thresholds, curtains, ramps), MQTT settings ready for newer firmware |
-| **v1.0.0** (Build 99) | 2025-12 | Initial App Store release — multi-robot control, live interactive map, room/zone cleaning with order, firmware updates, background monitoring, VoiceOver accessibility, EN/DE/FR localization |
+Xcode with the iOS 17 SDK or newer. Set your own team in the signing settings,
+then run on a device or simulator. There are no external dependencies to
+install. `tools/simulierter-roboter.py` serves a simulated robot for testing
+without hardware.
 
 ## Architecture
 
@@ -144,7 +138,7 @@ VacuPilot
 │   ├── Detail/      — Robot detail sections
 │   ├── Settings/    — Robot settings sections
 │   └── Map/         — Map overlays, drawing, controls
-└── Tests/           — 121 unit tests (models, geometry, state machines, caching)
+└── Tests/           — 151 unit tests, run on every pull request (models, geometry, state machines, caching)
 ```
 
 **Key design decisions:**
@@ -156,66 +150,32 @@ VacuPilot
 
 ## Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests.
+Bug reports and suggestions are welcome — please open an
+[issue](https://github.com/Revisor01/VacuPilot/issues); English or German is
+fine. Report security issues privately as described in
+[SECURITY.md](SECURITY.md). Pull requests run through tests and a secret scan;
+the guidelines for contributions are in [CLAUDE.md](CLAUDE.md).
+
+## Privacy
+
+VacuPilot collects nothing: no analytics, no advertising, no cloud services,
+no third-party SDKs. The app only connects to the robots you add. Robot
+addresses, optional credentials, settings, saved locations and the map cache
+stay on your device (credentials in the iOS keychain) and are removed when you
+delete the app.
+
+Full privacy policy (German):
+[simonluthe.de/apps/vacupilot/datenschutz](https://simonluthe.de/apps/vacupilot/datenschutz/)
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.
+VacuPilot is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ## Disclaimer
 
 This is an independent companion app. It communicates with robot vacuums that run a compatible open-source firmware purely over their documented local REST API. It is not affiliated with or endorsed by any firmware project, and it bundles no third-party source code, assets, or branding.
 
----
+## Contact
 
-## Privacy Policy
-
-### Controller
-
-Simon Luthe
-Suederstrasse 18
-25779 Hennstedt
-Germany
-
-Email: mail@simonluthe.de
-Web: [simonluthe.de](https://simonluthe.de)
-
-### Data Processing
-
-**VacuPilot stores and processes the following data exclusively on your device:**
-
-- IP addresses / hostnames of your robots
-- Optional credentials (username/password) for robot authentication
-- App settings and preferences
-- Saved GoTo locations
-- Cached map data for offline viewing
-
-**No data is transmitted to external servers.** All communication happens exclusively between your iOS device and your robots on your local network.
-
-### No Tracking or Analytics
-
-VacuPilot uses:
-- No analytics or tracking tools
-- No advertising
-- No cloud services
-- No third-party SDKs that collect data
-
-### Network Connections
-
-The app only connects to the robots you configure. These connections stay entirely within your local network (unless you use a VPN).
-
-### Data Storage
-
-All data is stored locally in the iOS Keychain (for credentials and robot config) and app storage (for settings and map cache). Uninstalling the app removes all data completely.
-
-### Your Rights (GDPR)
-
-Since all data is stored exclusively on your device with no transmission to the developer or third parties, you have full control over your data. You can remove it at any time by deleting the app.
-
-For privacy questions, contact the address above.
-
-### Changes
-
-This privacy policy may be updated as needed. The current version is always available in this repository.
-
-*Last updated: April 2026*
+Simon Luthe · [mail@simonluthe.de](mailto:mail@simonluthe.de) ·
+[simonluthe.de](https://simonluthe.de)

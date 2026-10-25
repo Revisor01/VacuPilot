@@ -6,9 +6,8 @@ Das Format basiert auf [Keep a Changelog 1.1.0](https://keepachangelog.com/de/1.
 dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 > **Hinweis zur Versionierung:** Die App-Store-Version ist die maßgebliche Version
-> (`MARKETING_VERSION` in `ValetudoApp/project.yml`). Die intern im Ordner
-> `.planning/` geführten Milestones (v2.0.0–v4.0.1) sind **Entwicklungszyklen**
-> des GSD-Workflows und keine ausgelieferten Versionen — sie sind unten den
+> (`MARKETING_VERSION` in `ValetudoApp/project.yml`). Interne Entwicklungszyklen
+> (v2.0.0–v4.0.1) sind keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
 ## [1.1.3] - 2026-10-24
@@ -75,9 +74,8 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 ### Entfernt
 
 - **Screenshot-Generator `ValetudoApp/AppStore/`** (Next.js-App inkl. 27
-  Store-Screenshots): Grafik-Erstellung liegt zentral in
-  `~/Documents/social-posts-studio` (Projekt `valetudios.json`, Assets unter
-  `public/apps/valetudios/`). Alle Screenshots waren dort byte-identisch
+  Store-Screenshots): Die Grafiken entstehen jetzt in einem eigenen Projekt
+  außerhalb dieses Repositorys, alle Screenshots waren dort byte-identisch
   vorhanden. Damit entfallen zugleich sämtliche 22 Dependabot-Alerts, die
   ausschließlich aus dessen `next`-Abhängigkeit stammten.
 - Altlasten aus dem Repo-Root: `SUPPORT-AUFTRAG.md` (umgesetzter
@@ -90,8 +88,6 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
   jetzt auf den Asset-Katalog. App-Store-Abschnitt sagte „Coming soon“, obwohl
   die App live ist — Store-Link ergänzt. Release-Datum in der Versionstabelle
   von 2026-04 auf 2025-12 korrigiert.
-- `.planning/STATE.md`: Notiz „App-Store-Submission noch ausstehend“ entsprach
-  nicht der Realität (v1.0/Build 99 seit 2025-12-20 READY_FOR_SALE).
 
 ### Sicherheit
 
