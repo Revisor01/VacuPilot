@@ -145,7 +145,7 @@ final class ValetudoAPITests: XCTestCase {
 
     /// Fehlt das Feld beim Speichern, setzt der Server es auf [] — freigegebene Fähigkeiten gingen verloren.
     func testEncodeMQTTConfigKeepsOptionalExposedCapabilities() throws {
-        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONLegacy.utf8))
+        let config = try JSONDecoder().decode(MQTTConfig.self, from: Data(mqttConfigJSONCurrent.utf8))
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(config)) as? [String: Any])
         XCTAssertEqual(json["optionalExposedCapabilities"] as? [String], ["SpeakerTestCapability"])
     }
