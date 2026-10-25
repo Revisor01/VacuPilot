@@ -1,0 +1,16 @@
+# Die App hat keine Paket-Abhaengigkeiten; aktuell zu halten sind nur die Actions.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Europe/Berlin
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
+
