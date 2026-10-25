@@ -163,10 +163,13 @@ final class UpdateServiceTests: XCTestCase {
 
     func testReset_fromErrorState_transitionsToIdle() async throws {
         let mock = MockValetudoAPI()
-        mock.shouldThrowOnCheck = true
+        mock.updaterStateToReturn = makeUpdaterState("ValetudoUpdaterApprovalPendingState")
+        mock.shouldThrowOnDownload = true
         let service = UpdateService(api: mock)
 
+        // Eine fehlgeschlagene Prüfung endet still in .idle; .error entsteht nur beim Download.
         await service.checkForUpdates()
+        await service.startDownload()
         if case .error = service.phase { } else {
             XCTFail("Setup failed: expected error phase")
         }
