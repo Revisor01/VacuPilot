@@ -332,7 +332,7 @@ struct TimerEditView: View {
 
 #Preview {
     NavigationStack {
-        TimersView(robot: RobotConfig(name: "Test", host: "192.168.0.35"))
+        TimersView(robot: RobotConfig(name: "Test", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }

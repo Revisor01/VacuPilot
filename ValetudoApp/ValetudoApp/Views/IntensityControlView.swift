@@ -221,7 +221,7 @@ struct IntensityControlView: View {
 
 #Preview {
     NavigationStack {
-        IntensityControlView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"))
+        IntensityControlView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }

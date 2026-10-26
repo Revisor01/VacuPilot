@@ -159,7 +159,7 @@ struct ConsumableRow: View {
 
 #Preview {
     NavigationStack {
-        ConsumablesView(robot: RobotConfig(name: "Test", host: "192.168.0.35"))
+        ConsumablesView(robot: RobotConfig(name: "Test", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }
