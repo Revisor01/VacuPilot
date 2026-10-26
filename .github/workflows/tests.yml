@@ -1,9 +1,8 @@
 name: Tests
 
-# Fuehrt die Unit-Tests bei jedem PR auf einem Simulator aus. Ohne diesen
-# Check koennte die Pflicht "Checks gruen vor dem Merge" die Tests nicht
-# erfassen. Signiert wird mit den Simulator-Einstellungen des Projekts (ad hoc),
-# damit dieser Check auch die lokale Konfiguration prueft.
+# Unit-Tests bei jedem PR auf einem Simulator, damit die Pflicht "Checks grün
+# vor dem Merge" sie erfasst. Signiert wird mit den Simulator-Einstellungen des
+# Projekts (ad hoc), so prüft der Check auch die lokale Konfiguration.
 
 on:
   pull_request:
@@ -18,57 +17,8 @@ concurrency:
 
 jobs:
   tests:
-    runs-on: macos-26
-    timeout-minutes: 40
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Neuestes stabiles Xcode waehlen
-        run: |
-          XCODE=$(ls -d /Applications/Xcode_*.app 2>/dev/null | grep -iv beta | sort -V | tail -1)
-          if [ -z "$XCODE" ]; then XCODE=/Applications/Xcode.app; fi
-          sudo xcode-select -s "$XCODE/Contents/Developer"
-          xcodebuild -version
-
-      - name: Simulator waehlen
-        run: |
-          UDID=$(xcrun simctl list devices available --json | python3 -c '
-          import json, sys
-          geraete = json.load(sys.stdin)["devices"]
-          laufzeiten = sorted((r for r in geraete if "iOS" in r), reverse=True)
-          for r in laufzeiten:
-              for g in geraete[r]:
-                  if g["name"].startswith("iPhone"):
-                      print(g["udid"]); sys.exit()
-          sys.exit("Kein iPhone-Simulator verfuegbar")')
-          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
-          xcrun simctl list devices | grep "$UDID"
-
-      - name: Tests ausfuehren
-        run: |
-          status=0
-          xcodebuild test \
-            -project ValetudoApp/ValetudoApp.xcodeproj \
-            -scheme ValetudoApp \
-            -destination "id=$SIM_UDID" \
-            -only-testing:ValetudoAppTests \
-            -resultBundlePath "$RUNNER_TEMP/Tests.xcresult" \
-            > "$RUNNER_TEMP/tests.log" 2>&1 || status=$?
-          grep -E "error:|failed|\*\* TEST" "$RUNNER_TEMP/tests.log" | tail -60 || true
-          exit "$status"
-
-      - name: Ergebnis zusammenfassen
-        if: always()
-        run: |
-          [ -d "$RUNNER_TEMP/Tests.xcresult" ] || { echo "Kein Ergebnis-Bundle."; exit 0; }
-          xcrun xcresulttool get test-results summary --path "$RUNNER_TEMP/Tests.xcresult" --compact \
-            | python3 -c '
-          import json, os, sys
-          s = json.load(sys.stdin)
-          werte = [s.get(k) for k in ("totalTestCount", "passedTests", "failedTests", "skippedTests")]
-          zeile = "{} Tests: {} bestanden, {} fehlgeschlagen, {} uebersprungen".format(*werte)
-          print(zeile)
-          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-              f.write("### " + zeile + "\n")'
+    uses: Revisor01/workflows/.github/workflows/xcode-tests.yml@9eb921a3c730493b1aea79d5b22bf655356d5e43 # 1.2.0
+    with:
+      projekt: ValetudoApp/ValetudoApp.xcodeproj
+      schema: ValetudoApp
+      test-ziel: ValetudoAppTests
