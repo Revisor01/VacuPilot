@@ -40,7 +40,7 @@ targets:
           - de.simonluthe.ValetudiOS.backgroundRefresh
     settings:
       base:
-        MARKETING_VERSION: "1.1.3"
+        MARKETING_VERSION: "1.1.4"
         CURRENT_PROJECT_VERSION: "108"
         PRODUCT_BUNDLE_IDENTIFIER: de.simonluthe.ValetudiOS
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
