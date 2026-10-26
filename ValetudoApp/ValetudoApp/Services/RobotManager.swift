@@ -169,14 +169,16 @@ class RobotManager {
                             robotId: robotId,
                             api: api,
                             isLocalNetwork: robot.isLocalNetwork,
-                            onAttributesUpdate: { [weak self] attrs in
-                                Task { @MainActor [weak self] in
-                                    self?.applyAttributeUpdate(attrs, for: robotId)
+                            // The SSE manager keeps these callbacks; a strong reference would
+                            // form a cycle. A separate name because this Task already holds self.
+                            onAttributesUpdate: { [weak manager = self] attrs in
+                                Task { @MainActor [weak manager] in
+                                    manager?.applyAttributeUpdate(attrs, for: robotId)
                                 }
                             },
-                            onConnectionChange: { [weak self] connected in
-                                Task { @MainActor [weak self] in
-                                    self?.sseConnectionChanged(connected, for: robotId)
+                            onConnectionChange: { [weak manager = self] connected in
+                                Task { @MainActor [weak manager] in
+                                    manager?.sseConnectionChanged(connected, for: robotId)
                                 }
                             }
                         )

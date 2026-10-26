@@ -370,7 +370,7 @@ final class MapViewModel {
 
     // MARK: - Static Layer Segment Colors
 
-    private static let segmentUIColors: [UIColor] = [
+    nonisolated private static let segmentUIColors: [UIColor] = [
         UIColor(red: 0.65, green: 0.80, blue: 0.92, alpha: 1),
         UIColor(red: 0.70, green: 0.88, blue: 0.75, alpha: 1),
         UIColor(red: 0.92, green: 0.78, blue: 0.72, alpha: 1),
