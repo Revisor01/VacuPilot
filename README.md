@@ -10,6 +10,10 @@
 </p>
 
 <p align="center">
+  <b>English</b> · <a href="README.de.md">Deutsch</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Platform-iOS%2017%2B-blue?logo=apple" alt="Platform">
   <img src="https://img.shields.io/itunes/v/6756815432?label=App%20Store&color=green" alt="App Store version">
   <img src="https://img.shields.io/badge/Swift-5.9-orange?logo=swift" alt="Swift">
@@ -154,7 +158,7 @@ Bug reports and suggestions are welcome — please open an
 [issue](https://github.com/Revisor01/VacuPilot/issues); English or German is
 fine. Report security issues privately as described in
 [SECURITY.md](SECURITY.md). Pull requests run through tests and a secret scan;
-the guidelines for contributions are in [CLAUDE.md](CLAUDE.md).
+see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Privacy
 
@@ -172,9 +176,9 @@ Full privacy policy (German):
 VacuPilot is licensed under the
 [GNU Affero General Public License v3.0](LICENSE). If you modify VacuPilot and
 make it available to others, including as a web service, you publish your
-source code under the same license. A commercial license is available on
-request ([mail@simonluthe.de](mailto:mail@simonluthe.de)). Contributions:
-[CONTRIBUTING.md](CONTRIBUTING.md).
+source code under the same license. Contributions:
+[CONTRIBUTING.md](CONTRIBUTING.md). The [LICENSE](LICENSE) file is
+authoritative.
 
 The App Store builds are distributed by the author as the copyright holder.
 
