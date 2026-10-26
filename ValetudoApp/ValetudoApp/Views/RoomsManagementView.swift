@@ -728,7 +728,7 @@ struct SegmentMaterialSheet: View {
 
 #Preview {
     NavigationStack {
-        RoomsManagementView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"))
+        RoomsManagementView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }

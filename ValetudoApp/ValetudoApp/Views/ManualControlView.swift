@@ -282,7 +282,7 @@ struct ManualControlView: View {
 
 #Preview {
     NavigationStack {
-        ManualControlView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"))
+        ManualControlView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }

@@ -172,6 +172,6 @@ struct RobotDetailView: View {
 
 #Preview {
     NavigationStack {
-        RobotDetailView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"), robotManager: RobotManager())
+        RobotDetailView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"), robotManager: RobotManager())
     }
 }

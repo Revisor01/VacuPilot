@@ -501,7 +501,7 @@ struct RobotSettingsView: View {
 #Preview {
     let robotManager = RobotManager()
     NavigationStack {
-        RobotSettingsView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"), robotManager: robotManager)
+        RobotSettingsView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"), robotManager: robotManager)
             .environment(robotManager)
     }
 }

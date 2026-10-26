@@ -389,6 +389,6 @@ struct MapView: View {
 }
 
 #Preview {
-    MapView(robot: RobotConfig(name: "Test", host: "192.168.0.35"))
+    MapView(robot: RobotConfig(name: "Test", host: "192.168.1.35"))
         .environment(RobotManager())
 }

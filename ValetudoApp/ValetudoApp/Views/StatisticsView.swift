@@ -143,7 +143,7 @@ struct StatisticRow: View {
 
 #Preview {
     NavigationStack {
-        StatisticsView(robot: RobotConfig(name: "Test Robot", host: "192.168.0.35"))
+        StatisticsView(robot: RobotConfig(name: "Test Robot", host: "192.168.1.35"))
             .environment(RobotManager())
     }
 }

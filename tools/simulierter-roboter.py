@@ -487,7 +487,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if p == "/robot/capabilities/WifiConfigurationCapability":
             return self._send({"details": {"state": "connected", "downspeed": 72,
-                                           "signal": -48, "ips": ["192.168.0.123"]},
+                                           "signal": -48, "ips": ["192.168.1.123"]},
                                "ssid": "Simulation"})
 
         # Die Dock-Fähigkeiten nutzen /properties mit eigenen Schlüsseln und
