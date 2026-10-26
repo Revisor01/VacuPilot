@@ -169,7 +169,14 @@ Full privacy policy (German):
 
 ## License
 
-VacuPilot is licensed under the [GNU General Public License v3.0](LICENSE).
+VacuPilot is licensed under the
+[GNU Affero General Public License v3.0](LICENSE). If you modify VacuPilot and
+make it available to others, including as a web service, you publish your
+source code under the same license. A commercial license is available on
+request ([mail@simonluthe.de](mailto:mail@simonluthe.de)). Contributions:
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
+The App Store builds are distributed by the author as the copyright holder.
 
 ## Disclaimer
 
