@@ -61,9 +61,7 @@ Credentials stay in the device keychain.
 - **Firmware Updates** — Check, download, and apply updates with fullscreen progress protection
 - **Timer / Schedules** — Create and manage cleaning schedules
 - **Voice Packs** — Browse and switch voice language packs
-- **MQTT Configuration** — Full MQTT broker settings (Home Assistant / Homie)
-- **NTP Configuration** — Time server settings
-- **WiFi Management** — View signal strength, scan networks, configure WiFi
+- **Network** — MQTT broker (Home Assistant / Homie), NTP time server, WiFi with signal strength and network scan
 - **Quirks** — Robot-specific configuration options
 - **Carpet Mode** — Toggle automatic carpet boost
 - **Auto-Empty Dock** — Configure auto-empty duration and behavior
@@ -74,11 +72,7 @@ Credentials stay in the device keychain.
 - **SSL/TLS Support** — HTTPS connections with optional self-signed certificate bypass
 - **Smart Connection Management** — Skips local robots when off-WiFi, suspends unreachable robots
 - **Siri Shortcuts** — Voice control for common actions
-- **Dark Mode** — Full dark mode support
-- **Localization** — English, German, French
-- **VoiceOver** — Full accessibility support
-- **Zero Dependencies** — No third-party SDKs, no supply chain risk
-- **GDPR Compliant** — All data stays on your device
+- English, German and French; light and dark mode; VoiceOver
 
 ## Installation
 
@@ -142,15 +136,8 @@ VacuPilot
 │   ├── Detail/      — Robot detail sections
 │   ├── Settings/    — Robot settings sections
 │   └── Map/         — Map overlays, drawing, controls
-└── Tests/           — 151 unit tests, run on every pull request (models, geometry, state machines, caching)
+└── Tests/           — unit tests, run on every pull request (models, geometry, state machines, caching)
 ```
-
-**Key design decisions:**
-- Pure SwiftUI + Swift 5.9, no UIKit wrappers (except update fullscreen lock)
-- Zero external package dependencies
-- MVVM with @Observable (iOS 17+)
-- Actor-based SSE connection management
-- Capability-gated UI — features only appear if the robot supports them
 
 ## Contributing
 

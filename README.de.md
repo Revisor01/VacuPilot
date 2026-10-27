@@ -62,9 +62,7 @@ dazwischen. Zugangsdaten bleiben im Schlüsselbund des Geräts.
 - **Firmware-Updates** — prüfen, laden und einspielen, mit Vollbild-Schutz während des Vorgangs
 - **Zeitpläne** — Reinigungszeiten anlegen und verwalten
 - **Sprachpakete** — Sprachen durchsehen und wechseln
-- **MQTT** — alle Einstellungen für den Broker (Home Assistant / Homie)
-- **NTP** — Zeitserver
-- **WLAN** — Signalstärke, Netze suchen, WLAN einrichten
+- **Netzwerk** — MQTT-Broker (Home Assistant / Homie), NTP-Zeitserver, WLAN mit Signalstärke und Netzsuche
 - **Quirks** — modellspezifische Einstellungen
 - **Teppichmodus** — automatische Saugkraft auf Teppich ein- und ausschalten
 - **Absaugstation** — Dauer und Verhalten der automatischen Entleerung
@@ -75,11 +73,7 @@ dazwischen. Zugangsdaten bleiben im Schlüsselbund des Geräts.
 - **SSL/TLS** — HTTPS-Verbindungen, selbst signierte Zertifikate auf Wunsch
 - **Verbindungen mit Verstand** — lokale Roboter werden außerhalb des WLANs übersprungen, unerreichbare pausiert
 - **Siri-Kurzbefehle** — Sprachsteuerung für häufige Aktionen
-- **Dunkelmodus** — vollständig
-- **Sprachen** — Englisch, Deutsch, Französisch
-- **VoiceOver** — vollständig barrierefrei
-- **Keine Abhängigkeiten** — keine fremden SDKs, kein Lieferkettenrisiko
-- **DSGVO-konform** — alle Daten bleiben auf dem Gerät
+- Englisch, Deutsch und Französisch; hell und dunkel; VoiceOver
 
 ## Installation
 
@@ -144,15 +138,8 @@ VacuPilot
 │   ├── Detail/      — Abschnitte der Roboteransicht
 │   ├── Settings/    — Abschnitte der Robotereinstellungen
 │   └── Map/         — Kartenebenen, Zeichnen, Bedienelemente
-└── Tests/           — 151 Unit-Tests, laufen bei jedem Pull Request (Modelle, Geometrie, Zustände, Zwischenspeicher)
+└── Tests/           — Unit-Tests, laufen bei jedem Pull Request (Modelle, Geometrie, Zustände, Zwischenspeicher)
 ```
-
-**Worauf es beim Bauen ankommt:**
-- Reines SwiftUI mit Swift 5.9, keine UIKit-Hüllen (außer der Vollbildsperre beim Update)
-- Keine fremden Pakete
-- MVVM mit @Observable (iOS 17+)
-- SSE-Verbindungen über Actors
-- Die Oberfläche richtet sich nach den Fähigkeiten — eine Funktion erscheint nur, wenn der Roboter sie kann
 
 ## Mitmachen
 
