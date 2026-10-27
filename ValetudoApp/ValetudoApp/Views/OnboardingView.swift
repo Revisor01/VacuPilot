@@ -56,7 +56,6 @@ struct OnboardingView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.easeInOut, value: currentPage)
 
-            // Page indicator
             HStack(spacing: 8) {
                 ForEach(0..<pages.count, id: \.self) { index in
                     Circle()
@@ -66,7 +65,6 @@ struct OnboardingView: View {
             }
             .padding(.bottom, 20)
 
-            // Button
             Button {
                 if currentPage < pages.count - 1 {
                     withAnimation {
@@ -125,26 +123,22 @@ struct OnboardingPageView: View {
         VStack(spacing: 24) {
             Spacer()
 
-            // Icon
             Image(systemName: page.icon)
                 .font(.system(size: 80))
                 .foregroundStyle(page.iconColor)
                 .padding(.bottom, 8)
 
-            // Title
             Text(page.title)
                 .font(.title)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
 
-            // Subtitle
             Text(page.subtitle)
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
 
-            // Features list
             if !page.features.isEmpty {
                 VStack(alignment: .leading, spacing: 16) {
                     ForEach(page.features, id: \.text) { feature in

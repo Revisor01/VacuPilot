@@ -92,7 +92,6 @@ struct ControlButton<MenuContent: View>: View {
     }
 }
 
-// Helper extension for conditional modifiers
 extension View {
     @ViewBuilder
     func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
@@ -199,7 +198,6 @@ struct DeviceInfoView: View {
                 }
             }
 
-            // Valetudo
             Section {
                 HStack {
                     Text("Version")
@@ -242,7 +240,6 @@ struct DeviceInfoView: View {
                 Label("Valetudo", systemImage: "app.badge")
             }
 
-            // System
             if let info = hostInfo {
                 Section {
                     LabeledContent(String(localized: "device_info.hostname"), value: info.hostname)

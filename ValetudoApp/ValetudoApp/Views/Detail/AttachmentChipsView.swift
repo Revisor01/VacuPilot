@@ -14,7 +14,6 @@ struct AttachmentChipsView: View {
         let hasInfo = Self.hasAnyAttachmentInfo(viewModel)
         if hasInfo {
             HStack(spacing: 4) {
-                // Dust bin
                 let dustbinAttached = viewModel.status?.dustbinAttached ?? (DebugConfig.showAllCapabilities ? true : nil)
                 if let attached = dustbinAttached {
                     attachmentChip(
@@ -24,7 +23,6 @@ struct AttachmentChipsView: View {
                     )
                 }
 
-                // Water tank
                 let waterTankAttached = viewModel.status?.waterTankAttached ?? (DebugConfig.showAllCapabilities ? true : nil)
                 if let attached = waterTankAttached {
                     attachmentChip(
@@ -34,7 +32,6 @@ struct AttachmentChipsView: View {
                     )
                 }
 
-                // Mop
                 let mopAttached = viewModel.status?.mopAttached ?? (DebugConfig.showAllCapabilities ? false : nil)
                 if let attached = mopAttached {
                     attachmentChip(

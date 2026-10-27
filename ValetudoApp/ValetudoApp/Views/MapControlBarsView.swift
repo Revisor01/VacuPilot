@@ -233,8 +233,7 @@ extension MapContentView {
                     }
                 }
 
-                // All annotation kinds live behind one menu — as separate
-                // buttons they would squeeze the whole row.
+                // One menu for all annotation kinds, separate buttons would squeeze the row.
                 if viewModel.hasMapAnnotations, !viewModel.supportedAnnotationTypes.isEmpty {
                     Menu {
                         ForEach(viewModel.supportedAnnotationTypes, id: \.self) { type in
@@ -404,7 +403,6 @@ extension MapContentView {
 
             HStack(spacing: 12) {
                 Button {
-                    // Cancel
                     viewModel.goToMarkerPosition = nil
                     viewModel.goToApiCoords = nil
                     viewModel.showGoToConfirm = false
@@ -422,7 +420,6 @@ extension MapContentView {
                 Button {
                     if let coords = viewModel.goToApiCoords {
                         if let preset = viewModel.editingPreset {
-                            // Update preset position
                             var updatedPreset = preset
                             updatedPreset.x = coords.x
                             updatedPreset.y = coords.y
@@ -432,7 +429,6 @@ extension MapContentView {
                             viewModel.goToApiCoords = nil
                             viewModel.showGoToConfirm = false
                         } else {
-                            // Confirm and go
                             Task {
                                 await viewModel.goToPoint(x: coords.x, y: coords.y)
                                 viewModel.goToMarkerPosition = nil
@@ -469,7 +465,6 @@ extension MapContentView {
 
             HStack(spacing: 12) {
                 Button {
-                    // Cancel
                     viewModel.goToMarkerPosition = nil
                     viewModel.pendingGoToX = nil
                     viewModel.pendingGoToY = nil
@@ -484,7 +479,6 @@ extension MapContentView {
                 }
 
                 Button {
-                    // Show save sheet
                     viewModel.showSavePresetSheet = true
                 } label: {
                     HStack {

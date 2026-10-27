@@ -29,10 +29,8 @@ extension MapContentView {
                 .gesture(
                     DragGesture()
                         .onChanged { value in
-                            // Convert screen position to map coordinates
                             let mapPos = screenToMapCoords(value.location, viewSize: geometry.size)
                             viewModel.goToMarkerPosition = mapPos
-                            // Update API coordinates
                             let pixelX = Int(((mapPos.x - params.offsetX) / params.scale).rounded())
                             let pixelY = Int(((mapPos.y - params.offsetY) / params.scale).rounded())
                             let apiX = pixelX * pixelSize
@@ -54,10 +52,8 @@ extension MapContentView {
     func presetMarkersOverlay(params: MapParams, pixelSize: Int, geometry: GeometryProxy) -> some View {
         if viewModel.showPresetsOnMap && !viewModel.showGoToConfirm && viewModel.editMode == .none {
             ForEach(viewModel.presetStore.presets(for: robot.id)) { preset in
-                // Calculate position in map coordinates
                 let mapX = CGFloat(preset.x / pixelSize) * params.scale + params.offsetX
                 let mapY = CGFloat(preset.y / pixelSize) * params.scale + params.offsetY
-                // Convert to screen coordinates
                 let screenPos = mapToScreenCoords(CGPoint(x: mapX, y: mapY), viewSize: geometry.size)
 
                 Button {
@@ -89,7 +85,6 @@ extension MapContentView {
     func restrictionDeleteOverlay(params: MapParams, restrictions: VirtualRestrictions, viewSize: CGSize) -> some View {
         let ps = CGFloat(viewModel.map?.pixelSize ?? 5)
 
-        // Virtual walls
         ForEach(Array(restrictions.virtualWalls.enumerated()), id: \.offset) { index, wall in
             let startX = CGFloat(wall.points.pA.x) / ps * params.scale + params.offsetX
             let startY = CGFloat(wall.points.pA.y) / ps * params.scale + params.offsetY
@@ -119,7 +114,6 @@ extension MapContentView {
             .position(screenPos)
         }
 
-        // No-go zones
         ForEach(Array(restrictions.restrictedZones.enumerated()), id: \.offset) { index, zone in
             let centerX = CGFloat(zone.points.pA.x + zone.points.pC.x) / 2 / ps * params.scale + params.offsetX
             let centerY = CGFloat(zone.points.pA.y + zone.points.pC.y) / 2 / ps * params.scale + params.offsetY
@@ -145,7 +139,6 @@ extension MapContentView {
             .position(screenPos)
         }
 
-        // No-mop zones
         ForEach(Array(restrictions.noMopZones.enumerated()), id: \.offset) { index, zone in
             let centerX = CGFloat(zone.points.pA.x + zone.points.pC.x) / 2 / ps * params.scale + params.offsetX
             let centerY = CGFloat(zone.points.pA.y + zone.points.pC.y) / 2 / ps * params.scale + params.offsetY

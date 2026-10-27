@@ -22,7 +22,6 @@ struct RobotSettingsView: View {
 
     var body: some View {
         List {
-            // Speaker Section
             if viewModel.hasVolumeControl || viewModel.hasSpeakerTest {
                 Section {
                     if viewModel.hasVolumeControl {
@@ -65,7 +64,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Cleaning Settings Section
             if viewModel.hasCarpetMode || viewModel.hasObstacleAvoidance || viewModel.hasPetObstacleAvoidance || viewModel.hasCollisionAvoidance || viewModel.hasCarpetSensorMode || viewModel.hasFloorMaterialNavigation {
                 Section {
                     if viewModel.hasCarpetMode {
@@ -160,7 +158,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Device Lock Section
             if viewModel.hasKeyLock {
                 Section {
                     Toggle(isOn: $viewModel.keyLock) {
@@ -181,7 +178,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Map Settings Section
             if viewModel.hasPersistentMap || viewModel.hasMappingPass || viewModel.hasMapReset {
                 Section {
                     if viewModel.hasPersistentMap {
@@ -238,7 +234,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Map Snapshots Section
             if viewModel.hasMapSnapshots {
                 Section {
                     if viewModel.mapSnapshots.isEmpty {
@@ -277,7 +272,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Pending Map Change Section
             if viewModel.hasPendingMapChange && viewModel.pendingMapChangeEnabled {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
@@ -324,7 +318,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Voice Pack Section
             if viewModel.hasVoicePack && !viewModel.voicePacks.isEmpty {
                 Section {
                     Picker(selection: $viewModel.currentVoicePackId) {
@@ -350,7 +343,6 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Quirks Section
             if viewModel.hasQuirks {
                 Section {
                     NavigationLink {
@@ -369,9 +361,7 @@ struct RobotSettingsView: View {
                 }
             }
 
-            // Valetudo System Section
             Section {
-                // WiFi Settings
                 if viewModel.hasWifiConfig || viewModel.hasWifiScan {
                     NavigationLink {
                         WifiSettingsView(robot: robot)
@@ -384,7 +374,6 @@ struct RobotSettingsView: View {
                     }
                 }
 
-                // MQTT Settings
                 NavigationLink {
                     MQTTSettingsView(robot: robot)
                 } label: {
@@ -395,7 +384,6 @@ struct RobotSettingsView: View {
                     }
                 }
 
-                // NTP Settings
                 NavigationLink {
                     NTPSettingsView(robot: robot)
                 } label: {
@@ -406,7 +394,6 @@ struct RobotSettingsView: View {
                     }
                 }
 
-                // Geräteinfo-Valetudo
                 NavigationLink {
                     DeviceInfoView(robot: robot, updateService: updateService)
                 } label: {
@@ -421,7 +408,6 @@ struct RobotSettingsView: View {
                 Label(String(localized: "settings.system"), systemImage: "gearshape.2")
             }
 
-            // No settings available
             if !viewModel.hasVolumeControl && !viewModel.hasSpeakerTest && !viewModel.hasCarpetMode && !viewModel.hasPersistentMap && !viewModel.hasMappingPass && !viewModel.hasAutoEmptyDock && !viewModel.hasMopDockAutoDrying && !viewModel.hasMopDockWashTemperature && !viewModel.hasMopDockDryingTime && !viewModel.hasQuirks && !viewModel.isLoading {
                 Section {
                     Text(String(localized: "settings.robot_no_settings"))

@@ -23,12 +23,10 @@ final class RobotDetailViewModel {
     }
     var isLoading = false
 
-    // Intensity control presets
     var fanSpeedPresets: [String] = []
     var waterUsagePresets: [String] = []
     var operationModePresets: [String] = []
 
-    // Capability flags
     var hasManualControl = DebugConfig.showAllCapabilities
     var hasAutoEmptyTrigger = DebugConfig.showAllCapabilities
     var hasMopDockClean = DebugConfig.showAllCapabilities
@@ -40,14 +38,13 @@ final class RobotDetailViewModel {
     // ErrorRouter — injected from View
     var errorRouter: ErrorRouter?
 
-    // UpdateService — Single Source of Truth (STATE-04)
+    // UpdateService is the single source of truth
     private(set) var updateService: UpdateService?
 
     var updateInProgress: Bool {
         guard let svc = updateService else { return false }
         switch svc.phase {
-        // NOTE: .checking absichtlich NICHT enthalten — sonst zeigt UpdateStatusBannerView
-        // während der reinen Update-Prüfung das große "in_progress"-Panel (bleibt gefühlt hängen).
+        // Without .checking, otherwise the banner shows the large in-progress panel during a mere check.
         case .downloading, .applying, .rebooting:
             return true
         default:
@@ -55,24 +52,19 @@ final class RobotDetailViewModel {
         }
     }
 
-    // Statistics
     var lastCleaningStats: [StatisticEntry] = []
     var totalStats: [StatisticEntry] = []
 
-    // Events
     var events: [ValetudoEvent] = []
 
-    // Clean Route
     var cleanRoutePresets: [String] = []
     var currentCleanRoute: String = ""
 
     // Obstacles (from map entities)
     var obstacles: [(id: String, label: String?)] = []
 
-    // Robot Properties
     var robotProperties: RobotProperties?
 
-    // Device Info
     var valetudoVersion: ValetudoVersion?
     var systemHostInfo: SystemHostInfo?
 
@@ -177,7 +169,6 @@ final class RobotDetailViewModel {
     private func loadCapabilities() async {
         guard let api = api else { return }
 
-        // Cache-Check
         if let cached = robotManager.cachedCapabilities(for: robot.id) {
             applyCapabilities(cached)
             return
@@ -311,8 +302,7 @@ final class RobotDetailViewModel {
                 self.robotManager.invalidateCapabilities(for: self.robot.id)
                 self.logger.info("Capabilities cache invalidated after OTA reboot for robot \(self.robot.id, privacy: .public)")
                 Task { @MainActor in
-                    // Nach OTA-Reboot: alle Update-relevanten Daten neu laden,
-                    // sonst zeigt der Banner weiterhin "Update verfuegbar".
+                    // After the OTA reboot reload update data, otherwise the banner keeps "update available".
                     self.updateService?.reset()
                     await self.updateService?.loadVersionInfo()
                     await self.updateService?.checkForUpdates()

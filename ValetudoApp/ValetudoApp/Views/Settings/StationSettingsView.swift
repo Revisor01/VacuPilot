@@ -11,14 +11,12 @@ struct StationSettingsView: View {
     @State private var isLoading = false
     @State private var stationLoaded = false
 
-    // Capabilities
     @State private var hasAutoEmptyDock = DebugConfig.showAllCapabilities
     @State private var hasAutoEmptyDockDuration = DebugConfig.showAllCapabilities
     @State private var hasMopDockAutoDrying = DebugConfig.showAllCapabilities
     @State private var hasMopDockWashTemperature = DebugConfig.showAllCapabilities
     @State private var hasMopDockDryingTime = DebugConfig.showAllCapabilities
 
-    // Settings
     @State private var mopDockAutoDrying = false
     @State private var mopDockWashTemperaturePresets: [String] = []
     @State private var currentWashTemperature: String = ""
@@ -33,7 +31,6 @@ struct StationSettingsView: View {
 
     var body: some View {
         List {
-            // Auto Empty Dock Settings
             if hasAutoEmptyDock || hasAutoEmptyDockDuration {
                 Section {
                     if hasAutoEmptyDock {
@@ -72,7 +69,6 @@ struct StationSettingsView: View {
                 }
             }
 
-            // Mop Dock Settings
             if hasMopDockAutoDrying || hasMopDockWashTemperature || hasMopDockDryingTime {
                 Section {
                     if hasMopDockAutoDrying {
@@ -131,7 +127,6 @@ struct StationSettingsView: View {
                 }
             }
 
-            // No settings available
             if !hasAutoEmptyDock && !hasAutoEmptyDockDuration && !hasMopDockAutoDrying && !hasMopDockWashTemperature && !hasMopDockDryingTime && !isLoading {
                 Section {
                     Text(String(localized: "settings.no_station_settings"))
@@ -159,7 +154,6 @@ struct StationSettingsView: View {
         isLoading = true
         defer { isLoading = false }
 
-        // Check capabilities
         do {
             let capabilities = try await api.getCapabilities()
             hasAutoEmptyDock = DebugConfig.showAllCapabilities || capabilities.contains("AutoEmptyDockAutoEmptyIntervalControlCapability")
@@ -171,7 +165,6 @@ struct StationSettingsView: View {
             // Use debug defaults
         }
 
-        // Load mop dock auto drying
         if hasMopDockAutoDrying {
             do {
                 mopDockAutoDrying = try await api.getMopDockAutoDrying()
@@ -180,12 +173,10 @@ struct StationSettingsView: View {
             }
         }
 
-        // Load mop dock wash temperature presets
         if hasMopDockWashTemperature {
             do {
                 mopDockWashTemperaturePresets = try await api.getMopDockWashTemperaturePresets()
-                // The capability reports its own current value; there is no
-                // matching state attribute for it.
+                // The capability reports its own value, there is no matching state attribute.
                 currentWashTemperature = (try? await api.getMopDockWashTemperature()) ?? ""
                 if currentWashTemperature.isEmpty, let first = mopDockWashTemperaturePresets.first {
                     currentWashTemperature = first
@@ -200,7 +191,6 @@ struct StationSettingsView: View {
             }
         }
 
-        // Load mop dock drying time presets
         if hasMopDockDryingTime {
             do {
                 mopDockDryingTimePresets = try await api.getMopDockDryingTimePresets()
@@ -215,7 +205,6 @@ struct StationSettingsView: View {
             }
         }
 
-        // Load auto empty dock duration presets
         if hasAutoEmptyDockDuration {
             do {
                 autoEmptyDockDurationPresets = try await api.getAutoEmptyDockDurationPresets()
@@ -320,8 +309,7 @@ struct StationSettingsView: View {
         }
     }
 
-    /// The firmware reports "auto", "short", "medium" or "long" here — the
-    /// intensity names used elsewhere do not apply.
+    /// Firmware values "auto", "short", "medium", "long", not the usual intensity names.
     private func displayNameForAutoEmptyDockDuration(_ preset: String) -> String {
         switch preset.lowercased() {
         case "auto":

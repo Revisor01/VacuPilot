@@ -46,7 +46,6 @@ class NetworkScanner {
         isScanning = true
         progress = 0
 
-        // Start mDNS immediately
         browserService.startBrowsing()
 
         scanTask = Task {
@@ -61,7 +60,6 @@ class NetworkScanner {
             // Always run IP scan for full coverage (as fallback and supplement)
             await scanNetwork()
 
-            // Final merge after IP scan
             mergeMDNSResults()
 
             isScanning = false
@@ -167,11 +165,7 @@ class NetworkScanner {
                 return nil
             }
 
-            // Identify a Valetudo robot by the X-Valetudo-Version response header.
-            // value(forHTTPHeaderField:) is case-insensitive on iOS 13+.
-            // Robots with Basic Auth enabled return HTTP 401 (still with the header set);
-            // robots without auth return HTTP 200. Both are valid Valetudo responses.
-            // Other 200-OK devices on /api/v2/robot are filtered out by the missing header.
+            // A Valetudo robot answers with X-Valetudo-Version, with 200 or 401 under Basic Auth.
             let isValetudo = httpResponse.value(forHTTPHeaderField: "X-Valetudo-Version") != nil
 
             guard isValetudo else { return nil }

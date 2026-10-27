@@ -16,18 +16,10 @@ struct ManualControlView: View {
         robotManager.getAPI(for: robot.id)
     }
 
-    // Touchpad size
     private let padSize: CGFloat = 280
     private let maxOffset: CGFloat = 100
 
-    // RC-Car steering: joystick direction = where the robot goes
-    // Y-axis (up/down) = forward/backward speed
-    // X-axis (left/right) = steering direction (not pure rotation)
-    //
-    // When pushing straight up: velocity=1, angle=0 (forward)
-    // When pushing left: velocity is low, angle is high (tight turn left)
-    // When pushing diagonal up-left: velocity is high, angle moderate (drive + steer)
-    // This feels like walking behind the robot and steering it
+    // RC-car steering: Y is forward/backward speed, X steers rather than rotating in place.
 
     private var velocityNormalized: Double {
         let normalizedY = -touchOffset.height / maxOffset  // up = positive = forward
@@ -38,9 +30,7 @@ struct ManualControlView: View {
         let normalizedX = touchOffset.width / maxOffset  // right = positive
         let normalizedY = -touchOffset.height / maxOffset
 
-        // Angle scales with X offset, but also consider the "intent":
-        // - Pure horizontal (Y≈0): full rotation (±120°) for on-the-spot turning
-        // - Diagonal (Y strong): moderate angle for steering while driving
+        // Pure horizontal turns on the spot (±120°), diagonal steers while driving.
         let absY = abs(normalizedY)
         let absX = abs(normalizedX)
 
@@ -50,14 +40,12 @@ struct ManualControlView: View {
         // Base angle from X position (0..120°)
         let baseAngle = normalizedX * 120.0
 
-        // When driving forward/backward (high Y), reduce angle for smoother steering
-        // When stationary (low Y), allow full rotation
+        // Less angle at speed for smoother steering, full rotation when stationary.
         let steeringFactor = absY > 0.3 ? (1.0 - absY * 0.5) : 1.0
 
         return max(-120, min(120, baseAngle * steeringFactor))
     }
 
-    // Display values for UI
     private var velocity: Int {
         Int(velocityNormalized * 100)
     }
@@ -70,7 +58,6 @@ struct ManualControlView: View {
         VStack(spacing: 30) {
             Spacer()
 
-            // Status indicator
             HStack(spacing: 8) {
                 Circle()
                     .fill(isTouching ? Color.green : Color.gray.opacity(0.3))
@@ -80,14 +67,11 @@ struct ManualControlView: View {
                     .foregroundStyle(isTouching ? .primary : .secondary)
             }
 
-            // Touchpad
             ZStack {
-                // Background
                 RoundedRectangle(cornerRadius: 40)
                     .fill(Color(.systemGray6))
                     .frame(width: padSize, height: padSize)
 
-                // Direction indicators (subtle)
                 VStack {
                     Image(systemName: "chevron.up")
                         .foregroundStyle(.tertiary)
@@ -106,12 +90,10 @@ struct ManualControlView: View {
                 }
                 .frame(width: padSize - 60)
 
-                // Center dot (resting position)
                 Circle()
                     .stroke(Color.gray.opacity(0.3), lineWidth: 2)
                     .frame(width: 60, height: 60)
 
-                // Touch indicator (follows finger)
                 Circle()
                     .fill(isTouching ? Color.blue : Color.blue.opacity(0.3))
                     .frame(width: 50, height: 50)
@@ -123,16 +105,13 @@ struct ManualControlView: View {
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        // Clamp offset to maxOffset
                         let x = max(-maxOffset, min(maxOffset, value.translation.width))
                         let y = max(-maxOffset, min(maxOffset, value.translation.height))
                         touchOffset = CGSize(width: x, height: y)
 
                         if !isTouching {
                             isTouching = true
-                            // Start heartbeat: send move commands every 500ms while touching.
-                            // Valetudo auto-disables manual control if no move command arrives
-                            // within its watchdog window (~1-2s), so we must send continuously.
+                            // Heartbeat every 500 ms: Valetudo ends manual control after ~1-2 s without a move command.
                             heartbeatTask = Task {
                                 while !Task.isCancelled {
                                     await sendMovement()
@@ -142,10 +121,8 @@ struct ManualControlView: View {
                         }
                     }
                     .onEnded { _ in
-                        // Cancel heartbeat first, then stop
                         heartbeatTask?.cancel()
                         heartbeatTask = nil
-                        // Reset and stop
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                             touchOffset = .zero
                         }
@@ -156,7 +133,6 @@ struct ManualControlView: View {
                     }
             )
 
-            // Speed indicator
             if isTouching {
                 VStack(spacing: 4) {
                     Text("v: \(velocity) • ∠: \(angle)°")
@@ -168,7 +144,6 @@ struct ManualControlView: View {
 
             Spacer()
 
-            // Instructions
             Text(String(localized: "manual.touchpad_hint"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -270,10 +245,7 @@ struct ManualControlView: View {
             if useHighRes {
                 try await api.highResManualControl(velocity: 0.0, angle: 0.0)
             }
-            // Standard ManualControl: no "stop" movementCommand exists in Valetudo.
-            // Valid commands are only: forward, backward, rotate_clockwise, rotate_counterclockwise.
-            // The robot stops on its own after the last discrete command — just cancel the
-            // heartbeat task (done in onEnded before calling here) and do nothing else.
+            // Valetudo has no "stop" command; the robot stops by itself, the heartbeat is already cancelled.
         } catch {
             logger.error("Stop failed: \(error.localizedDescription, privacy: .public)")
         }

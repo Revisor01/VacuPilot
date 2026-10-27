@@ -18,7 +18,6 @@ struct StatisticsView: View {
 
     var body: some View {
         List {
-            // Current/Last Cleaning Section
             if hasCurrentStats && !currentStats.isEmpty {
                 Section {
                     ForEach(currentStats) { stat in
@@ -29,7 +28,6 @@ struct StatisticsView: View {
                 }
             }
 
-            // Total Statistics Section
             if hasTotalStats && !totalStats.isEmpty {
                 Section {
                     ForEach(totalStats) { stat in
@@ -66,7 +64,6 @@ struct StatisticsView: View {
         isLoading = true
         defer { isLoading = false }
 
-        // Load current statistics
         do {
             currentStats = try await api.getCurrentStatistics()
         } catch {
@@ -74,7 +71,6 @@ struct StatisticsView: View {
             logger.error("Current statistics not supported: \(error.localizedDescription, privacy: .public)")
         }
 
-        // Load total statistics
         do {
             totalStats = try await api.getTotalStatistics()
         } catch {

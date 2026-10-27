@@ -61,7 +61,6 @@ actor SSEConnectionManager {
         // Don't reconnect suspended robots (they exhausted retries)
         if suspended.contains(robotId) { return }
 
-        // Cancel any existing task for this robot
         tasks[robotId]?.cancel()
         tasks[robotId] = nil
         isConnected[robotId] = false
@@ -84,7 +83,6 @@ actor SSEConnectionManager {
         }
         tasks[robotId] = task
 
-        // Start path monitor if not already running
         startPathMonitorIfNeeded()
     }
 
@@ -173,7 +171,6 @@ actor SSEConnectionManager {
                 continue
             }
 
-            // Cancel existing task
             tasks[robotId]?.cancel()
             tasks[robotId] = nil
             isConnected[robotId] = false
@@ -238,11 +235,7 @@ actor SSEConnectionManager {
                 // URLSession task was cancelled — exit cleanly
                 break
             } catch let APIError.httpError(status) where status == 401 || status == 403 {
-                // Auth-Fehler: NICHT sofort über dieselbe Verbindung reconnecten (das würde nur
-                // weitere 401 produzieren — Rückkopplung), aber den Roboter auch NICHT dauerhaft
-                // suspendieren. Ein 401 ist hier meist transient (Server handelt Basic-Auth neu
-                // aus, schließt die Verbindung kurz). Daher: langer, fester Backoff (30s) und
-                // weiter versuchen, damit der Roboter nicht dauerhaft "nicht erreichbar" bleibt.
+                // 401 is mostly transient: fixed 30 s backoff instead of instant reconnects or suspending the robot.
                 logger.warning("SSE auth error \(status, privacy: .public) for robot \(robotId, privacy: .public) — backing off 30s, then retry")
                 isConnected[robotId] = false
                 onConnectionChange(false)
@@ -277,7 +270,6 @@ actor SSEConnectionManager {
             }
         }
 
-        // Cleanup on exit
         isConnected[robotId] = false
         if retryCount >= maxRetries {
             suspended.insert(robotId)

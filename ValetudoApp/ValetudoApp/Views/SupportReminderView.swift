@@ -8,7 +8,6 @@ struct SupportReminderView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            // Header
             VStack(spacing: 16) {
                 Image(systemName: "heart.circle.fill")
                     .font(.system(size: 60))
@@ -20,14 +19,12 @@ struct SupportReminderView: View {
                     .multilineTextAlignment(.center)
             }
 
-            // Message
             Text("support.reminder.message")
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
-            // Buttons
             VStack(spacing: 12) {
                 Button {
                     supportManager.markReminderShown()

@@ -21,7 +21,6 @@ struct DoNotDisturbView: View {
     var body: some View {
         List {
             if isSupported {
-                // Enable Toggle Section
                 Section {
                     Toggle(isOn: $isEnabled) {
                         Label(String(localized: "dnd.enabled"), systemImage: "moon.fill")
@@ -33,7 +32,6 @@ struct DoNotDisturbView: View {
                     Text(String(localized: "dnd.description"))
                 }
 
-                // Time Selection Section
                 if isEnabled {
                     Section(String(localized: "dnd.schedule")) {
                         DatePicker(
@@ -55,7 +53,6 @@ struct DoNotDisturbView: View {
                         }
                     }
 
-                    // Current Status
                     Section {
                         HStack {
                             Image(systemName: "clock")
@@ -68,7 +65,6 @@ struct DoNotDisturbView: View {
                     }
                 }
 
-                // Save Button
                 if hasChanges {
                     Section {
                         Button {

@@ -16,8 +16,7 @@ final class MockValetudoAPI: ValetudoAPIProtocol, @unchecked Sendable {
     var shouldThrowOnDownload = false
     var getUpdaterStateCallCount = 0
 
-    /// Sequence of states to return on successive getUpdaterState calls.
-    /// Once exhausted, falls back to updaterStateToReturn.
+    /// States for successive getUpdaterState calls, then updaterStateToReturn.
     var stateSequence: [UpdaterState]? = nil
 
     func checkForUpdates() async throws {
@@ -91,9 +90,7 @@ final class UpdateServiceTests: XCTestCase {
 
         await service.checkForUpdates()
 
-        // Eine fehlgeschlagene Update-PRÜFUNG (z.B. View verlassen, Verbindung weg, 401
-        // beim Navigieren) darf KEINEN dauerhaften Fehler-Banner erzeugen — sie fällt
-        // still auf .idle zurück. Echte Fehler-Banner gibt es nur bei Download/Apply.
+        // A failed check falls back silently to .idle, no error banner.
         XCTAssertEqual(service.phase, .idle)
     }
 
@@ -101,8 +98,7 @@ final class UpdateServiceTests: XCTestCase {
 
     func testStartDownload_fromUpdateAvailable_transitionsToReadyToApply() async throws {
         let mock = MockValetudoAPI()
-        // First getUpdaterState call: checkForUpdates poll → ApprovalPending
-        // Then startDownload poll: first call → ApplyPending (triggers readyToApply)
+        // First call ApprovalPending, then ApplyPending during startDownload.
         mock.stateSequence = [
             makeUpdaterState("ValetudoUpdaterApprovalPendingState"),
             makeUpdaterState("ValetudoUpdaterApplyPendingState")
@@ -143,8 +139,7 @@ final class UpdateServiceTests: XCTestCase {
 
     func testStartDownload_whenPollReturnsIdle_transitionsToInterruptedError() async throws {
         let mock = MockValetudoAPI()
-        // First call (checkForUpdates): ApprovalPending
-        // Second call (poll in startDownload): IdleState → "Download unterbrochen"
+        // First call ApprovalPending, then IdleState → "Download unterbrochen".
         mock.stateSequence = [
             makeUpdaterState("ValetudoUpdaterApprovalPendingState"),
             makeUpdaterState("ValetudoUpdaterIdleState")
@@ -263,8 +258,7 @@ final class UpdateServiceTests: XCTestCase {
 
         await service.checkForUpdates()
 
-        // ErrorState falls through to default → .idle (no error message field in model)
-        // This documents the current behavior: unknown states map to .idle
+        // Unknown states such as ErrorState map to .idle.
         XCTAssertEqual(service.phase, .idle)
     }
 

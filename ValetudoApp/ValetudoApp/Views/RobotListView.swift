@@ -73,20 +73,17 @@ struct RobotRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Online indicator dot
             Circle()
                 .fill(status?.isOnline == true ? Color.green : Color.red)
                 .frame(width: 10, height: 10)
 
             VStack(alignment: .leading, spacing: 4) {
-                // Robot name
                 HStack(spacing: 6) {
                     Text(robot.name)
                         .font(.headline)
                         .lineLimit(1)
                         .truncationMode(.tail)
 
-                    // Update indicator
                     if hasUpdate {
                         Image(systemName: "arrow.down.circle.fill")
                             .font(.caption)
@@ -94,9 +91,7 @@ struct RobotRowView: View {
                     }
                 }
 
-                // Model name + Battery
                 HStack(spacing: 8) {
-                    // Model name
                     if let model = status?.info?.modelName {
                         Text(model)
                             .font(.caption)
@@ -105,7 +100,6 @@ struct RobotRowView: View {
                             .truncationMode(.tail)
                     }
 
-                    // Battery if online
                     if let battery = status?.batteryLevel {
                         HStack(spacing: 3) {
                             Image(systemName: batteryIcon(level: battery, charging: status?.batteryStatus == "charging"))
@@ -121,7 +115,6 @@ struct RobotRowView: View {
 
             Spacer()
 
-            // Status badge on the right
             if status?.isOnline == true, let statusValue = status?.statusValue {
                 StatusBadge(status: statusValue)
             } else {

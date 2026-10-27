@@ -44,8 +44,7 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
         case id, name, host, username, useSSL, ignoreCertificateErrors
     }
 
-    // Custom decoder for backward compatibility with existing saved robots
-    // Note: password is intentionally excluded from CodingKeys — stored in Keychain, never in UserDefaults
+    // Password is not in CodingKeys: it lives in the Keychain, never in UserDefaults.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)

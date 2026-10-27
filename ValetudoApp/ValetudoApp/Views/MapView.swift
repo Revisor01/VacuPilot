@@ -106,7 +106,6 @@ struct MapPreviewView: View {
                         }
                 }
 
-                // Overlay tap hint
                 VStack {
                     Spacer()
                     HStack {
@@ -201,7 +200,6 @@ struct MapContentView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Map
             GeometryReader { geometry in
                 ZStack {
                     Color(uiColor: .systemGroupedBackground)
@@ -244,7 +242,6 @@ struct MapContentView: View {
                             .scaleEffect(scale)
                             .offset(offset)
 
-                            // Drawing overlay for edit modes
                             if viewModel.editMode != .none && viewModel.editMode != .roomEdit && viewModel.editMode != .deleteRestriction {
                                 // For splitRoom with existing line, show drag handles
                                 if viewModel.editMode == .splitRoom && currentDrawStart != nil && currentDrawEnd != nil {
@@ -254,25 +251,20 @@ struct MapContentView: View {
                                 }
                             }
 
-                            // GoTo/SavePreset marker (draggable circle)
                             if let p = params {
                                 goToMarkerOverlay(params: p, pixelSize: pixelSize, geometry: geometry)
 
-                                // Preset markers (when toggled visible)
                                 presetMarkersOverlay(params: p, pixelSize: pixelSize, geometry: geometry)
                             }
 
-                            // Restriction delete targets
                             if viewModel.editMode == .deleteRestriction, let p = params, let restrictions = viewModel.existingRestrictions {
                                 restrictionDeleteOverlay(params: p, restrictions: restrictions, viewSize: geometry.size)
                             }
 
-                            // Annotation delete targets
                             if viewModel.editMode == .deleteAnnotation, let p = params {
                                 annotationDeleteOverlay(params: p, annotations: viewModel.existingAnnotations, viewSize: geometry.size)
                             }
 
-                            // Offline banner
                             if viewModel.isOffline {
                                 VStack {
                                     HStack(spacing: 6) {
@@ -310,7 +302,6 @@ struct MapContentView: View {
                 }
             }
 
-            // Bottom bar
             selectedRoomsBar
         }
         .toolbar {

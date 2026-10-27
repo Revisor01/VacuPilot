@@ -6,7 +6,6 @@ struct StatisticsSectionView: View {
     var body: some View {
         Section {
             DisclosureGroup {
-                // Last/Current cleaning stats
                 if !viewModel.lastCleaningStats.isEmpty {
                     Text(String(localized: "stats.current"))
                         .font(.caption)
@@ -18,7 +17,6 @@ struct StatisticsSectionView: View {
                     }
                 }
 
-                // Total stats
                 if !viewModel.totalStats.isEmpty {
                     Text(String(localized: "stats.total"))
                         .font(.caption)

@@ -125,24 +125,20 @@ struct TimerRow: View {
     var body: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                // Time
                 Text(timer.localTimeString)
                     .font(.title2)
                     .fontWeight(.medium)
 
-                // Label or action type
                 if let label = timer.label, !label.isEmpty {
                     Text(label)
                         .font(.subheadline)
                         .foregroundStyle(.primary)
                 }
 
-                // Days
                 Text(timer.dowString)
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                // Action type
                 HStack(spacing: 4) {
                     Image(systemName: timer.action.type == "full_cleanup" ? "house.fill" : "square.grid.2x2")
                         .font(.caption2)
@@ -300,7 +296,6 @@ struct TimerEditView: View {
 
         do {
             if let existingTimer = timer {
-                // Update existing timer
                 var updatedTimer = existingTimer
                 updatedTimer.label = label.isEmpty ? nil : label
                 updatedTimer.dow = Array(selectedDays).sorted()
@@ -310,7 +305,6 @@ struct TimerEditView: View {
 
                 try await api.updateTimer(updatedTimer)
             } else {
-                // Create new timer
                 let request = CreateTimerRequest(
                     enabled: true,
                     label: label.isEmpty ? nil : label,

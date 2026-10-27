@@ -9,7 +9,6 @@ struct ConsumablesPreviewSectionView: View {
                 DisclosureGroup {
                     ForEach(viewModel.consumables) { consumable in
                         HStack(spacing: 12) {
-                            // Icon
                             ZStack {
                                 Circle()
                                     .fill(consumable.iconColor.opacity(0.15))
@@ -19,7 +18,6 @@ struct ConsumablesPreviewSectionView: View {
                                     .foregroundStyle(consumable.iconColor)
                             }
 
-                            // Name & Progress
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(consumable.displayName)
                                     .font(.subheadline)
@@ -37,14 +35,12 @@ struct ConsumablesPreviewSectionView: View {
                                 .frame(height: 6)
                             }
 
-                            // Value
                             Text(consumable.remainingDisplay)
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .foregroundStyle(consumable.iconColor)
                                 .frame(minWidth: 40, alignment: .trailing)
 
-                            // Reset button
                             Button {
                                 Task { await viewModel.resetConsumable(consumable) }
                             } label: {

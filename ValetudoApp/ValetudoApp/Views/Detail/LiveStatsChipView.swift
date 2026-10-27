@@ -17,7 +17,6 @@ struct LiveStatsChipView: View {
                     .modifier(PulseAnimation())
             }
 
-            // Time
             HStack(spacing: 1) {
                 Image(systemName: "clock")
                     .font(.system(size: 8))
@@ -31,7 +30,6 @@ struct LiveStatsChipView: View {
                 .font(.system(size: 8))
                 .opacity(0.5)
 
-            // Area
             HStack(spacing: 1) {
                 Image(systemName: "square.dashed")
                     .font(.system(size: 8))

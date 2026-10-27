@@ -9,7 +9,6 @@ struct SupportView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Header
                     VStack(spacing: 12) {
                         Image(systemName: "heart.fill")
                             .font(.system(size: 50))
@@ -27,7 +26,6 @@ struct SupportView: View {
                     }
                     .padding(.top)
 
-                    // Support Options
                     if supportManager.isLoading {
                         ProgressView()
                             .padding(40)
@@ -50,7 +48,6 @@ struct SupportView: View {
                         .padding(.horizontal)
                     }
 
-                    // Footer
                     Text("support.footer")
                         .font(.caption)
                         .foregroundStyle(.tertiary)

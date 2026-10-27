@@ -13,10 +13,8 @@ struct MiniMapView: View {
 
             guard let params = calculateMapParams(layers: layers, pixelSize: pixelSize, size: size, padding: 10) else { return }
 
-            // Draw floor
             drawLayers(context: context, layers: layers, type: "floor", color: Color(white: 0.92), params: params, pixelSize: pixelSize)
 
-            // Draw segments
             for layer in layers where layer.type == "segment" {
                 let pixels = layer.decompressedPixels
                 guard !pixels.isEmpty else { continue }
@@ -32,18 +30,14 @@ struct MiniMapView: View {
                 drawThinWalls(context: context, pixels: pixels, color: Color(white: 0.25), params: params, pixelSize: pixelSize)
             }
 
-            // Draw restrictions
             if let restrictions = restrictions {
                 let ps = CGFloat(pixelSize)
-                // Virtual walls
                 for wall in restrictions.virtualWalls {
                     drawVirtualWall(context: context, wall: wall, params: params, pixelSize: ps)
                 }
-                // No-go zones
                 for zone in restrictions.restrictedZones {
                     drawRestrictedZone(context: context, zone: zone, params: params, pixelSize: ps, color: .red.opacity(0.3))
                 }
-                // No-mop zones
                 for zone in restrictions.noMopZones {
                     drawNoMopZone(context: context, zone: zone, params: params, pixelSize: ps, color: .blue.opacity(0.3))
                 }
@@ -56,7 +50,6 @@ struct MiniMapView: View {
                 }
             }
 
-            // Draw entities
             if let entities = map.entities {
                 // Draw path first (under robot)
                 for entity in entities where entity.type == "path" || entity.type == "predicted_path" {
@@ -244,20 +237,16 @@ struct MiniMapView: View {
         let y = CGFloat(points[1]) / ps * params.scale + params.offsetY
         let size: CGFloat = 18
 
-        // Pulsing glow effect
         let glowRect = CGRect(x: x - size/2 - 4, y: y - size/2 - 4, width: size + 8, height: size + 8)
         context.fill(Circle().path(in: glowRect), with: .color(Color(white: 0.2).opacity(0.3)))
 
-        // Outer ring
         let outerRect = CGRect(x: x - size/2, y: y - size/2, width: size, height: size)
         context.fill(Circle().path(in: outerRect), with: .color(Color(white: 0.2)))
 
-        // Inner body
         let innerSize: CGFloat = 12
         let innerRect = CGRect(x: x - innerSize/2, y: y - innerSize/2, width: innerSize, height: innerSize)
         context.fill(Circle().path(in: innerRect), with: .color(Color(white: 0.3)))
 
-        // Vacuum pattern (small circle)
         let dotSize: CGFloat = 4
         let dotRect = CGRect(x: x - dotSize/2, y: y - dotSize/2, width: dotSize, height: dotSize)
         context.fill(Circle().path(in: dotRect), with: .color(.white))
@@ -270,11 +259,9 @@ struct MiniMapView: View {
         let y = CGFloat(points[1]) / ps * params.scale + params.offsetY
         let size: CGFloat = 16
 
-        // Glow
         let glowRect = CGRect(x: x - size/2 - 3, y: y - size/2 - 3, width: size + 6, height: size + 6)
         context.fill(RoundedRectangle(cornerRadius: 5).path(in: glowRect), with: .color(Color(white: 0.2).opacity(0.3)))
 
-        // Base
         let rect = CGRect(x: x - size/2, y: y - size/2, width: size, height: size)
         context.fill(RoundedRectangle(cornerRadius: 4).path(in: rect), with: .color(Color(white: 0.2)))
 

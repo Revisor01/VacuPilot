@@ -1,18 +1,8 @@
 #!/usr/bin/env python3
 """
-Ein simulierter Valetudo-Roboter zum Testen von VacuPilot ohne echte Hardware.
+Simulierter Valetudo-Roboter mit allen Fähigkeiten, zum Testen ohne Hardware; Änderungen bleiben bis zum Neustart.
 
-Startet einen HTTP-Server, der sich wie ein Roboter mit allen Fähigkeiten
-verhält — inklusive Karte mit Räumen, Bodenbelägen (auch Teppich),
-Sperrzonen, Karten-Markierungen (Türschwelle, Vorhang, Rampe) und einer
-Teppichfläche im Midea-Format.
-
-Änderungen werden im Speicher gehalten: Wer einen Raum umbenennt, einen
-Bodenbelag setzt oder eine Markierung zeichnet, sieht das Ergebnis danach
-auch in der Karte. Beim Neustart ist alles wieder auf Anfang.
-
-Aufruf:  python3 fake_robot.py [--port 8080] [--host 0.0.0.0]
-Beenden: Strg-C
+Aufruf: python3 tools/simulierter-roboter.py [--port 8080] [--host 0.0.0.0]
 """
 
 import argparse
@@ -26,9 +16,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 START_TIME = time.time()
 
-# ---------------------------------------------------------------------------
-# Karte
-# ---------------------------------------------------------------------------
+# ---------- Karte ----------
 
 PIXEL_SIZE = 5          # cm pro Kartenpixel
 MAP_W, MAP_H = 200, 160  # Kartengröße in Pixeln
@@ -235,8 +223,7 @@ class RobotState:
                 entities.append({"__class": "PathMapEntity", "type": "path",
                                  "points": list(self.path), "metaData": {}})
 
-            # Teppichfläche, wie Midea sie meldet: die Nummer als Zahl, nicht
-            # als Text. Daran blieb die Karte bis 1.1.2 leer (PR #4).
+            # Teppichfläche wie bei Midea: die Nummer als Zahl, nicht als Text.
             entities.append({"__class": "PolygonMapEntity", "type": "carpet",
                              "points": [30 * PIXEL_SIZE, 30 * PIXEL_SIZE, 60 * PIXEL_SIZE, 30 * PIXEL_SIZE,
                                         60 * PIXEL_SIZE, 55 * PIXEL_SIZE, 30 * PIXEL_SIZE, 55 * PIXEL_SIZE],
@@ -349,8 +336,7 @@ PRESET_LISTS = {
     "CarpetSensorModeControlCapability": ["off", "avoid", "lift"],
     "CleanRouteControlCapability": ["standard", "intensive", "deep"],
     "SpeakerVolumeControlCapability": ["off", "low", "medium", "high", "max"],
-    # Die folgenden Werte stammen aus den Core-Enums der Firmware — nicht raten,
-    # sie weichen von den sonst üblichen Intensitätsnamen ab.
+    # Werte aus den Core-Enums der Firmware, sie weichen von den üblichen Intensitätsnamen ab.
     "AutoEmptyDockAutoEmptyIntervalControlCapability": ["off", "infrequent", "normal", "frequent"],
     "AutoEmptyDockAutoEmptyDurationControlCapability": ["auto", "short", "medium", "long"],
     "MopDockMopDryingTimeControlCapability": ["2h", "3h", "4h", "cold"],
@@ -490,8 +476,7 @@ class Handler(BaseHTTPRequestHandler):
                                            "signal": -48, "ips": ["192.168.1.123"]},
                                "ssid": "Simulation"})
 
-        # Die Dock-Fähigkeiten nutzen /properties mit eigenen Schlüsseln und
-        # eigene Wertnamen — nicht das übliche presets/name-Muster.
+        # Dock-Fähigkeiten nutzen /properties mit eigenen Schlüsseln, nicht presets/name.
         DOCK_PROPS = {
             "AutoEmptyDockAutoEmptyIntervalControlCapability": ("supportedIntervals", "interval"),
             "AutoEmptyDockAutoEmptyDurationControlCapability": ("supportedDurations", "duration"),
@@ -655,8 +640,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Connection", "keep-alive")
         self.end_headers()
         is_map = "map" in path
-        # Nach einer Weile beenden, damit tote Verbindungen nicht dauerhaft
-        # einen Thread belegen. Die App verbindet sich von selbst neu.
+        # Nach einer Weile beenden, damit tote Verbindungen keinen Thread belegen; die App verbindet neu.
         deadline = time.time() + 600
         try:
             while time.time() < deadline:

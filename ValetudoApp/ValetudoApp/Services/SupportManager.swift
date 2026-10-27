@@ -35,7 +35,7 @@ class SupportManager {
                 .sorted { $0.price < $1.price }
             products = loaded
 
-            // DEBT-07: Validiere dass alle konfigurierten Product IDs geladen wurden
+            // Prüfen, dass alle konfigurierten Product IDs geladen wurden
             let loadedIds = Set(loaded.map { $0.id })
             let missingIds = Constants.supportProductIds.subtracting(loadedIds)
             if !missingIds.isEmpty {

@@ -2,17 +2,13 @@ import XCTest
 @testable import ValetudoApp
 
 // MARK: - SSE Backoff Timing Tests
-// SSEConnectionManager is an actor with private state, so we test:
-// 1. The documented backoff schedule (1s → 5s → 30s)
-// 2. Connection state management (connect/disconnect)
-// 3. Line parsing logic (data: prefix handling)
+// The actor's state is private, so these tests cover the backoff schedule, connection state and line parsing.
 
 final class SSEConnectionManagerTests: XCTestCase {
 
     // MARK: - Backoff Schedule Tests
 
-    /// Validates the documented backoff values from SSEConnectionManager.streamWithReconnect
-    /// Backoff logic: retryCount 1 → 1s, 2 → 5s, 3+ → 30s (capped)
+    /// Backoff of streamWithReconnect: retry 1 → 1 s, 2 → 5 s, 3+ → 30 s.
     func testBackoffRetryCount1Is1Second() {
         let delay = backoffDelay(retryCount: 1)
         XCTAssertEqual(delay, 1.0)

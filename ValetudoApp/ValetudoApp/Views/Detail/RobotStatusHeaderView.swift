@@ -5,12 +5,10 @@ struct RobotStatusHeaderView: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // Status indicator
             Circle()
                 .fill(viewModel.status?.isOnline == true ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            // Status text
             if let statusValue = viewModel.status?.statusValue {
                 Text(localizedStatus(statusValue))
                     .font(.subheadline)
@@ -23,7 +21,6 @@ struct RobotStatusHeaderView: View {
                     .foregroundStyle(.red)
             }
 
-            // Model name (after status)
             if let model = viewModel.status?.info?.modelName {
                 Text("·")
                     .foregroundStyle(.secondary)
@@ -36,14 +33,13 @@ struct RobotStatusHeaderView: View {
 
             Spacer()
 
-            // Consumable warning
             if viewModel.hasConsumableWarning {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
 
-            // HTTP connection warning (SEC-01)
+            // HTTP connection warning
             if !viewModel.robot.useSSL {
                 Image(systemName: "lock.open.fill")
                     .font(.caption)
@@ -51,7 +47,6 @@ struct RobotStatusHeaderView: View {
                     .accessibilityLabel(String(localized: "security.http_connection"))
             }
 
-            // Locate button (compact, before battery)
             if viewModel.status?.isOnline == true {
                 Button {
                     Task { await viewModel.locate() }
@@ -68,7 +63,6 @@ struct RobotStatusHeaderView: View {
                 .accessibilityLabel(String(localized: "action.locate"))
             }
 
-            // Battery pill (rightmost)
             if let battery = viewModel.status?.batteryLevel {
                 HStack(spacing: 4) {
                     Image(systemName: batteryIcon(level: battery, charging: viewModel.status?.batteryStatus == "charging"))

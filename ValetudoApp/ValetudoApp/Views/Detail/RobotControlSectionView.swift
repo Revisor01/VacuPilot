@@ -7,7 +7,6 @@ struct RobotControlSectionView: View {
         Section {
             // Main control buttons - 3 buttons: Start/Pause (toggle), Stop, Home
             HStack(spacing: 12) {
-                // Start/Pause toggle button
                 if viewModel.isRunning {
                     ControlButton(
                         title: String(localized: "action.pause"),
@@ -59,7 +58,6 @@ struct RobotControlSectionView: View {
                 HStack(spacing: 8) {
                     Spacer()
 
-                    // Operation Mode
                     if !viewModel.operationModePresets.isEmpty {
                         Menu {
                             ForEach(viewModel.operationModePresets, id: \.self) { preset in
@@ -93,7 +91,6 @@ struct RobotControlSectionView: View {
                         }
                     }
 
-                    // Fan Speed
                     if !viewModel.fanSpeedPresets.isEmpty {
                         Menu {
                             ForEach(viewModel.fanSpeedPresets, id: \.self) { preset in
@@ -126,7 +123,6 @@ struct RobotControlSectionView: View {
                         }
                     }
 
-                    // Water Usage
                     if !viewModel.waterUsagePresets.isEmpty {
                         Menu {
                             ForEach(viewModel.waterUsagePresets, id: \.self) { preset in

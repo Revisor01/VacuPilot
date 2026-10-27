@@ -3,8 +3,7 @@ import XCTest
 
 final class TimerTests: XCTestCase {
 
-    /// Round-trip property: utcToLocal then localToUTC must return the original values.
-    /// This holds for any timezone the test runner is in.
+    /// utcToLocal then localToUTC returns the original values in any timezone.
     func testLocalToUtcRoundTrip() {
         let hours = [0, 1, 10, 12, 22, 23]
         let minutes = [0, 15, 30, 45, 59]
@@ -58,8 +57,7 @@ final class TimerTests: XCTestCase {
         }
     }
 
-    /// Verify that utcOffset is correctly applied: the difference between local and UTC
-    /// must equal the current timezone offset (mod 24h).
+    /// Local minus UTC equals the current timezone offset (mod 24 h).
     func testUtcToLocalAppliesOffset() {
         let offsetMinutes = TimeZone.current.secondsFromGMT() / 60
         let inputH = 10

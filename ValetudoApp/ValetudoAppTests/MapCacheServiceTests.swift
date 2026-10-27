@@ -105,11 +105,9 @@ final class MapCacheServiceTests: XCTestCase {
     // MARK: - Overwrite Existing Cache
 
     func testSaveOverwritesPreviousCache() async {
-        // Save first version
         let map1 = RobotMap(size: MapSize(x: 100, y: 100), pixelSize: 5, layers: [], entities: [])
         await service.save(map1, for: robotId)
 
-        // Overwrite with second version
         let map2 = RobotMap(size: MapSize(x: 500, y: 500), pixelSize: 10, layers: [], entities: [])
         await service.save(map2, for: robotId)
 
@@ -125,11 +123,9 @@ final class MapCacheServiceTests: XCTestCase {
         let map = makeMinimalMap()
         await service.save(map, for: robotId)
 
-        // Verify it exists
         let beforeDelete = await service.load(for: robotId)
         XCTAssertNotNil(beforeDelete)
 
-        // Delete and verify it's gone
         service.deleteCache(for: robotId)
         let afterDelete = await service.load(for: robotId)
         XCTAssertNil(afterDelete)

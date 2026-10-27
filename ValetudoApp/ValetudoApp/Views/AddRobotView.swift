@@ -18,7 +18,6 @@ struct AddRobotView: View {
     var body: some View {
         NavigationStack {
             Form {
-                // Network Scan Section
                 Section {
                     Button {
                         showScanner = true
@@ -38,7 +37,6 @@ struct AddRobotView: View {
                     Text(String(localized: "scan.description"))
                 }
 
-                // Manual Entry Section
                 Section(String(localized: "scan.manual_entry")) {
                     TextField(String(localized: "settings.name"), text: $name)
                         .textContentType(.name)
@@ -196,7 +194,6 @@ struct NetworkScannerView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Progress Section
                 if scanner.isScanning {
                     Section {
                         VStack(spacing: 12) {
@@ -217,7 +214,6 @@ struct NetworkScannerView: View {
                     }
                 }
 
-                // Found Robots Section
                 if !scanner.discoveredRobots.isEmpty {
                     Section(String(localized: "scan.found_robots")) {
                         ForEach(sortedRobots) { robot in
@@ -256,7 +252,6 @@ struct NetworkScannerView: View {
                     }
                 }
 
-                // No Results
                 if !scanner.isScanning && scanner.discoveredRobots.isEmpty && scanner.progress > 0 {
                     Section {
                         VStack(spacing: 12) {
@@ -275,7 +270,6 @@ struct NetworkScannerView: View {
                     }
                 }
 
-                // Rescan Button
                 if !scanner.isScanning && scanner.progress > 0 {
                     Section {
                         Button {

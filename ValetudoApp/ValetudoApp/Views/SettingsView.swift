@@ -29,7 +29,6 @@ struct SettingsView: View {
 
                                 Spacer()
 
-                                // Online status
                                 Circle()
                                     .fill(robotManager.robotStates[robot.id]?.isOnline == true ? .green : .red)
                                     .frame(width: 10, height: 10)

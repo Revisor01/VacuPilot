@@ -98,7 +98,6 @@ final class RobotSettingsViewModel {
             settingsLoaded = true
         }
 
-        // Load speaker volume
         do {
             volume = Double(try await api.getSpeakerVolume())
         } catch {
@@ -106,7 +105,6 @@ final class RobotSettingsViewModel {
             if !DebugConfig.showAllCapabilities { hasVolumeControl = false }
         }
 
-        // Load carpet mode
         do {
             carpetMode = try await api.getCarpetMode()
         } catch {
@@ -114,7 +112,6 @@ final class RobotSettingsViewModel {
             if !DebugConfig.showAllCapabilities { hasCarpetMode = false }
         }
 
-        // Load persistent map
         do {
             persistentMap = try await api.getPersistentMap()
         } catch {
@@ -122,7 +119,7 @@ final class RobotSettingsViewModel {
             if !DebugConfig.showAllCapabilities { hasPersistentMap = false }
         }
 
-        // Check capabilities (Cache-first, DEBT-06)
+        // Check capabilities, cache first
         do {
             let capabilities: [String]
             if let cached = robotManager.cachedCapabilities(for: robot.id) {
@@ -155,7 +152,6 @@ final class RobotSettingsViewModel {
             hasMappingPass = DebugConfig.showAllCapabilities
         }
 
-        // Load key lock state
         if hasKeyLock {
             do {
                 keyLock = try await api.getKeyLock()
@@ -165,7 +161,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load obstacle avoidance state
         if hasObstacleAvoidance {
             do {
                 obstacleAvoidance = try await api.getObstacleAvoidance()
@@ -175,7 +170,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load pet obstacle avoidance state
         if hasPetObstacleAvoidance {
             do {
                 petObstacleAvoidance = try await api.getPetObstacleAvoidance()
@@ -185,7 +179,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load carpet sensor mode presets
         if hasCarpetSensorMode {
             do {
                 carpetSensorModePresets = try await api.getCarpetSensorModePresets()
@@ -201,7 +194,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load collision avoidance
         if hasCollisionAvoidance {
             do {
                 collisionAvoidance = try await api.getCollisionAvoidantNavigation()
@@ -211,7 +203,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load floor material navigation
         if hasFloorMaterialNavigation {
             do {
                 floorMaterialNavigation = try await api.getFloorMaterialNavigation()
@@ -221,7 +212,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load mop dock auto drying
         if hasMopDockAutoDrying {
             do {
                 mopDockAutoDrying = try await api.getMopDockAutoDrying()
@@ -231,7 +221,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load mop dock wash temperature presets
         if hasMopDockWashTemperature {
             do {
                 mopDockWashTemperaturePresets = try await api.getMopDockWashTemperaturePresets()
@@ -247,7 +236,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load mop dock drying time presets
         if hasMopDockDryingTime {
             do {
                 mopDockDryingTimePresets = try await api.getMopDockDryingTimePresets()
@@ -266,7 +254,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load map snapshots
         if hasMapSnapshots {
             do {
                 mapSnapshots = try await api.getMapSnapshots()
@@ -276,7 +263,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load pending map change
         if hasPendingMapChange {
             do {
                 let state = try await api.getPendingMapChange()
@@ -287,7 +273,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load voice packs
         if hasVoicePack {
             do {
                 let state = try await api.getVoicePackState()
@@ -299,7 +284,6 @@ final class RobotSettingsViewModel {
             }
         }
 
-        // Load auto empty dock duration presets
         if hasAutoEmptyDockDuration {
             do {
                 autoEmptyDockDurationPresets = try await api.getAutoEmptyDockDurationPresets()

@@ -100,8 +100,7 @@ final class ConsumableTests: XCTestCase {
     }
 }
 
-/// Trockenzeit-Werte der Mopp-Station. 2026.10.0 bringt "5h" und "quiet" dazu;
-/// vorher wurde "5h" zu "5H" und "quiet" blieb unübersetzt.
+/// Drying times of the mop dock; "5h" and "quiet" arrived with 2026.10.0.
 final class DryingTimeDisplayNameTests: XCTestCase {
 
     func testFiveHoursIsLocalized() {

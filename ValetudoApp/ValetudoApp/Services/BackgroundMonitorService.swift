@@ -28,7 +28,6 @@ final class BackgroundMonitorService {
         // 1. Sofort reschedulen — garantiert naechsten Zyklus auch wenn dieser Task abbricht
         scheduleBackgroundRefresh()
 
-        // 2. Swift Task fuer async Arbeit
         let workTask = Task {
             await checkAllRobots()
         }
@@ -39,7 +38,6 @@ final class BackgroundMonitorService {
             task.setTaskCompleted(success: false)
         }
 
-        // 4. Nach Abschluss completion aufrufen
         Task {
             _ = await workTask.result
             task.setTaskCompleted(success: true)
@@ -73,21 +71,18 @@ final class BackgroundMonitorService {
         guard let prevStatus = previous?.statusValue else { return }
         let currentStatus = current.statusValue ?? ""
 
-        // Reinigung abgeschlossen
         if prevStatus == "cleaning" && (currentStatus == "docked" || currentStatus == "idle") {
             Task { @MainActor in
                 NotificationService.shared.notifyCleaningComplete(robotName: robotName, area: nil)
             }
         }
 
-        // Roboter steckt fest
         if current.statusFlag == "stuck" && previous?.statusFlag != "stuck" {
             Task { @MainActor in
                 NotificationService.shared.notifyRobotStuck(robotName: robotName)
             }
         }
 
-        // Roboter im Fehler-Zustand
         if currentStatus == "error" && prevStatus != "error" {
             let errorMsg = current.statusFlag ?? String(localized: "status.error")
             Task { @MainActor in
