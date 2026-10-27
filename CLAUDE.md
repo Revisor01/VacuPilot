@@ -29,10 +29,23 @@ kein `TODO` ohne Issue-Nummer, kein auskommentierter Code.
 
 ## In English
 
-Project instructions and handover notes are kept outside this repository.
-Without them: changes only via pull request to `main`, one topic each;
-Conventional Commits in English or German; user-visible changes go into `CHANGELOG.md` under `[Unreleased]`; new behaviour gets a test, a bug fix first gets the test that shows the
-bug;
-no new dependencies without asking; no credentials, private hostnames, local
-paths, test accounts or work notes anywhere in the repository. Comments
-explain why, at most three lines.
+Project instructions, handover notes and operational knowledge are not kept
+in this repository but in the author's private notes. Without them, follow
+these rules.
+
+- Changes only via a pull request to `main`. One topic per pull request.
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org/),
+  subject in the present tense, at most 72 characters, in German or English.
+- Every change that users notice goes into `CHANGELOG.md` under
+  `[Unreleased]` in the same pull request
+  ([Keep a Changelog](https://keepachangelog.com/en/1.1.0/)).
+- New behaviour gets a test; a bug fix first gets the test that shows the bug.
+- No new dependencies without asking.
+- No credentials, private server hostnames, local paths, test accounts or
+  work notes in this repository, including commit messages, pull request
+  texts and comments. The secret scan in CI checks this.
+
+Comments: a comment says why something is the way it is, not what the code
+does or how it used to be. At most three lines; anything longer belongs in
+the commit message or in `docs/`. No hostnames, IPs or server details, no
+`TODO` without an issue number, no commented-out code.
