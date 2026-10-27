@@ -12,23 +12,19 @@ struct RoomsManagementView: View {
     @State private var newName = ""
     @State private var showRenameSheet = false
 
-    // Capabilities
     @State private var hasSegmentRename = false
     @State private var hasSegmentEdit = false
     @State private var hasSegmentMaterial = false
     @State private var supportedMaterials: [String] = []
 
-    // Material editing
     @State private var showMaterialSheet = false
     @State private var materialSegment: Segment?
     /// Floor material per segment id, read from the map layers.
     @State private var segmentMaterials: [String: String] = [:]
 
-    // Join segments
     @State private var showJoinSheet = false
     @State private var selectedSegmentsToJoin: Set<String> = []
 
-    // Split segment
     @State private var showSplitSheet = false
     @State private var segmentToSplit: Segment?
 
@@ -44,7 +40,6 @@ struct RoomsManagementView: View {
                         .foregroundStyle(.secondary)
                 }
             } else {
-                // Segment Edit Section
                 if hasSegmentEdit && segments.count >= 2 {
                     Section {
                         Button {
@@ -71,9 +66,7 @@ struct RoomsManagementView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(segment.displayName)
                                     .font(.body)
-                                // Show the floor material rather than the raw id:
-                                // it is the useful piece of information here, and
-                                // it makes clear the material can be changed.
+                                // The floor material instead of the raw id, it shows that it can be changed.
                                 if hasSegmentMaterial, let material = materialForSegment(segment.id) {
                                     Label {
                                         Text(FloorMaterial.displayName(for: material))
@@ -192,7 +185,6 @@ struct RoomsManagementView: View {
                 hasSegmentMaterial = capabilities.contains("MapSegmentMaterialControlCapability")
             }
 
-            // Load supported materials if capability exists
             if hasSegmentMaterial {
                 do {
                     let props = try await api.getSegmentMaterialProperties()
@@ -443,7 +435,6 @@ struct SplitSegmentSheet: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                // Segment picker
                 Picker(String(localized: "rooms.select_room"), selection: $selectedSegmentId) {
                     Text(String(localized: "rooms.select_room")).tag(nil as String?)
                     ForEach(segments) { segment in
@@ -453,7 +444,6 @@ struct SplitSegmentSheet: View {
                 .pickerStyle(.menu)
                 .padding()
 
-                // Map with drawing
                 if isLoading {
                     Spacer()
                     ProgressView()
@@ -469,7 +459,6 @@ struct SplitSegmentSheet: View {
                                 viewSize: geometry.size
                             )
 
-                            // Drawing overlay
                             Color.clear
                                 .contentShape(Rectangle())
                                 .gesture(
@@ -496,7 +485,6 @@ struct SplitSegmentSheet: View {
                     Spacer()
                 }
 
-                // Instructions
                 Text(String(localized: "rooms.split_hint"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -555,7 +543,6 @@ struct SplitSegmentSheet: View {
 
         let pixelSize = map.pixelSize ?? 5
 
-        // Calculate map params
         var minX = Int.max, maxX = Int.min
         var minY = Int.max, maxY = Int.min
 
@@ -585,7 +572,6 @@ struct SplitSegmentSheet: View {
         let offsetX = padding + (availableWidth - contentWidth * scale) / 2 - CGFloat(minX) * scale
         let offsetY = padding + (availableHeight - contentHeight * scale) / 2 - CGFloat(minY) * scale
 
-        // Convert screen to map coordinates
         let pointA = ZonePoint(
             x: Int((start.x - offsetX) / scale),
             y: Int((start.y - offsetY) / scale)
@@ -614,14 +600,12 @@ struct SplitMapView: View {
 
             guard let params = calculateMapParams(layers: layers, pixelSize: pixelSize, size: size) else { return }
 
-            // Draw floor
             for layer in layers where layer.type == "floor" {
                 let pixels = layer.decompressedPixels
                 guard !pixels.isEmpty else { continue }
                 drawPixels(context: context, pixels: pixels, color: Color(white: 0.92), params: params, pixelSize: pixelSize)
             }
 
-            // Draw segments
             for layer in layers where layer.type == "segment" {
                 let pixels = layer.decompressedPixels
                 guard !pixels.isEmpty else { continue }
@@ -631,14 +615,12 @@ struct SplitMapView: View {
                 drawPixels(context: context, pixels: pixels, color: color, params: params, pixelSize: pixelSize)
             }
 
-            // Draw walls
             for layer in layers where layer.type == "wall" {
                 let pixels = layer.decompressedPixels
                 guard !pixels.isEmpty else { continue }
                 drawPixels(context: context, pixels: pixels, color: Color(white: 0.25), params: params, pixelSize: pixelSize)
             }
 
-            // Draw split line
             if let start = splitStart, let end = splitEnd {
                 var path = Path()
                 path.move(to: start)

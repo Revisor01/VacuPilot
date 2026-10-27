@@ -21,7 +21,6 @@ struct UpdateStatusBannerView: View {
                         }
                         Spacer()
 
-                        // GitHub release link
                         if let urlStr = viewModel.updateService?.updateUrl, let releaseURL = URL(string: urlStr) {
                             Link(destination: releaseURL) {
                                 Image(systemName: "arrow.up.forward.square")

@@ -137,7 +137,7 @@ class NotificationService {
             return
         }
 
-        // Per D-07: ersten verfuegbaren Roboter verwenden
+        // Ersten verfügbaren Roboter verwenden
         let robotId = robotManager.robots.first?.id
         guard let id = robotId, let api = robotManager.getAPI(for: id) else {
             logger.warning("No robot available for notification action \(actionIdentifier, privacy: .public)")

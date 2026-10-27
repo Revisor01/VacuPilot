@@ -18,16 +18,13 @@ final class MapLayerTests: XCTestCase {
     }
 
     func testDecompressSingleRun() throws {
-        // [5, 10, 3] means: starting at (5, 10), draw 3 horizontal pixels
-        // => (5,10), (6,10), (7,10) = [5, 10, 6, 10, 7, 10]
+        // [5, 10, 3] => (5,10), (6,10), (7,10)
         let layer = try makeLayer(json: #"{"compressedPixels": [5, 10, 3]}"#)
         XCTAssertEqual(layer.decompressedPixels, [5, 10, 6, 10, 7, 10])
     }
 
     func testDecompressMultipleRuns() throws {
-        // [0, 0, 2, 10, 5, 1]
-        // Run 1: (0,0) count=2 => (0,0),(1,0) = [0,0,1,0]
-        // Run 2: (10,5) count=1 => (10,5) = [10,5]
+        // Two runs: (0,0) count 2 and (10,5) count 1
         let layer = try makeLayer(json: #"{"compressedPixels": [0, 0, 2, 10, 5, 1]}"#)
         XCTAssertEqual(layer.decompressedPixels, [0, 0, 1, 0, 10, 5])
     }
@@ -66,8 +63,7 @@ final class MapLayerTests: XCTestCase {
     }
 
     func testUnknownMaterialIsHumanizedRatherThanDropped() {
-        // Newer firmware may introduce materials this build has never seen.
-        // They must stay visible instead of vanishing from the UI.
+        // Unknown materials from newer firmware must stay visible.
         XCTAssertEqual(FloorMaterial.displayName(for: "carpet_extra_high"), "Carpet Extra High")
         XCTAssertEqual(FloorMaterial.displayName(for: "linoleum"), "Linoleum")
     }
@@ -139,8 +135,7 @@ final class MapLayerTests: XCTestCase {
     }
 
     func testUnknownMaterialDecodesWithoutFailing() throws {
-        // metaData.material is a free-form String, so an unknown value must not
-        // break decoding of the whole layer.
+        // metaData.material is free-form, an unknown value must not break the layer.
         let layer = try makeLayer(json: #"{"compressedPixels": [1, 1, 1], "metaData": {"material": "carpet_extra_high"}}"#)
         XCTAssertEqual(layer.metaData?.material, "carpet_extra_high")
         XCTAssertEqual(layer.decompressedPixels, [1, 1])
@@ -152,9 +147,7 @@ final class MapLayerTests: XCTestCase {
         try JSONDecoder().decode(RobotMap.self, from: json.data(using: .utf8)!)
     }
 
-    /// Reduced map of a Eureka J15 Pro Ultra (Midea, firmware 2026.10.0), see
-    /// PR #4. Midea sends the carpet id as a number, which used to fail
-    /// decoding and leave the whole map empty.
+    /// Reduced map of a Eureka J15 Pro Ultra (Midea, firmware 2026.10.0), which sends the carpet id as a number.
     private let mideaMapWithCarpet = #"""
     {
       "__class": "ValetudoMap",

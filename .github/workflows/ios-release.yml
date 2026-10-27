@@ -1,9 +1,6 @@
 name: iOS Release Build
 
-# Baut das Release in Xcode Cloud (Workflow „VacuPilot TestFlight“) und wartet
-# darauf; der Build landet in TestFlight und kann von dort in den App Store.
-# Xcode Cloud signiert selbst und vergibt die Build-Nummer. Die Workflow-ID
-# steht in der Repo-Variable XCODE_CLOUD_WORKFLOW.
+# Baut das Release in Xcode Cloud (Workflow-ID in XCODE_CLOUD_WORKFLOW) und wartet auf TestFlight.
 
 on:
   workflow_dispatch:

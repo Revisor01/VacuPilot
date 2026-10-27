@@ -95,14 +95,12 @@ struct ConsumableRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Icon
             Image(systemName: consumable.icon)
                 .font(.title2)
                 .foregroundStyle(consumable.iconColor)
                 .frame(width: 36)
                 .accessibilityHidden(true)
 
-            // Name & Progress
             VStack(alignment: .leading, spacing: 6) {
                 Text(consumable.displayName)
                     .font(.subheadline)
@@ -110,12 +108,10 @@ struct ConsumableRow: View {
 
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
-                        // Background
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.secondary.opacity(0.2))
                             .frame(height: 8)
 
-                        // Progress
                         RoundedRectangle(cornerRadius: 4)
                             .fill(progressColor)
                             .frame(width: geometry.size.width * consumable.remainingPercent / 100, height: 8)
@@ -127,7 +123,6 @@ struct ConsumableRow: View {
             .accessibilityLabel(consumable.displayName)
             .accessibilityValue(String(format: "%.0f%%", consumable.remainingPercent))
 
-            // Remaining value
             Text(consumable.remainingDisplay)
                 .font(.subheadline)
                 .fontWeight(.semibold)
@@ -135,7 +130,6 @@ struct ConsumableRow: View {
                 .frame(minWidth: 44, alignment: .trailing)
                 .accessibilityHidden(true)
 
-            // Reset button
             Button {
                 onReset()
             } label: {

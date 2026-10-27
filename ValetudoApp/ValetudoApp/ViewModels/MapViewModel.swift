@@ -33,11 +33,11 @@ final class MapViewModel {
     var mapRefreshId = UUID()
     var loadError: String?
 
-    // MARK: - Cached Computations (PERF-01, PERF-03)
+    // MARK: - Cached Computations
     @ObservationIgnored var segmentPixelSets: [String: Set<Int>] = [:]
     var cachedSegmentInfos: [SegmentInfo] = []
 
-    // MARK: - Static Layer Pre-rendering (PERF-04)
+    // MARK: - Static Layer Pre-rendering
     var staticLayerImage: CGImage?
     @ObservationIgnored private var lastRenderSize: CGSize = .zero
 
@@ -67,11 +67,7 @@ final class MapViewModel {
     // MARK: - Existing Annotations
     var annotationToDelete: MapAnnotation?
 
-    /// Annotations currently set on the robot.
-    ///
-    /// The firmware has no endpoint to read these back — they arrive as part of
-    /// the map. Deriving them from `map` rather than storing a copy keeps them
-    /// in step with every map refresh automatically.
+    /// Annotations on the robot, derived from `map` because the firmware cannot read them back.
     var existingAnnotations: [MapAnnotation] {
         (map?.entities ?? []).compactMap { MapAnnotation(entity: $0) }
     }
@@ -269,7 +265,6 @@ final class MapViewModel {
                     break
                 } catch {
                     logger.warning("Map SSE error: \(error.localizedDescription, privacy: .public) — falling back to HTTP poll")
-                    // Einmaliger HTTP-Poll als Fallback
                     if let newMap = try? await api.getMap() {
                         self.map = newMap
                         self.rebuildSegmentPixelSets()
@@ -280,7 +275,6 @@ final class MapViewModel {
                         self.isOffline = false
                         await MapCacheService.shared.saveIfChanged(newMap, for: self.robot.id)
                     } else {
-                        // HTTP-Poll auch fehlgeschlagen
                         if self.map == nil, let cachedMap = await MapCacheService.shared.load(for: self.robot.id) {
                             self.map = cachedMap
                             self.isOffline = true
@@ -381,9 +375,7 @@ final class MapViewModel {
         UIColor(red: 0.78, green: 0.88, blue: 0.72, alpha: 1),
     ]
 
-    /// Multiplies the RGB channels by `factor`, keeping the alpha value.
-    /// `factor` below 1 darkens; the alpha stays put so the stripe does not
-    /// turn lighter against the floor underneath.
+    /// Multiplies RGB by `factor` and keeps alpha, so the stripe does not turn lighter.
     nonisolated static func darken(_ color: UIColor, by factor: CGFloat) -> UIColor {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard color.getRed(&r, green: &g, blue: &b, alpha: &a) else { return color }
@@ -423,7 +415,6 @@ final class MapViewModel {
 
                 let pixelScale = scale * CGFloat(pxSize)
 
-                // Floor
                 for layer in layersCopy where layer.type == "floor" {
                     let pixels = layer.decompressedPixels
                     cgCtx.setFillColor(UIColor(white: 0.92, alpha: 1).cgColor)
@@ -443,11 +434,7 @@ final class MapViewModel {
                     let baseColor = MapViewModel.segmentUIColor(segmentId: layer.metaData?.segmentId).withAlphaComponent(0.6)
                     let material = layer.metaData?.material
 
-                    // A map pixel is about two screen points across, so fine
-                    // hatching blurs into an even wash and every material ends
-                    // up looking the same. The stripes are therefore spaced
-                    // widely, and the contrast — not the spacing — carries the
-                    // difference.
+                    // A map pixel is about two points wide, so stripes are spaced widely and contrast carries the difference.
                     let textureInterval: Int
                     let isHorizontal: Bool
                     let isVertical: Bool
@@ -464,8 +451,7 @@ final class MapViewModel {
                         textureInterval = 6; isHorizontal = false; isVertical = true
                         accentStrength = 0.75
                     case "carpet", "carpet_low", "carpet_high":
-                        // Narrow diagonal-free grid with strong contrast: the
-                        // densest and darkest of the three, hard to confuse
+                        // Narrow grid with strong contrast, the densest of the three.
                         textureInterval = 4; isHorizontal = true; isVertical = true
                         accentStrength = 0.45
                     default:
@@ -473,9 +459,7 @@ final class MapViewModel {
                         accentStrength = 1.0
                     }
 
-                    // Darken the room colour instead of making it more
-                    // transparent: on the light floor, a more transparent
-                    // colour comes out *lighter* and the stripes disappear.
+                    // Darken instead of fading: a more transparent colour reads lighter and the stripes disappear.
                     let accentColor = MapViewModel.darken(baseColor, by: accentStrength)
 
                     var i = 0
@@ -684,8 +668,7 @@ final class MapViewModel {
         let offsetX = params.offsetX
         let offsetY = params.offsetY
 
-        // start/end are already in map coordinates (from screenToMapCoords)
-        // Convert directly to pixel coordinates — no gesture transform removal needed
+        // start/end are already map coordinates, convert directly to pixels.
         let pixelAX = Int(((start.x - offsetX) / mapScale).rounded())
         let pixelAY = Int(((start.y - offsetY) / mapScale).rounded())
         let pixelBX = Int(((end.x - offsetX) / mapScale).rounded())
@@ -786,12 +769,7 @@ final class MapViewModel {
 
     // MARK: - Map Annotations
 
-    /// Sends the given annotations to the robot and refreshes the map.
-    ///
-    /// The endpoint replaces the whole set, so `annotations` must be the
-    /// complete list — anything left out is deleted on the robot. Since there
-    /// is no way to read annotations back other than the map, the map is
-    /// reloaded afterwards to reflect what actually stuck.
+    /// Sends the complete annotation set (anything left out is deleted) and reloads the map.
     private func writeAnnotations(_ annotations: [MapAnnotation]) async -> Bool {
         guard let api = api else { return false }
 
@@ -826,8 +804,7 @@ final class MapViewModel {
     }
 
     func deleteAnnotation(_ annotation: MapAnnotation) async {
-        // Match on type and coordinates: the id is local to this app and is not
-        // preserved by the robot.
+        // Match on type and coordinates, the robot does not keep the local id.
         let remaining = existingAnnotations.filter {
             !($0.type == annotation.type && $0.points == annotation.points)
         }

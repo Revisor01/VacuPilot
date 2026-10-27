@@ -34,7 +34,7 @@ struct ObstaclePhotoView: View {
         .navigationTitle(label ?? String(localized: "obstacle.photo"))
         .navigationBarTitleDisplayMode(.inline)
         .task(id: obstacleId) {
-            // Lazy-Loading — nur laden wenn View erscheint (Pitfall 5: Rate-Limit beachten)
+            // Erst beim Erscheinen laden, wegen Rate-Limit
             isLoading = true
             loadError = false
             do {

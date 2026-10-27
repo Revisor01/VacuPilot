@@ -50,7 +50,6 @@ struct RoomsSectionView: View {
                 // Clean button with iterations picker - visible when rooms are selected
                 if !viewModel.selectedSegments.isEmpty {
                     HStack(spacing: 8) {
-                        // Clean button
                         Button {
                             Task { await viewModel.cleanSelectedRooms() }
                         } label: {
@@ -92,7 +91,6 @@ struct RoomsSectionView: View {
 
                         Spacer()
 
-                        // Room count badge
                         Text("\(viewModel.selectedSegments.count)")
                             .font(.caption)
                             .padding(.horizontal, 8)

@@ -24,7 +24,6 @@ struct IntensityControlView: View {
 
     var body: some View {
         List {
-            // Operation Mode Section
             if !operationModePresets.isEmpty {
                 Section {
                     ForEach(operationModePresets, id: \.self) { preset in
@@ -53,7 +52,6 @@ struct IntensityControlView: View {
                 }
             }
 
-            // Fan Speed Section
             if !fanSpeedPresets.isEmpty {
                 Section {
                     ForEach(fanSpeedPresets, id: \.self) { preset in
@@ -80,7 +78,6 @@ struct IntensityControlView: View {
                 }
             }
 
-            // Water Usage Section
             if !waterUsagePresets.isEmpty {
                 Section {
                     ForEach(waterUsagePresets, id: \.self) { preset in
@@ -134,10 +131,8 @@ struct IntensityControlView: View {
         isLoading = true
         defer { isLoading = false }
 
-        // Load fan speed presets
         do {
             fanSpeedPresets = try await api.getFanSpeedPresets()
-            // Get current value from robot state
             if let fanSpeedAttr = status?.attributes.first(where: {
                 $0.__class == "PresetSelectionStateAttribute" && $0.type == "fan_speed"
             }) {
@@ -147,10 +142,8 @@ struct IntensityControlView: View {
             logger.error("Fan speed not supported: \(error.localizedDescription, privacy: .public)")
         }
 
-        // Load water usage presets
         do {
             waterUsagePresets = try await api.getWaterUsagePresets()
-            // Get current value from robot state
             if let waterAttr = status?.attributes.first(where: {
                 $0.__class == "PresetSelectionStateAttribute" && $0.type == "water_grade"
             }) {
@@ -160,10 +153,8 @@ struct IntensityControlView: View {
             logger.error("Water usage not supported: \(error.localizedDescription, privacy: .public)")
         }
 
-        // Load operation mode presets
         do {
             operationModePresets = try await api.getOperationModePresets()
-            // Get current value from robot state
             if let modeAttr = status?.attributes.first(where: {
                 $0.__class == "PresetSelectionStateAttribute" && $0.type == "operation_mode"
             }) {

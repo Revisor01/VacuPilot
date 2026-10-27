@@ -86,9 +86,7 @@ final class NWBrowserService {
                 model = self.txtRecordValue(txtRecord, key: "model")
             }
 
-            // Build the actual mDNS hostname Valetudo announces: "valetudo-<id-lowercased>.local"
-            // Service-instance name (e.g. "Valetudo CriticalMetallicMole") is NOT URL-safe (contains spaces)
-            // and is not the hostname Valetudo registers via mDNS.
+            // Hostname "valetudo-<id-lowercased>.local"; the service-instance name contains spaces and is no hostname.
             let host: String
             if let id = robotId, !id.isEmpty {
                 host = "valetudo-\(id.lowercased()).local"

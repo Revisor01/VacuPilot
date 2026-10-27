@@ -22,7 +22,6 @@ struct WifiSettingsView: View {
 
     var body: some View {
         List {
-            // Current Connection
             if let status = wifiStatus, let details = status.details {
                 Section {
                     HStack {
@@ -67,7 +66,6 @@ struct WifiSettingsView: View {
                 }
             }
 
-            // Available Networks
             Section {
                 if isScanning {
                     HStack {
@@ -197,7 +195,6 @@ struct WifiSettingsView: View {
 
         do {
             networks = try await api.scanWifi()
-            // Sort by signal strength
             networks.sort { $0.details.signal > $1.details.signal }
         } catch {
             logger.error("Failed to scan WiFi: \(error, privacy: .public)")

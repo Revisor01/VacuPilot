@@ -12,7 +12,6 @@ struct MQTTSettingsView: View {
     @State private var isLoading = false
     @State private var isSaving = false
 
-    // Editable fields
     @State private var enabled = false
     @State private var host = ""
     @State private var port = "1883"

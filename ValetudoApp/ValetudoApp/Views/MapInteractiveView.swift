@@ -208,8 +208,7 @@ struct InteractiveMapView: View {
                                 Text(info.name)
                                     .font(.system(size: 11, weight: .semibold))
                                     .foregroundStyle(isSelected ? .white : .primary)
-                                // The floor texture alone is hard to tell apart,
-                                // so the material is named here as well.
+                                // The floor texture alone is hard to tell apart, so the material is named too.
                                 if let material = info.material, material != "generic" {
                                     Text(FloorMaterial.displayName(for: material))
                                         .font(.system(size: 9))
@@ -240,14 +239,11 @@ struct InteractiveMapView: View {
 
     // MARK: - Annotation Labels
 
-    /// Names each annotation on the map. The shapes alone are hard to tell
-    /// apart, and a threshold is a thin line that is awkward to hit — the
-    /// label doubles as a comfortable tap target.
+    /// Labels each annotation, which also gives thin thresholds a comfortable tap target.
     @ViewBuilder
     private var annotationLabelsOverlay: some View {
         let all = existingAnnotations + drawnAnnotations
-        // In delete mode the delete buttons sit in these same spots, so the
-        // labels step aside.
+        // In delete mode the delete buttons take these spots.
         if !all.isEmpty, editMode != .deleteAnnotation {
             GeometryReader { geometry in
                 let params = calculateMapParams(
@@ -358,7 +354,6 @@ struct InteractiveMapView: View {
     }
 
     private func drawWalls(context: GraphicsContext, layers: [MapLayer], color: Color, params: MapParams, pixelSize: Int) {
-        // Draw walls as thin lines
         let normalScale = params.scale * CGFloat(pixelSize)
         let wallScale = normalScale * 0.2  // 20% - very thin
         for layer in layers where layer.type == "wall" {
@@ -391,9 +386,7 @@ struct InteractiveMapView: View {
         let pixelScale = params.scale * CGFloat(pixelSize)
         var i = 0
 
-        // See the note in MapViewModel: at roughly two screen points per map
-        // pixel, tight hatching turns into an even wash. Wide spacing plus
-        // differing contrast is what stays readable.
+        // Wide spacing and differing contrast, see MapViewModel.
         let textureInterval: Int
         let isHorizontal: Bool
         let isVertical: Bool
@@ -428,8 +421,7 @@ struct InteractiveMapView: View {
             accentStrength = 1.0
         }
 
-        // Darken, don't fade: a more transparent colour reads as *lighter*
-        // against the floor and the stripes vanish.
+        // Darken, don't fade: a more transparent colour reads lighter.
         let accentColor = Color(MapViewModel.darken(UIColor(color), by: accentStrength))
 
         while i < pixels.count - 1 {
@@ -510,11 +502,9 @@ struct InteractiveMapView: View {
         let y = CGFloat(points[1]) / ps * params.scale + params.offsetY
         let size: CGFloat = 14
 
-        // Glow
         let glowRect = CGRect(x: x - size/2 - 2, y: y - size/2 - 2, width: size + 4, height: size + 4)
         context.fill(RoundedRectangle(cornerRadius: 4).path(in: glowRect), with: .color(Color(white: 0.2).opacity(0.3)))
 
-        // Base
         let rect = CGRect(x: x - size/2, y: y - size/2, width: size, height: size)
         context.fill(RoundedRectangle(cornerRadius: 3).path(in: rect), with: .color(Color(white: 0.2)))
 
@@ -539,20 +529,16 @@ struct InteractiveMapView: View {
         let y = CGFloat(points[1]) / ps * params.scale + params.offsetY
         let size: CGFloat = 16
 
-        // Glow effect
         let glowRect = CGRect(x: x - size/2 - 3, y: y - size/2 - 3, width: size + 6, height: size + 6)
         context.fill(Circle().path(in: glowRect), with: .color(Color(white: 0.2).opacity(0.3)))
 
-        // Outer ring
         let outerRect = CGRect(x: x - size/2, y: y - size/2, width: size, height: size)
         context.fill(Circle().path(in: outerRect), with: .color(Color(white: 0.2)))
 
-        // Inner body
         let innerSize: CGFloat = 10
         let innerRect = CGRect(x: x - innerSize/2, y: y - innerSize/2, width: innerSize, height: innerSize)
         context.fill(Circle().path(in: innerRect), with: .color(Color(white: 0.3)))
 
-        // Vacuum pattern (small circle)
         let dotSize: CGFloat = 4
         let dotRect = CGRect(x: x - dotSize/2, y: y - dotSize/2, width: dotSize, height: dotSize)
         context.fill(Circle().path(in: dotRect), with: .color(.white))
@@ -716,13 +702,11 @@ struct InteractiveMapView: View {
             || (mode == .annotation && annotationTypeToDraw != .ramp)
 
         if drawsLine {
-            // Draw line with start and end markers
             var path = Path()
             path.move(to: start)
             path.addLine(to: end)
             context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: 4))
 
-            // Start point marker (larger, draggable indicator)
             let startSize: CGFloat = 16
             context.fill(Circle().path(in: CGRect(
                 x: start.x - startSize/2,
@@ -737,7 +721,6 @@ struct InteractiveMapView: View {
                 height: startSize
             )), with: .color(.white), lineWidth: 2)
 
-            // End point marker
             let endSize: CGFloat = 16
             context.fill(Circle().path(in: CGRect(
                 x: end.x - endSize/2,
@@ -752,7 +735,6 @@ struct InteractiveMapView: View {
                 height: endSize
             )), with: .color(.white), lineWidth: 2)
         } else if mode == .goTo || mode == .savePreset {
-            // Draw target marker
             let targetSize: CGFloat = 20
             context.fill(Circle().path(in: CGRect(
                 x: start.x - targetSize/2,
@@ -767,7 +749,6 @@ struct InteractiveMapView: View {
                 height: targetSize
             )), with: .color(color), lineWidth: 2)
         } else {
-            // Draw rectangle
             let minX = min(start.x, end.x)
             let maxX = max(start.x, end.x)
             let minY = min(start.y, end.y)

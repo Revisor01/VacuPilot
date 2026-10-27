@@ -1,8 +1,6 @@
 name: Tests
 
-# Unit-Tests bei jedem PR auf einem Simulator, damit die Pflicht "Checks grün
-# vor dem Merge" sie erfasst. Signiert wird mit den Simulator-Einstellungen des
-# Projekts (ad hoc), so prüft der Check auch die lokale Konfiguration.
+# Unit-Tests bei jedem PR, mit den Simulator-Signiereinstellungen des Projekts.
 
 on:
   pull_request:

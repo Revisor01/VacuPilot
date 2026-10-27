@@ -72,12 +72,10 @@ class UpdateService {
     // MARK: - Public Actions
 
     func loadVersionInfo() async {
-        // Load current Valetudo version
         if let version = try? await api.getValetudoVersion() {
             currentVersion = version.release
         }
 
-        // Load latest GitHub release
         guard let url = URL(string: Constants.githubApiLatestReleaseUrl) else { return }
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -92,8 +90,7 @@ class UpdateService {
     func checkForUpdates() async {
         if let last = lastCheckDate, Date().timeIntervalSince(last) < 3600 { return }
 
-        // Ein hängengebliebener .error aus einem früheren (abgebrochenen) Check darf einen
-        // neuen Check nicht blockieren — aus .error oder .idle heraus neu prüfen ist ok.
+        // A stale .error from an aborted check must not block a new one.
         switch phase {
         case .idle, .error:
             break
@@ -106,8 +103,7 @@ class UpdateService {
         lastCheckDate = Date()
 
         do {
-            // Erst aktuellen State holen — Valetudo erlaubt "check" nur in Idle/Error.
-            // Wenn bereits ApprovalPending/Downloading/ApplyPending, direkt nutzen.
+            // Valetudo allows "check" only in Idle/Error; other states are used directly.
             let initialState = try await api.getUpdaterState()
             let initialMapped = mapUpdaterState(initialState)
             if case .idle = initialMapped {
@@ -127,14 +123,10 @@ class UpdateService {
                 setPhase(initialMapped)
             }
         } catch {
-            // Ein fehlgeschlagener Update-PRÜFUNG ist unkritisch (z.B. View verlassen,
-            // Verbindung kurz weg, 401 beim Navigieren). Sie darf KEINEN dauerhaften
-            // Fehler-Banner erzeugen — still zurück auf .idle, beim nächsten Öffnen
-            // wird erneut geprüft. Echte Fehler-Banner gibt es nur bei Download/Apply.
+            // A failed check falls back silently to .idle; error banners only for download and apply.
             logger.info("checkForUpdates failed (silent, back to idle): \(error.localizedDescription, privacy: .public)")
             setPhase(.idle)
-            // lastCheckDate zurücksetzen, damit der nächste Aufruf nicht wegen des
-            // 1h-Throttles übersprungen wird.
+            // Reset lastCheckDate so the next call is not skipped by the 1-hour throttle.
             lastCheckDate = nil
         }
     }
@@ -244,7 +236,7 @@ class UpdateService {
                     return
                 }
 
-                // Pitfall 6: Unexpected idle while downloading means the download was interrupted
+                // Unexpected idle while downloading means the download was interrupted
                 if case .idle = mapped {
                     setPhase(.error("Download wurde unterbrochen"))
                     return
@@ -272,7 +264,6 @@ class UpdateService {
 
                 do {
                     let _ = try await api.getValetudoVersion()
-                    // Roboter antwortet wieder — Erfolg
                     setPhase(.idle)
                     onRebootComplete?()
                     return

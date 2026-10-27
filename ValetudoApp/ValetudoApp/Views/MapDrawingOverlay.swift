@@ -30,12 +30,10 @@ extension MapContentView {
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        // Convert screen coordinates to map coordinates
                         let mapStart = screenToMapCoords(value.startLocation, viewSize: geometry.size)
                         let mapEnd = screenToMapCoords(value.location, viewSize: geometry.size)
 
-                        // For goTo/savePreset: always update to new tap position
-                        // For other modes: only set start once (for drag drawing)
+                        // goTo/savePreset follow every tap; other modes set the start once for dragging.
                         if viewModel.editMode == .goTo || viewModel.editMode == .savePreset {
                             currentDrawStart = mapStart
                         } else if currentDrawStart == nil {
@@ -66,7 +64,6 @@ extension MapContentView {
                             let mapEnd = screenToMapCoords(value.location, viewSize: viewSize)
 
                             if currentDrawStart == nil || (currentDrawStart != nil && currentDrawEnd != nil && !isDraggingSplitStart && !isDraggingSplitEnd) {
-                                // Start new line
                                 currentDrawStart = mapStart
                                 currentDrawEnd = mapEnd
                             } else {
@@ -163,8 +160,7 @@ extension MapContentView {
             return
         }
 
-        // start/end are already in map coordinates (from screenToMapCoords in drawingOverlay)
-        // We just need to convert from map view coordinates to pixel coordinates
+        // start/end are already map coordinates, convert to pixels.
         let pixelStartX = Int(((start.x - params.offsetX) / params.scale).rounded())
         let pixelStartY = Int(((start.y - params.offsetY) / params.scale).rounded())
         let pixelEndX = Int(((end.x - params.offsetX) / params.scale).rounded())
@@ -235,9 +231,7 @@ extension MapContentView {
                     ZonePoint(x: apiEndX, y: apiEndY)
                 ]
             case .ramp:
-                // A quad: the drag spans the rectangle, corners clockwise from
-                // top-left. The firmware also accepts rotated quads, but the
-                // app only offers axis-aligned ones.
+                // Axis-aligned quad, corners clockwise from top-left; the firmware would also accept rotated ones.
                 points = [
                     ZonePoint(x: minX, y: minY),
                     ZonePoint(x: maxX, y: minY),

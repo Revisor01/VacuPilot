@@ -11,13 +11,7 @@ struct MapParams {
 
 // MARK: - Map Parameter Calculation
 
-/// Calculates scale and offset needed to fit all map layers into the given view size.
-/// - Parameters:
-///   - layers: All map layers (floor, walls, segments)
-///   - pixelSize: Map pixel size from RobotMap.pixelSize (typically 5)
-///   - size: Available view size in points
-///   - padding: Padding around the map content (default 20; use 10 for mini-map)
-/// - Returns: MapParams with scale and offsets, or nil if no pixel data found
+/// Scale and offset that fit all map layers into the given view size, or nil without pixel data.
 func calculateMapParams(
     layers: [MapLayer],
     pixelSize: Int,

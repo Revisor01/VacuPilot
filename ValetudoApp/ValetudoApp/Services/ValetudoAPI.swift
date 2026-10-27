@@ -25,8 +25,7 @@ actor ValetudoAPI {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "API")
     private let decoder: JSONDecoder
     private let sessionDelegate: SSLSessionDelegate?
-    // Getrennte SSE-Sessions für State- und Map-Stream, damit ein hängender Map-Stream
-    // nicht den State-Stream blockiert und umgekehrt. Beide werden in deinit invalidiert.
+    // Separate SSE sessions for state and map, so one hanging stream does not block the other.
     private var _sseStateSession: URLSession?
     private var _sseMapSession: URLSession?
 
@@ -34,8 +33,7 @@ actor ValetudoAPI {
         let sseConfig = URLSessionConfiguration.default
         sseConfig.timeoutIntervalForRequest = .infinity
         sseConfig.timeoutIntervalForResource = .infinity
-        // Pro Session nur eine Verbindung zum Valetudo-Host — verhindert dass beim
-        // Navigieren mehrere parallele Auth-Verbindungen aufgemacht werden (→ 401).
+        // One connection per host, parallel auth connections end in 401.
         sseConfig.httpMaximumConnectionsPerHost = 1
         if let delegate = sessionDelegate {
             return URLSession(configuration: sseConfig, delegate: delegate, delegateQueue: nil)
@@ -58,9 +56,7 @@ actor ValetudoAPI {
     }
 
     deinit {
-        // SSE-Sessions hielten langlebige (timeout=.infinity) Verbindungen offen.
-        // Ohne explizites Invalidieren leakten sie beim Navigieren und erschöpften
-        // irgendwann die gleichzeitigen Auth-Verbindungen des Valetudo-Servers (→ 401).
+        // Long-lived SSE sessions leak without invalidation and exhaust the server's auth connections (401).
         _sseStateSession?.invalidateAndCancel()
         _sseMapSession?.invalidateAndCancel()
     }
@@ -149,7 +145,6 @@ extension ValetudoAPI {
         var request = URLRequest(url: url)
         request.httpMethod = method
 
-        // Debug: Log the request
         logger.info("Request: \(method, privacy: .public) \(url.absoluteString, privacy: .public)")
         if let body = body, let bodyString = String(data: body, encoding: .utf8) {
             logger.info("Request body: \(bodyString, privacy: .public)")
@@ -383,10 +378,7 @@ extension ValetudoAPI {
         try await request("/robot/capabilities/MapAnnotationsCapability/properties")
     }
 
-    /// Replaces all map annotations on the robot.
-    ///
-    /// There is no endpoint to read them back — they arrive with the map. The
-    /// PUT is replace-all, so callers must pass the complete set.
+    /// Replaces all map annotations; the PUT is replace-all, so pass the complete set.
     func setMapAnnotations(_ annotations: [MapAnnotation]) async throws {
         let body = try JSONEncoder().encode(annotations.map { MapAnnotationRequest($0) })
         try await requestVoid("/robot/capabilities/MapAnnotationsCapability", body: body)
@@ -414,11 +406,7 @@ extension ValetudoAPI {
     }
 
     // MARK: - Auto Empty Dock
-    //
-    // These four dock capabilities do not follow the usual preset pattern:
-    // the list of choices comes from `/properties` under its own key, and the
-    // value is read and written as `interval` / `duration` / `temperature`
-    // rather than `name`. There is no `/presets` and no `/preset` route here.
+    // These dock capabilities read choices from `/properties` and use their own value keys, no `/presets`.
 
     func getAutoEmptyDockIntervalPresets() async throws -> [String] {
         let props: AutoEmptyIntervalProperties = try await request("/robot/capabilities/AutoEmptyDockAutoEmptyIntervalControlCapability/properties")
@@ -876,9 +864,7 @@ extension ValetudoAPI {
 
 // MARK: - Robot Properties Models
 // MARK: - Dock Capability Models
-//
-// These capabilities each use their own field name instead of the shared
-// `name` used by ordinary presets.
+// These capabilities use their own field name instead of the preset `name`.
 
 struct AutoEmptyIntervalProperties: Codable {
     let supportedIntervals: [String]

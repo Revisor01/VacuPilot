@@ -23,7 +23,6 @@ struct NTPSettingsView: View {
 
     var body: some View {
         Form {
-            // Current Time Section
             if let status = status, let robotTime = status.robotTime {
                 Section {
                     HStack {

@@ -54,7 +54,7 @@ struct KeychainStore {
         }
     }
 
-    // MARK: - Robot Config Storage (SEC-03)
+    // MARK: - Robot Config Storage
     private static let configService = "com.valetudio.robot.config"
 
     static func robotConfig(for robotId: UUID) -> RobotConfig? {

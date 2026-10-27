@@ -22,10 +22,21 @@ arbeitet, hält sich an die folgenden Regeln.
 
 ## Kommentare
 
-Ein Kommentar sagt, warum etwas so ist, nicht was der Code tut oder wie es
-früher war. Höchstens drei Zeilen; was mehr braucht, gehört in die
-Commit-Nachricht oder nach `docs/`. Keine Hostnamen, IPs oder Serverdetails,
-kein `TODO` ohne Issue-Nummer, kein auskommentierter Code.
+**Kommentare.** Ein Kommentar ist eine Zeile und sagt, warum etwas so ist.
+Nicht, was der Code tut, nicht, wie es dazu kam, keine Merksätze, keine
+Erklärprosa. So reicht es: „Deploy-Skript statt Portainer-Webhook: auf dem
+Zielserver läuft kein Portainer.“ Zwei Zeilen nur, wenn sonst ein Fehler
+droht; Vorgeschichte gehört in die Commit-Nachricht. Ein Dateikopf nennt in
+einer Zeile, was die Datei ist, dazu höchstens der Aufruf. Der Quelltext ist
+zum Veröffentlichen geschrieben: keine Hostnamen, IPs, Server- oder
+Proxy-Aufbau, Stack- oder Registry-IDs, Auftragsnummern, Befundkennungen,
+Agenten, Namen außer dem Autor, keine wörtlichen Zitate von Entscheidungen,
+kein Verweis auf die Werkstatt. Kein `TODO` ohne Issue-Nummer, kein
+auskommentierter Code. Wer einen Kommentar anfasst, kürzt ihn auf diese
+Regel. Gegenprobe vor jedem Merge: der Prüf-Scan des Repos meldet „Prüfung
+ohne Treffer"; wo es einen Quelltext-Export gibt, ist das `node
+scripts/quelltext-export/export.mjs HEAD`, sonst gitleaks mit der
+Konfiguration der Werkstatt.
 
 ## In English
 
@@ -45,7 +56,9 @@ these rules.
   work notes in this repository, including commit messages, pull request
   texts and comments. The secret scan in CI checks this.
 
-Comments: a comment says why something is the way it is, not what the code
-does or how it used to be. At most three lines; anything longer belongs in
-the commit message or in `docs/`. No hostnames, IPs or server details, no
-`TODO` without an issue number, no commented-out code.
+Comments: a comment is one line and says why something is the way it is.
+Not what the code does, not how it came about. Two lines only where a mistake
+would otherwise follow; history belongs in the commit message. A file header
+names in one line what the file is, plus at most how to call it. No hostnames,
+IPs or server details, no `TODO` without an issue number, no commented-out
+code.

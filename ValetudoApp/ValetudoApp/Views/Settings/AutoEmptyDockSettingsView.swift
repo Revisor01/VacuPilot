@@ -61,8 +61,7 @@ struct AutoEmptyDockSettingsView: View {
 
         do {
             presets = try await api.getAutoEmptyDockIntervalPresets()
-            // Mark the value the robot is actually set to, so the checkmark is
-            // right before anything is changed.
+            // Mark the robot's current value before anything is changed.
             selectedPreset = (try? await api.getAutoEmptyDockInterval()) ?? selectedPreset
         } catch {
             logger.error("Failed to load auto empty dock presets: \(error, privacy: .public)")

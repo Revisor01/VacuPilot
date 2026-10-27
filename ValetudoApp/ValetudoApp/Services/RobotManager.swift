@@ -10,7 +10,7 @@ class RobotManager {
     var robotStates: [UUID: RobotStatus] = [:]
     var robotUpdateAvailable: [UUID: Bool] = [:]
 
-    // MARK: - Active Robot (ROBUST-03)
+    // MARK: - Active Robot
     var activeRobotId: UUID? {
         didSet {
             if oldValue != activeRobotId {
@@ -19,7 +19,7 @@ class RobotManager {
         }
     }
 
-    // MARK: - Centralized Room Selection (DEBT-02)
+    // MARK: - Centralized Room Selection
     @ObservationIgnored var roomSelections: [UUID: [String]] = [:]
     @ObservationIgnored var iterationSelections: [UUID: Int] = [:]
 
@@ -50,9 +50,7 @@ class RobotManager {
     @ObservationIgnored private var apis: [UUID: ValetudoAPI] = [:]
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
     @ObservationIgnored private var previousStates: [UUID: RobotStatus] = [:]
-    // Aufeinanderfolgende fehlgeschlagene Polls pro Roboter. Erst ab dem Schwellwert
-    // gilt ein Roboter als offline — ein einzelner kurzer Timeout (WLAN-Hicker, 10s-
-    // Request-Timeout) soll die Anzeige NICHT sofort auf "nicht erreichbar" kippen.
+    // Failed polls in a row; only past the threshold is a robot offline, so a single timeout does not flip it.
     @ObservationIgnored private var consecutiveFailures: [UUID: Int] = [:]
     private let offlineFailureThreshold = 3
     @ObservationIgnored private var lastConsumableCheck: [UUID: Date] = [:]
@@ -61,7 +59,7 @@ class RobotManager {
     private let notificationService = NotificationService.shared
     @ObservationIgnored private let sseManager = SSEConnectionManager()
 
-    // MARK: - Capabilities Cache (DEBT-06)
+    // MARK: - Capabilities Cache
     @ObservationIgnored private var capabilitiesCache: [UUID: [String]] = [:]
     @ObservationIgnored private var capabilitiesCacheDate: [UUID: Date] = [:]
     private let capabilitiesTTL: TimeInterval = 86400 // 24 Stunden
@@ -71,7 +69,6 @@ class RobotManager {
         startRefreshing()
         notificationService.setupCategories()
 
-        // Request notification permission
         Task {
             await notificationService.requestAuthorization()
         }
@@ -153,12 +150,7 @@ class RobotManager {
     private func startRefreshing() {
         refreshTask = Task {
             while !Task.isCancelled {
-                // Keep a live SSE stream for every robot so the list view stays current and
-                // robots don't drop to "unreachable" when they aren't the active one.
-                // (The 401 issue is handled at the connection layer: sessions are invalidated
-                // on deinit, state/map use separate single-connection sessions, and a 401/403
-                // suspends instead of hammering reconnects.)
-                // Connect SSE for each robot that doesn't have an active connection yet
+                // Live SSE stream for every robot, so the list stays current and inactive robots do not turn unreachable.
                 for robot in robots {
                     guard let api = apis[robot.id] else { continue }
                     let sseActive = await sseManager.isSSEActive(for: robot.id)
@@ -169,8 +161,7 @@ class RobotManager {
                             robotId: robotId,
                             api: api,
                             isLocalNetwork: robot.isLocalNetwork,
-                            // The SSE manager keeps these callbacks; a strong reference would
-                            // form a cycle. A separate name because this Task already holds self.
+                            // The SSE manager keeps these callbacks; a strong reference would form a cycle.
                             onAttributesUpdate: { [weak manager = self] attrs in
                                 Task { @MainActor [weak manager] in
                                     manager?.applyAttributeUpdate(attrs, for: robotId)
@@ -185,8 +176,7 @@ class RobotManager {
                     }
                 }
 
-                // Poll only robots without active SSE (fallback)
-                // When activeRobotId is set, only poll the active robot
+                // Poll only robots without active SSE; with activeRobotId set, only that one.
                 let robotsToPoll = activeRobotId != nil
                     ? robots.filter { $0.id == activeRobotId }
                     : robots
@@ -203,8 +193,7 @@ class RobotManager {
                     }
                 }
 
-                // Hintergrund-Polling gedrosselt (15s statt 5s) — die Live-Aktualität
-                // kommt primär über die SSE-Streams; das Polling ist nur Fallback.
+                // 15 s in the background, SSE carries the live updates.
                 try? await Task.sleep(for: .seconds(15))
             }
         }
@@ -236,7 +225,6 @@ class RobotManager {
             // Erfolgreicher Poll — Fehlerzähler zurücksetzen
             consecutiveFailures[id] = 0
 
-            // Check for state changes and send notifications
             checkStateChanges(robotName: robotName, previous: previousState, current: newStatus)
 
             previousStates[id] = robotStates[id]
@@ -250,9 +238,7 @@ class RobotManager {
                 await self.checkConsumables(for: id)
             }
         } catch {
-            // Einen einzelnen Fehler NICHT sofort als offline werten — erst nach mehreren
-            // Fehlversuchen in Folge. Solange unter dem Schwellwert: bisherigen (Online-)
-            // Status beibehalten, damit die Anzeige nicht bei jedem kurzen Timeout flackert.
+            // Below the threshold keep the previous status, so short timeouts do not flicker.
             let failures = (consecutiveFailures[id] ?? 0) + 1
             consecutiveFailures[id] = failures
 
@@ -315,17 +301,14 @@ class RobotManager {
         guard let prevStatus = previous?.statusValue else { return }
         let currentStatus = current.statusValue ?? ""
 
-        // Cleaning completed
         if prevStatus == "cleaning" && (currentStatus == "docked" || currentStatus == "idle") {
             notificationService.notifyCleaningComplete(robotName: robotName, area: current.cleanedArea)
         }
 
-        // Robot stuck (specific flag)
         if current.statusFlag == "stuck" && previous?.statusFlag != "stuck" {
             notificationService.notifyRobotStuck(robotName: robotName)
         }
 
-        // Robot error (general error state)
         if currentStatus == "error" && prevStatus != "error" {
             let errorMsg = current.statusFlag ?? String(localized: "status.error")
             notificationService.notifyRobotError(robotName: robotName, error: errorMsg)
@@ -389,16 +372,13 @@ class RobotManager {
                 }
                 migratedRobots[index].password = nil
 
-                // Config in Keychain speichern
                 KeychainStore.saveRobotConfig(migratedRobots[index], for: robot.id)
             }
 
-            // Robot-ID-Liste in UserDefaults speichern
             if let idsData = try? JSONEncoder().encode(decoded.map { $0.id }) {
                 UserDefaults.standard.set(idsData, forKey: robotIdsKey)
             }
 
-            // Alten UserDefaults-Blob loeschen
             UserDefaults.standard.removeObject(forKey: storageKey)
 
             loadedRobots = migratedRobots
@@ -411,7 +391,6 @@ class RobotManager {
     }
 
     private func saveRobots() {
-        // Config-Blobs einzeln in Keychain speichern
         for robot in robots {
             KeychainStore.saveRobotConfig(robot, for: robot.id)
         }

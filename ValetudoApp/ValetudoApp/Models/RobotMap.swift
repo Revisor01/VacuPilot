@@ -16,10 +16,7 @@ struct RobotMap: Codable {
 
 // Declared in an extension so the memberwise initializer stays available.
 extension RobotMap {
-    /// Layers and entities are decoded one by one, and an element the app
-    /// cannot read is left out instead of failing the whole map. Firmware
-    /// differs between manufacturers, and a single unexpected value used to
-    /// leave the map empty (Midea sends carpet ids as numbers, see PR #4).
+    /// Decodes layers and entities one by one, so one unreadable element does not empty the whole map.
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         size = try container.decodeIfPresent(MapSize.self, forKey: .size)
@@ -30,8 +27,7 @@ extension RobotMap {
 }
 
 private extension KeyedDecodingContainer {
-    /// Like `decodeIfPresent` for an array, but drops elements that fail to
-    /// decode instead of failing the array.
+    /// Like `decodeIfPresent` for an array, but drops elements that fail to decode.
     func decodeSkippingUnreadable<Element: Decodable>(_ type: [Element].Type, forKey key: Key) throws -> [Element]? {
         guard let elements = try decodeIfPresent([SkippableElement<Element>].self, forKey: key) else {
             return nil
@@ -48,8 +44,7 @@ private extension KeyedDecodingContainer {
     }
 }
 
-/// One array element, decoded without throwing so that the array around it
-/// still decodes when this element does not.
+/// One array element, decoded without throwing so the surrounding array still decodes.
 private struct SkippableElement<Element: Decodable>: Decodable {
     let result: Result<Element, Error>
 
@@ -63,9 +58,7 @@ struct MapSize: Codable {
     let y: Int
 }
 
-/// Cache class for MapLayer pixel decompression.
-/// Using a class (reference type) allows caching on structs passed as `let` in SwiftUI Canvas closures,
-/// where `lazy var` (mutating) would not compile.
+/// Pixel cache as a class, because `lazy var` does not compile on structs used in Canvas closures.
 final class MapLayerCache {
     private var cachedPixels: [Int]?
 
@@ -92,22 +85,17 @@ struct MapLayer: Codable {
         case `__class`, type, pixels, compressedPixels, metaData, dimensions
     }
 
-    /// Returns decompressed pixels - cached via MapLayerCache to avoid recomputation per frame.
-    /// Cache is naturally invalidated when new map data arrives (new MapLayer instances = fresh cache).
+    /// Decompressed pixels, cached per MapLayer instance.
     var decompressedPixels: [Int] {
         cache.decompressedPixels(from: self)
     }
 
-    /// Computes decompressed pixels from raw data. Called only by MapLayerCache on first access.
-    /// Valetudo uses run-length encoding: [x1, y1, count1, x2, y2, count2, ...]
-    /// Each entry means: starting at (x,y), draw 'count' pixels horizontally.
+    /// Decodes Valetudo's run-length encoding `[x, y, count, …]` into horizontal pixel runs.
     fileprivate func computeDecompressedPixels() -> [Int] {
-        // If regular pixels exist, use them
         if let pixels = pixels, !pixels.isEmpty {
             return pixels
         }
 
-        // Otherwise decompress
         guard let compressed = compressedPixels, !compressed.isEmpty else {
             return []
         }
@@ -120,7 +108,6 @@ struct MapLayer: Codable {
             let y = compressed[i + 1]
             let count = compressed[i + 2]
 
-            // Generate pixels for this run
             for offset in 0..<count {
                 result.append(x + offset)
                 result.append(y)
@@ -175,9 +162,7 @@ enum FloorMaterial: String, CaseIterable, Codable {
         }
     }
 
-    /// Anzeigename für einen Materialwert der Firmware. Unbekannte Werte, wie sie
-    /// neuere Firmware liefern kann, werden lesbar aufbereitet statt verworfen —
-    /// aus `carpet_extra_high` wird so "Carpet extra high".
+    /// Display name for a firmware material; unknown values are made readable instead of dropped.
     static func displayName(for rawValue: String) -> String {
         if let known = FloorMaterial(rawValue: rawValue) {
             return known.displayName
@@ -187,8 +172,7 @@ enum FloorMaterial: String, CaseIterable, Codable {
             .localizedCapitalized
     }
 
-    /// Symbol für einen Materialwert der Firmware, mit neutralem Rückfallwert
-    /// für unbekannte Werte.
+    /// Symbol for a firmware material, with a neutral fallback.
     static func icon(for rawValue: String) -> String {
         FloorMaterial(rawValue: rawValue)?.icon ?? "square.fill"
     }
@@ -228,7 +212,6 @@ struct EntityMetaData: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
-        // Normale Felder decodieren
         self.angle = try container.decodeIfPresent(Int.self, forKey: .angle)
         self.label = try container.decodeIfPresent(String.self, forKey: .label)
         
@@ -260,8 +243,7 @@ enum MapEntityType: String {
     case goToTarget = "go_to_target"
     case activeZone = "active_zone"
     case obstacle
-    // Map annotations, added in firmware 2026.07.0. These are plain map
-    // entities like the ones above, not a separate kind of object.
+    // Map annotations (firmware 2026.07.0) are plain map entities.
     case threshold
     case curtain
     case ramp
@@ -270,9 +252,7 @@ enum MapEntityType: String {
 // MARK: - Obstacles
 
 extension RobotMap {
-    /// Obstacles the robot recognized, each with the id under which
-    /// `ObstacleImagesCapability` serves its photo. Only `obstacle` entities
-    /// count: carpets carry an id in their metaData as well.
+    /// Recognized obstacles with their photo id; only `obstacle` entities count, carpets carry an id too.
     var obstacles: [(id: String, label: String?)] {
         (entities ?? []).compactMap { entity in
             guard entity.type == MapEntityType.obstacle.rawValue,
@@ -284,8 +264,7 @@ extension RobotMap {
 
 // MARK: - Map Annotations
 
-/// Kinds of map annotation. Which ones a robot accepts is reported by
-/// `MapAnnotationsCapability/properties`.
+/// Kinds of map annotation; a robot reports the accepted ones in `MapAnnotationsCapability/properties`.
 enum MapAnnotationType: String, CaseIterable, Codable {
     case threshold
     case curtain
@@ -313,11 +292,7 @@ enum MapAnnotationType: String, CaseIterable, Codable {
     }
 }
 
-/// A map annotation as the app works with it.
-///
-/// Note the asymmetry in the firmware API: annotations are *read* from the map
-/// entities as a flat `[x, y, x, y, …]` array, but *written* back as an array
-/// of `{x, y}` objects. `init(entity:)` handles the former, `points` the latter.
+/// A map annotation; read as a flat `[x, y, …]` array, written back as `{x, y}` objects.
 struct MapAnnotation: Identifiable, Equatable {
     var id = UUID()
     var type: MapAnnotationType
@@ -328,8 +303,7 @@ struct MapAnnotation: Identifiable, Equatable {
         self.points = points
     }
 
-    /// Builds an annotation from a map entity, or returns nil if the entity is
-    /// not an annotation or carries an unusable number of coordinates.
+    /// Builds an annotation from a map entity, or nil if it is none or has unusable coordinates.
     init?(entity: MapEntity) {
         guard let rawType = entity.type,
               let type = MapAnnotationType(rawValue: rawType),
@@ -345,10 +319,7 @@ struct MapAnnotation: Identifiable, Equatable {
     }
 }
 
-/// Request body for `PUT …/MapAnnotationsCapability`.
-///
-/// The endpoint replaces the entire set, so every annotation that should
-/// survive has to be part of the request.
+/// Request body for `PUT …/MapAnnotationsCapability`, which replaces the entire set.
 struct MapAnnotationRequest: Codable {
     let type: String
     let points: [ZonePoint]

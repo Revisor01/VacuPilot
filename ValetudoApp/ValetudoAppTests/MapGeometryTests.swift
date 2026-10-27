@@ -107,8 +107,7 @@ final class MapGeometryTests: XCTestCase {
     }
 
     func testScreenToMapCoordsWithScale2() {
-        // Scale=2, offset=.zero, viewSize=400x400
-        // A point at (300, 300): mapX = (300 - 0 - 200) / 2 + 200 = 100/2 + 200 = 250
+        // Scale 2, offset 0, view 400x400: mapX = (300 - 0 - 200) / 2 + 200 = 250
         let viewSize = CGSize(width: 400, height: 400)
         let point = CGPoint(x: 300, y: 300)
         let result = screenToMapCoords(point, scale: 2.0, offset: .zero, viewSize: viewSize)
@@ -117,8 +116,7 @@ final class MapGeometryTests: XCTestCase {
     }
 
     func testScreenToMapCoordsWithOffset() {
-        // Scale=1, offset=CGSize(50, 50), viewSize=400x400
-        // point=(100, 100): mapX = (100 - 50 - 200) / 1 + 200 = -150 + 200 = 50
+        // Scale 1, offset 50, view 400x400: mapX = (100 - 50 - 200) / 1 + 200 = 50
         let viewSize = CGSize(width: 400, height: 400)
         let offset = CGSize(width: 50, height: 50)
         let point = CGPoint(x: 100, y: 100)
@@ -148,8 +146,7 @@ final class MapGeometryTests: XCTestCase {
     }
 
     func testMapToScreenCoordsWithScale2() {
-        // Scale=2, offset=.zero, viewSize=400x400
-        // point=(250, 250): screenX = (250 - 200) * 2 + 200 + 0 = 100 + 200 = 300
+        // Scale 2, offset 0, view 400x400: screenX = (250 - 200) * 2 + 200 = 300
         let viewSize = CGSize(width: 400, height: 400)
         let point = CGPoint(x: 250, y: 250)
         let result = mapToScreenCoords(point, scale: 2.0, offset: .zero, viewSize: viewSize)
@@ -158,8 +155,7 @@ final class MapGeometryTests: XCTestCase {
     }
 
     func testMapToScreenCoordsWithOffset() {
-        // Scale=1, offset=CGSize(50, 50), viewSize=400x400
-        // point=(50, 50): screenX = (50 - 200) * 1 + 200 + 50 = -150 + 250 = 100
+        // Scale 1, offset 50, view 400x400: screenX = (50 - 200) * 1 + 200 + 50 = 100
         let viewSize = CGSize(width: 400, height: 400)
         let offset = CGSize(width: 50, height: 50)
         let point = CGPoint(x: 50, y: 50)
