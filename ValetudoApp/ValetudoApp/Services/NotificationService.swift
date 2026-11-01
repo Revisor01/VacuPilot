@@ -103,6 +103,18 @@ class NotificationService {
         scheduleNotification(content: content, identifier: identifier)
     }
 
+    func notifyDockComponent(robotName: String, component: DockComponent) {
+        guard isAuthorized && notifyConsumableLow else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = String(localized: "notification.dock_component.title \(robotName)")
+        content.body = String(localized: "notification.dock_component.body \(component.displayName) \(component.valueDisplay)")
+        content.sound = .default
+        content.categoryIdentifier = "DOCK_COMPONENT"
+
+        scheduleNotification(content: content, identifier: "dock_\(robotName)_\(component.type)")
+    }
+
     func notifyRobotOffline(robotName: String) {
         guard isAuthorized && notifyRobotOffline else { return }
 
