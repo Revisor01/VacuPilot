@@ -54,6 +54,12 @@ struct RobotDetailView: View {
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
                     .listRowSeparator(.hidden)
+
+                    if let dockComponents = viewModel.status?.dockComponents, !dockComponents.isEmpty {
+                        DockComponentChipsView(components: dockComponents)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
+                            .listRowSeparator(.hidden)
+                    }
                 }
             }
 

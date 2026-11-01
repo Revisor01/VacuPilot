@@ -226,6 +226,7 @@ class RobotManager {
             consecutiveFailures[id] = 0
 
             checkStateChanges(robotName: robotName, previous: previousState, current: newStatus)
+            checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
 
             previousStates[id] = robotStates[id]
             if robotStates[id] != newStatus {
@@ -267,6 +268,7 @@ class RobotManager {
         )
         let robotName = getRobotName(for: id)
         checkStateChanges(robotName: robotName, previous: previousStates[id], current: newStatus)
+        checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
         previousStates[id] = robotStates[id]
         if robotStates[id] != newStatus {
             robotStates[id] = newStatus
@@ -312,6 +314,12 @@ class RobotManager {
         if currentStatus == "error" && prevStatus != "error" {
             let errorMsg = current.statusFlag ?? String(localized: "status.error")
             notificationService.notifyRobotError(robotName: robotName, error: errorMsg)
+        }
+    }
+
+    private func checkDockComponents(robotName: String, previous: RobotStatus?, current: RobotStatus) {
+        for component in current.newDockComponentProblems(since: previous) {
+            notificationService.notifyDockComponent(robotName: robotName, component: component)
         }
     }
 
