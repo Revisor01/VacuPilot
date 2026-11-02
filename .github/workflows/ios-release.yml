@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   bauen:
-    uses: Revisor01/workflows/.github/workflows/xcode-cloud.yml@59236255da497972cdac8407c9af45d994ad0fcb # 1.4.1
+    uses: Revisor01/workflows/.github/workflows/xcode-cloud.yml@3ec878449b89e1a69714b87381cb8effd7075fef # 1.5.1
     with:
       workflow-id: ${{ vars.XCODE_CLOUD_WORKFLOW }}
     secrets:
