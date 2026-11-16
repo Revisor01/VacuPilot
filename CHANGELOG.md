@@ -18,6 +18,9 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 ### Geändert
 - Neue Lizenz: GNU AGPL v3.0 statt GPL-3.0: Die Pflicht, Änderungen offenzulegen, gilt jetzt auch für den Betrieb als Webdienst.
 
+### Behoben
+- Brechen die Stationsanzeigen unter der Kartenvorschau in zwei Reihen um, hat die untere Reihe Abstand zum Kartenrand und wirkt nicht mehr abgeschnitten ([#30](https://github.com/Revisor01/VacuPilot/issues/30)).
+
 ### Sonstiges
 
 - Release-Builds entstehen in Xcode Cloud und starten nur noch von Hand, über den Release-Knopf auf GitHub statt bei jedem Push.

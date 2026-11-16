@@ -113,4 +113,14 @@ final class DockComponentTests: XCTestCase {
 
         XCTAssertEqual(after.newDockComponentProblems(since: before), [])
     }
+
+    // MARK: - Chip rows under the map preview
+
+    func testLastChipRowKeepsDistanceToCardEdge() {
+        XCTAssertEqual(RobotDetailView.chipRowBottomInset(isLastRow: true), 12)
+    }
+
+    func testChipRowFollowedByDockRowAddsNoGap() {
+        XCTAssertEqual(RobotDetailView.chipRowBottomInset(isLastRow: false), 0)
+    }
 }

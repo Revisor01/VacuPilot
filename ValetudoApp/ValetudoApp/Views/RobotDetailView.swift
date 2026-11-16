@@ -9,6 +9,11 @@ struct RobotDetailView: View {
     @State private var showUpdateWarning = false
     @State private var showLeaveDuringUpdateWarning = false
 
+    // The last chip row needs room above the card's rounded bottom edge, or it looks cut off.
+    nonisolated static func chipRowBottomInset(isLastRow: Bool) -> CGFloat {
+        isLastRow ? 12 : 0
+    }
+
     private var showUpdateOverlay: Bool {
         guard let phase = viewModel.updateService?.phase else { return false }
         switch phase {
@@ -45,6 +50,8 @@ struct RobotDetailView: View {
                     MapPreviewView(robot: viewModel.robot, showFullMap: $showFullMap)
                         .listRowSeparator(.hidden)
 
+                    let dockComponents = viewModel.status?.dockComponents ?? []
+
                     HStack(spacing: 8) {
                         if AttachmentChipsView.hasAnyAttachmentInfo(viewModel) {
                             AttachmentChipsView(viewModel: viewModel)
@@ -52,12 +59,12 @@ struct RobotDetailView: View {
                         Spacer()
                         LiveStatsChipView(viewModel: viewModel)
                     }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: Self.chipRowBottomInset(isLastRow: dockComponents.isEmpty), trailing: 16))
                     .listRowSeparator(.hidden)
 
-                    if let dockComponents = viewModel.status?.dockComponents, !dockComponents.isEmpty {
+                    if !dockComponents.isEmpty {
                         DockComponentChipsView(components: dockComponents)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 0, trailing: 16))
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: Self.chipRowBottomInset(isLastRow: true), trailing: 16))
                             .listRowSeparator(.hidden)
                     }
                 }
