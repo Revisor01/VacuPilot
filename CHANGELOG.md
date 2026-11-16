@@ -10,7 +10,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > (v2.0.0–v4.0.1) sind keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
-## [Unreleased] - 1.1.5
+## [1.1.5] - 2026-11-17
 
 ### Hinzugefügt
 - Der Hinweis auf ein Firmware-Update lässt sich je Roboter für eine Version überspringen; er kommt erst mit der nächsten Version wieder, und installieren lässt sich die übersprungene Version weiterhin in den Geräteinformationen des Roboters ([#31](https://github.com/Revisor01/VacuPilot/issues/31)).
@@ -196,7 +196,9 @@ REST-API v2 — ohne Cloud, ohne Tracking, ohne Konto.
 - App auf iPhone-only umgestellt; `ITSAppUsesNonExemptEncryption` in
   `project.yml` verankert.
 
-[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/1.1.3...HEAD
+[Unreleased]: https://github.com/Revisor01/VacuPilot/compare/1.1.5...HEAD
+[1.1.5]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.5
+[1.1.4]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.4
 [1.1.3]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.3
 [1.1.2]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.2
 [1.1.1]: https://github.com/Revisor01/VacuPilot/releases/tag/1.1.1
