@@ -6,47 +6,53 @@ struct UpdateStatusBannerView: View {
 
     var body: some View {
         if case .updateAvailable = viewModel.updateService?.phase {
-            Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "arrow.down.circle.fill")
-                            .foregroundStyle(.orange)
-                        VStack(alignment: .leading) {
-                            Text(String(localized: "update.available"))
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            Text("\(viewModel.updateService?.currentVersion ?? "?") → \(viewModel.updateService?.latestVersion ?? "?")")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-
-                        if let urlStr = viewModel.updateService?.updateUrl, let releaseURL = URL(string: urlStr) {
-                            Link(destination: releaseURL) {
-                                Image(systemName: "arrow.up.forward.square")
-                                    .foregroundStyle(.secondary)
-                                    .padding(8)
-                                    .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.borderless)
-                        }
-                    }
-
-                    Button {
-                        showUpdateWarning = true
-                    } label: {
+            if viewModel.updateService?.showsUpdateAvailableBanner == true {
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            Image(systemName: "arrow.down.to.line")
-                            Text(String(localized: "update.install"))
+                            Image(systemName: "arrow.down.circle.fill")
+                                .foregroundStyle(.orange)
+                            VStack(alignment: .leading) {
+                                Text(String(localized: "update.available"))
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                Text("\(viewModel.updateService?.currentVersion ?? "?") → \(viewModel.updateService?.pendingVersion ?? "?")")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+
+                            if let urlStr = viewModel.updateService?.updateUrl, let releaseURL = URL(string: urlStr) {
+                                Link(destination: releaseURL) {
+                                    Image(systemName: "arrow.up.forward.square")
+                                        .foregroundStyle(.secondary)
+                                        .padding(8)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.borderless)
+                            }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(Color.orange)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .contentShape(Rectangle())
+
+                        Button {
+                            showUpdateWarning = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.down.to.line")
+                                Text(String(localized: "update.install"))
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(Color.orange)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.borderless)
+
+                        if let pending = viewModel.updateService?.pendingVersion {
+                            skipButton(version: pending)
+                        }
                     }
-                    .buttonStyle(.borderless)
                 }
             }
         } else if case .downloading = viewModel.updateService?.phase {
@@ -130,6 +136,7 @@ struct UpdateStatusBannerView: View {
         } else if let currentVersion = viewModel.updateService?.currentVersion,
                   let latestVersion = viewModel.updateService?.latestVersion,
                   currentVersion != latestVersion,
+                  viewModel.updateService?.isSkipped(latestVersion) == false,
                   let updateUrl = viewModel.updateService?.updateUrl {
             Section {
                 if let url = URL(string: updateUrl) {
@@ -151,7 +158,21 @@ struct UpdateStatusBannerView: View {
                         }
                     }
                 }
+                skipButton(version: latestVersion)
             }
         }
+    }
+
+    private func skipButton(version: String) -> some View {
+        Button {
+            viewModel.skipUpdate(version: version)
+        } label: {
+            Text(String(localized: "update.skip_version"))
+                .font(.subheadline)
+                .frame(maxWidth: .infinity)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+        .foregroundStyle(.secondary)
     }
 }

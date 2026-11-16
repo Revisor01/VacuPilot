@@ -285,4 +285,114 @@ final class UpdateServiceTests: XCTestCase {
 
         XCTAssertEqual(service.phase, .idle)
     }
+
+    // MARK: - Skipping a version
+
+    private func makeDefaults() -> UserDefaults {
+        let name = "UpdateServiceTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: name)!
+        addTeardownBlock { defaults.removePersistentDomain(forName: name) }
+        return defaults
+    }
+
+    private func pendingState(version: String) -> UpdaterState {
+        UpdaterState(
+            __class: "ValetudoUpdaterApprovalPendingState",
+            busy: nil, currentVersion: "2026.08.0", version: version,
+            releaseTimestamp: nil, downloadUrl: nil, downloadPath: nil, metaData: nil
+        )
+    }
+
+    func testSkippedVersion_hidesBanner() async throws {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+        store.skip("2026.10.0")
+        let mock = MockValetudoAPI()
+        mock.updaterStateToReturn = pendingState(version: "2026.10.0")
+        let service = UpdateService(api: mock, skipStore: store)
+
+        await service.checkForUpdates()
+
+        XCTAssertEqual(service.phase, .updateAvailable)
+        XCTAssertEqual(service.pendingVersion, "2026.10.0")
+        XCTAssertFalse(service.showsUpdateAvailableBanner)
+    }
+
+    func testNewerVersionAfterSkip_showsBannerAgain() async throws {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+        store.skip("2026.10.0")
+        let mock = MockValetudoAPI()
+        mock.updaterStateToReturn = pendingState(version: "2026.11.0")
+        let service = UpdateService(api: mock, skipStore: store)
+
+        await service.checkForUpdates()
+
+        XCTAssertEqual(service.skippedVersion, "2026.10.0")
+        XCTAssertEqual(service.pendingVersion, "2026.11.0")
+        XCTAssertTrue(service.showsUpdateAvailableBanner)
+    }
+
+    func testSkipOnOneRobot_leavesOtherRobotUnaffected() async throws {
+        let defaults = makeDefaults()
+        let storeA = SkippedUpdateStore(robotId: UUID(), defaults: defaults)
+        let storeB = SkippedUpdateStore(robotId: UUID(), defaults: defaults)
+        let mock = MockValetudoAPI()
+        mock.updaterStateToReturn = pendingState(version: "2026.10.0")
+        let serviceA = UpdateService(api: mock, skipStore: storeA)
+        let serviceB = UpdateService(api: mock, skipStore: storeB)
+        await serviceA.checkForUpdates()
+        await serviceB.checkForUpdates()
+
+        serviceA.skip(version: "2026.10.0")
+
+        XCTAssertFalse(serviceA.showsUpdateAvailableBanner)
+        XCTAssertTrue(serviceB.showsUpdateAvailableBanner)
+        XCTAssertEqual(storeA.version, "2026.10.0")
+        XCTAssertNil(storeB.version)
+    }
+
+    func testSkip_persistsAcrossServiceInstances() async throws {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+        UpdateService(api: MockValetudoAPI(), skipStore: store).skip(version: "2026.10.0")
+
+        let reopened = UpdateService(api: MockValetudoAPI(), skipStore: store)
+
+        XCTAssertEqual(reopened.skippedVersion, "2026.10.0")
+    }
+
+    func testClearSkippedVersion_showsBannerAgain() async throws {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+        store.skip("2026.10.0")
+        let mock = MockValetudoAPI()
+        mock.updaterStateToReturn = pendingState(version: "2026.10.0")
+        let service = UpdateService(api: mock, skipStore: store)
+        await service.checkForUpdates()
+        XCTAssertFalse(service.showsUpdateAvailableBanner)
+
+        service.clearSkippedVersion()
+
+        XCTAssertNil(service.skippedVersion)
+        XCTAssertNil(store.version)
+        XCTAssertTrue(service.showsUpdateAvailableBanner)
+    }
+
+    func testSkippedVersion_installStaysPossible() async throws {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+        store.skip("2026.10.0")
+        let mock = MockValetudoAPI()
+        mock.updaterStateToReturn = pendingState(version: "2026.10.0")
+        let service = UpdateService(api: mock, skipStore: store)
+        await service.checkForUpdates()
+
+        mock.updaterStateToReturn = makeUpdaterState("ValetudoUpdaterApplyPendingState")
+        await service.startDownload()
+
+        XCTAssertEqual(service.phase, .readyToApply)
+    }
+
+    func testStoreWithoutSkippedVersion_skipsNothing() {
+        let store = SkippedUpdateStore(robotId: UUID(), defaults: makeDefaults())
+
+        XCTAssertFalse(store.isSkipped("2026.10.0"))
+        XCTAssertFalse(store.isSkipped(nil))
+    }
 }

@@ -142,7 +142,7 @@ struct DeviceInfoView: View {
                                 Text(String(localized: "update.available"))
                                     .font(.subheadline)
                                     .fontWeight(.medium)
-                                Text("\(updateService?.currentVersion ?? version?.release ?? "?") → \(updateService?.latestVersion ?? latestRelease?.tag_name ?? "?")")
+                                Text("\(updateService?.currentVersion ?? version?.release ?? "?") → \(updateService?.pendingVersion ?? latestRelease?.tag_name ?? "?")")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -234,6 +234,12 @@ struct DeviceInfoView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
+                    }
+                }
+                if let skipped = updateService?.skippedVersion {
+                    LabeledContent(String(localized: "update.skipped_version"), value: skipped)
+                    Button(String(localized: "update.unskip")) {
+                        updateService?.clearSkippedVersion()
                     }
                 }
             } header: {

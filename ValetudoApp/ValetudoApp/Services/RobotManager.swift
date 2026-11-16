@@ -112,6 +112,7 @@ class RobotManager {
         previousStates.removeValue(forKey: id)
         saveRobots()
         MapCacheService.shared.deleteCache(for: id)
+        SkippedUpdateStore(robotId: id).clear()
     }
 
     func getAPI(for id: UUID) -> ValetudoAPI? {
@@ -289,6 +290,7 @@ class RobotManager {
             let updaterState = try await api.getUpdaterState()
             await MainActor.run {
                 let newValue = updaterState.isUpdateAvailable
+                    && !SkippedUpdateStore(robotId: id).isSkipped(updaterState.version)
                 if self.robotUpdateAvailable[id] != newValue {
                     self.robotUpdateAvailable[id] = newValue
                 }

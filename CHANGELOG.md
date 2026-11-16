@@ -10,7 +10,15 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > (v2.0.0–v4.0.1) sind keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
-## [Unreleased] - 1.1.4
+## [Unreleased] - 1.1.5
+
+### Hinzugefügt
+- Der Hinweis auf ein Firmware-Update lässt sich je Roboter für eine Version überspringen; er kommt erst mit der nächsten Version wieder, und installieren lässt sich die übersprungene Version weiterhin in den Geräteinformationen des Roboters ([#31](https://github.com/Revisor01/VacuPilot/issues/31)).
+
+### Behoben
+- Brechen die Stationsanzeigen unter der Kartenvorschau in zwei Reihen um, hat die untere Reihe Abstand zum Kartenrand und wirkt nicht mehr abgeschnitten ([#30](https://github.com/Revisor01/VacuPilot/issues/30)).
+
+## [1.1.4] - 2026-11-01
 
 ### Hinzugefügt
 - Bei Stationen, die Frischwasser, Schmutzwasser, Reinigungsmittel und Staubbeutel melden (etwa Dreame X40 Master), zeigt die Roboteransicht deren Stand, und die App benachrichtigt, sobald etwas leer, voll oder nicht eingesetzt ist ([#26](https://github.com/Revisor01/VacuPilot/issues/26)).
