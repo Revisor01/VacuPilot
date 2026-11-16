@@ -14,6 +14,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ### Hinzugefügt
 - Bei Stationen, die Frischwasser, Schmutzwasser, Reinigungsmittel und Staubbeutel melden (etwa Dreame X40 Master), zeigt die Roboteransicht deren Stand, und die App benachrichtigt, sobald etwas leer, voll oder nicht eingesetzt ist ([#26](https://github.com/Revisor01/VacuPilot/issues/26)).
+- Der Hinweis auf ein Firmware-Update lässt sich je Roboter für eine Version überspringen; er kommt erst mit der nächsten Version wieder, und installieren lässt sich die übersprungene Version weiterhin in den Geräteinformationen des Roboters ([#31](https://github.com/Revisor01/VacuPilot/issues/31)).
 
 ### Geändert
 - Neue Lizenz: GNU AGPL v3.0 statt GPL-3.0: Die Pflicht, Änderungen offenzulegen, gilt jetzt auch für den Betrieb als Webdienst.

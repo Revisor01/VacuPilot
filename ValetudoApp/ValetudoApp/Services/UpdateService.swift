@@ -40,6 +40,30 @@ protocol ValetudoAPIProtocol: AnyObject, Sendable {
     func getValetudoVersion() async throws -> ValetudoVersion
 }
 
+// MARK: - SkippedUpdateStore
+
+struct SkippedUpdateStore {
+    let robotId: UUID
+    var defaults: UserDefaults = .standard
+
+    private var key: String { "skipped_update_version_\(robotId.uuidString)" }
+
+    var version: String? { defaults.string(forKey: key) }
+
+    func isSkipped(_ candidate: String?) -> Bool {
+        guard let candidate, let version else { return false }
+        return candidate == version
+    }
+
+    func skip(_ version: String) {
+        defaults.set(version, forKey: key)
+    }
+
+    func clear() {
+        defaults.removeObject(forKey: key)
+    }
+}
+
 // MARK: - UpdateService
 
 @MainActor
@@ -51,18 +75,48 @@ class UpdateService {
     private(set) var latestVersion: String?
     private(set) var updateUrl: String?
     private(set) var downloadProgress: Double = 0.0
+    /// Version the robot's updater offers; may differ from the latest GitHub release.
+    private(set) var offeredVersion: String?
+    private(set) var skippedVersion: String?
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "UpdateService")
     private let api: any ValetudoAPIProtocol
     @ObservationIgnored private var pollingTask: Task<Void, Never>?
     @ObservationIgnored private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
     @ObservationIgnored private var lastCheckDate: Date?
+    @ObservationIgnored private let skipStore: SkippedUpdateStore?
 
     /// Wird aufgerufen wenn der Roboter nach einem OTA-Update erfolgreich neu gestartet hat
     var onRebootComplete: (() -> Void)?
 
-    init(api: any ValetudoAPIProtocol) {
+    init(api: any ValetudoAPIProtocol, skipStore: SkippedUpdateStore? = nil) {
         self.api = api
+        self.skipStore = skipStore
+        self.skippedVersion = skipStore?.version
+    }
+
+    // MARK: - Skipped Version
+
+    var pendingVersion: String? { offeredVersion ?? latestVersion }
+
+    func isSkipped(_ version: String?) -> Bool {
+        guard let version, let skippedVersion else { return false }
+        return version == skippedVersion
+    }
+
+    /// Only the banner honours a skip; installing from the robot settings stays possible.
+    var showsUpdateAvailableBanner: Bool {
+        phase == .updateAvailable && !isSkipped(pendingVersion)
+    }
+
+    func skip(version: String) {
+        skipStore?.skip(version)
+        skippedVersion = version
+    }
+
+    func clearSkippedVersion() {
+        skipStore?.clear()
+        skippedVersion = nil
     }
 
     deinit {
@@ -106,6 +160,7 @@ class UpdateService {
             // Valetudo allows "check" only in Idle/Error; other states are used directly.
             let initialState = try await api.getUpdaterState()
             let initialMapped = mapUpdaterState(initialState)
+            var finalState = initialState
             if case .idle = initialMapped {
                 // Nur dann triggern wir einen neuen Check.
                 try await api.checkForUpdates()
@@ -114,6 +169,7 @@ class UpdateService {
                 for attempt in 0..<10 {
                     try? await Task.sleep(for: .milliseconds(attempt == 0 ? 500 : 1500))
                     let state = try await api.getUpdaterState()
+                    finalState = state
                     mapped = mapUpdaterState(state)
                     if case .idle = mapped { continue }
                     break
@@ -122,6 +178,7 @@ class UpdateService {
             } else {
                 setPhase(initialMapped)
             }
+            offeredVersion = phase == .updateAvailable ? finalState.version : nil
         } catch {
             // A failed check falls back silently to .idle; error banners only for download and apply.
             logger.info("checkForUpdates failed (silent, back to idle): \(error.localizedDescription, privacy: .public)")
@@ -184,6 +241,7 @@ class UpdateService {
         currentVersion = nil
         latestVersion = nil
         updateUrl = nil
+        offeredVersion = nil
         downloadProgress = 0.0
         lastCheckDate = nil
     }

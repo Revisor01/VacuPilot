@@ -296,7 +296,7 @@ final class RobotDetailViewModel {
     private func setupUpdateService() {
         guard let api = api else { return }
         if updateService == nil {
-            updateService = UpdateService(api: api)
+            updateService = UpdateService(api: api, skipStore: SkippedUpdateStore(robotId: robot.id))
             updateService?.onRebootComplete = { [weak self] in
                 guard let self = self else { return }
                 self.robotManager.invalidateCapabilities(for: self.robot.id)
@@ -495,6 +495,11 @@ final class RobotDetailViewModel {
     }
 
     // MARK: - Update
+
+    func skipUpdate(version: String) {
+        updateService?.skip(version: version)
+        robotManager.robotUpdateAvailable[robot.id] = false
+    }
 
     func startUpdate() async {
         guard let svc = updateService else { return }
