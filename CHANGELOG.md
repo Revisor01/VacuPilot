@@ -12,6 +12,9 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ## [Unreleased] - 1.1.6
 
+### Behoben
+- Nach einer Reinigung kam die Meldung „Reinigung abgeschlossen“ bei laufender App teils doppelt; jeder Statuswechsel wird jetzt genau einmal gemeldet.
+
 ## [1.1.5] - 2026-11-17
 
 ### Hinzugefügt
