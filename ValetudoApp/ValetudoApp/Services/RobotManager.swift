@@ -49,7 +49,7 @@ class RobotManager {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "RobotManager")
     @ObservationIgnored private var apis: [UUID: ValetudoAPI] = [:]
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
-    @ObservationIgnored private var previousStates: [UUID: RobotStatus] = [:]
+    @ObservationIgnored private let stateTracker = RobotStateTracker()
     // Failed polls in a row; only past the threshold is a robot offline, so a single timeout does not flip it.
     @ObservationIgnored private var consecutiveFailures: [UUID: Int] = [:]
     private let offlineFailureThreshold = 3
@@ -109,7 +109,7 @@ class RobotManager {
         robots.removeAll { $0.id == id }
         apis.removeValue(forKey: id)
         robotStates.removeValue(forKey: id)
-        previousStates.removeValue(forKey: id)
+        stateTracker.forget(id)
         saveRobots()
         MapCacheService.shared.deleteCache(for: id)
         SkippedUpdateStore(robotId: id).clear()
@@ -211,7 +211,6 @@ class RobotManager {
     func refreshRobot(_ id: UUID) async {
         guard let api = apis[id] else { return }
         let robotName = getRobotName(for: id)
-        let previousState = previousStates[id]
 
         do {
             let attributes = try await api.getAttributes()
@@ -226,10 +225,9 @@ class RobotManager {
             // Erfolgreicher Poll — Fehlerzähler zurücksetzen
             consecutiveFailures[id] = 0
 
-            checkStateChanges(robotName: robotName, previous: previousState, current: newStatus)
+            notifyStateEvents(stateTracker.apply(newStatus, for: id), robotName: robotName)
             checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
 
-            previousStates[id] = robotStates[id]
             if robotStates[id] != newStatus {
                 robotStates[id] = newStatus
             }
@@ -250,8 +248,8 @@ class RobotManager {
             }
 
             // Schwellwert erreicht — jetzt als offline markieren
-            previousStates[id] = robotStates[id]
             let offlineStatus = RobotStatus(isOnline: false)
+            _ = stateTracker.apply(offlineStatus, for: id)
             if robotStates[id] != offlineStatus {
                 robotStates[id] = offlineStatus
             }
@@ -268,9 +266,8 @@ class RobotManager {
             info: existingInfo
         )
         let robotName = getRobotName(for: id)
-        checkStateChanges(robotName: robotName, previous: previousStates[id], current: newStatus)
+        notifyStateEvents(stateTracker.apply(newStatus, for: id), robotName: robotName)
         checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
-        previousStates[id] = robotStates[id]
         if robotStates[id] != newStatus {
             robotStates[id] = newStatus
         }
@@ -301,21 +298,16 @@ class RobotManager {
     }
 
     // MARK: - State Change Notifications
-    private func checkStateChanges(robotName: String, previous: RobotStatus?, current: RobotStatus) {
-        guard let prevStatus = previous?.statusValue else { return }
-        let currentStatus = current.statusValue ?? ""
-
-        if prevStatus == "cleaning" && (currentStatus == "docked" || currentStatus == "idle") {
-            notificationService.notifyCleaningComplete(robotName: robotName, area: current.cleanedArea)
-        }
-
-        if current.statusFlag == "stuck" && previous?.statusFlag != "stuck" {
-            notificationService.notifyRobotStuck(robotName: robotName)
-        }
-
-        if currentStatus == "error" && prevStatus != "error" {
-            let errorMsg = current.statusFlag ?? String(localized: "status.error")
-            notificationService.notifyRobotError(robotName: robotName, error: errorMsg)
+    private func notifyStateEvents(_ events: [RobotStateEvent], robotName: String) {
+        for event in events {
+            switch event {
+            case .cleaningComplete(let area):
+                notificationService.notifyCleaningComplete(robotName: robotName, area: area)
+            case .stuck:
+                notificationService.notifyRobotStuck(robotName: robotName)
+            case .error(let flag):
+                notificationService.notifyRobotError(robotName: robotName, error: flag ?? String(localized: "status.error"))
+            }
         }
     }
 

@@ -7,10 +7,14 @@ which newer firmware features the app does not cover.
 
 | VacuPilot | Build | Date | Minimum | Tested against | Evidence |
 |---|---|---|---|---|---|
+| 1.1.5 | 123 | 2026-11-17 | 2024.06.0 | 2026.10.0 (source) | No device test; no firmware-related change (update hint, station row layout) |
+| 1.1.4 | 122 | 2026-11-01 | 2024.06.0 | 2026.10.0 (source) | No device test; dock component states against unit tests |
 | 1.1.3 | 108 | 2026-10-24 | 2024.06.0 | 2026.10.0 (source) | No device test; carpet id as a number (Midea) against unit tests and the simulated robot |
 | 1.1.2 | 107 | 2026-10-22 | 2024.06.0 | 2026.10.0 (source) | No device test; API comparison 2026.08.0 → 2026.10.0, new values via unit tests |
 | 1.1.0 | 104 | 2026-10-07 | 2024.06.0 | 2026.08.0 | Device test on a Roborock S5 Max; carpet and map annotations only against the simulated robot |
 | 1.0.0 | 99 | 2025-12-20 | 2024.06.0 | 2026.02.0 · 2026.05.0 | Live OTA test on two robots |
+
+Each release adds its row here in the release pull request.
 
 The minimum is not enforced: the app follows the robot's capability list, so
 older firmware shows up as missing features, not as an error.

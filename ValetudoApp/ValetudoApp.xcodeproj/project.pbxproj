@@ -17,6 +17,7 @@
 		1F0534502B3DB53D433509DD /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */; };
 		21831384B60A49CF9536027A /* MapOverlayViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE57BDF736246CD4F42B244 /* MapOverlayViews.swift */; };
 		227BE68A1514D604CA149F78 /* DockComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69BAB34C07120E0EF349A3C /* DockComponent.swift */; };
+		0CA4D82FA8E3CB3A843CEF3E /* RobotStateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A1A72644FF18D61FDA50172 /* RobotStateEvent.swift */; };
 		26187F76B128067478E11E35 /* RobotDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DD7833558396395DCA7D32 /* RobotDetailView.swift */; };
 		268751822B3D802C519CE03C /* SSEConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9841E9A11C0D78ACE274994 /* SSEConnectionManager.swift */; };
 		296A3B5821E1A4916CB23FB8 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FD244AAC28A5D50E6DF9E55 /* MapViewModel.swift */; };
@@ -80,6 +81,7 @@
 		DDD26A60B887E1133DD2E18B /* AddRobotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3BEF0FC2A1B164BA6099BBC /* AddRobotView.swift */; };
 		DE94B163C104E2E22A076D08 /* MapGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276033B5B7CFD4CEB45479EA /* MapGeometry.swift */; };
 		DF88E04138C5EEED7EE5B2DA /* DockComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F575C49F2960CF0FD67A2F03 /* DockComponentTests.swift */; };
+		AD15FD1A10FA650B06CD0F24 /* StateEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3921D7C153D6928B7A76563E /* StateEventTests.swift */; };
 		E0D9225810327799920C33B4 /* MQTTSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F05909B03F354CD7AC5E728 /* MQTTSettingsView.swift */; };
 		E3B89B8282E352373120510B /* RobotManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BE7F0D27E21AAB984042AF4 /* RobotManager.swift */; };
 		E5A9320CDD26029B2624B25C /* UpdateOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98A5D2C3E4A261558B82597A /* UpdateOverlayView.swift */; };
@@ -181,6 +183,7 @@
 		E2A0BADAA7A0164C077A6A9D /* StationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StationSettingsView.swift; sourceTree = "<group>"; };
 		E6102D935A16D6758543ADC2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E69BAB34C07120E0EF349A3C /* DockComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockComponent.swift; sourceTree = "<group>"; };
+		1A1A72644FF18D61FDA50172 /* RobotStateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotStateEvent.swift; sourceTree = "<group>"; };
 		EBBA65057AA09088A3B6E843 /* RobotDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotDetailViewModel.swift; sourceTree = "<group>"; };
 		EDE57BDF736246CD4F42B244 /* MapOverlayViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapOverlayViews.swift; sourceTree = "<group>"; };
 		EE89B2C234119A62502A7547 /* SupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportView.swift; sourceTree = "<group>"; };
@@ -190,6 +193,7 @@
 		F46636E74EA5413B0AFDBEFC /* RoomsSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomsSectionView.swift; sourceTree = "<group>"; };
 		F4727F8CABE30473DD20C391 /* ValetudoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValetudoApp.swift; sourceTree = "<group>"; };
 		F575C49F2960CF0FD67A2F03 /* DockComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DockComponentTests.swift; sourceTree = "<group>"; };
+		3921D7C153D6928B7A76563E /* StateEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateEventTests.swift; sourceTree = "<group>"; };
 		F59ACF682660288ABD2AB9E7 /* DoNotDisturbView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoNotDisturbView.swift; sourceTree = "<group>"; };
 		F6096D4E41E9DA4B4A7CB36A /* RobotMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotMap.swift; sourceTree = "<group>"; };
 		F82E74EF0C796AB55893BA3C /* WifiSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WifiSettingsView.swift; sourceTree = "<group>"; };
@@ -343,6 +347,7 @@
 			children = (
 				B313EE35A432692658D58220 /* Consumable.swift */,
 				E69BAB34C07120E0EF349A3C /* DockComponent.swift */,
+				1A1A72644FF18D61FDA50172 /* RobotStateEvent.swift */,
 				1B5589AF6019A8A237268523 /* RobotConfig.swift */,
 				F6096D4E41E9DA4B4A7CB36A /* RobotMap.swift */,
 				602023483884AA7FC99EE28A /* RobotState.swift */,
@@ -364,6 +369,7 @@
 			children = (
 				D19BECB7EAC228CACDE27D45 /* ConsumableTests.swift */,
 				F575C49F2960CF0FD67A2F03 /* DockComponentTests.swift */,
+				3921D7C153D6928B7A76563E /* StateEventTests.swift */,
 				C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */,
 				512D53EA1BD64BF36BFAA74A /* MapCacheServiceTests.swift */,
 				DF2ECD98AE2E9729767F4CE8 /* MapGeometryTests.swift */,
@@ -494,6 +500,7 @@
 			files = (
 				7287C4B56D6A0CE743D38B28 /* ConsumableTests.swift in Sources */,
 				DF88E04138C5EEED7EE5B2DA /* DockComponentTests.swift in Sources */,
+				AD15FD1A10FA650B06CD0F24 /* StateEventTests.swift in Sources */,
 				1F0534502B3DB53D433509DD /* KeychainStoreTests.swift in Sources */,
 				FB8C5E78715AEBEF5B4A7BE4 /* MapCacheServiceTests.swift in Sources */,
 				8F6D7422E6348F6AF68FADD7 /* MapGeometryTests.swift in Sources */,
@@ -525,6 +532,7 @@
 				023B647B98CE0D551626BEB0 /* DebugConfig.swift in Sources */,
 				8E7FB7D245E8323E351F68C8 /* DoNotDisturbView.swift in Sources */,
 				227BE68A1514D604CA149F78 /* DockComponent.swift in Sources */,
+				0CA4D82FA8E3CB3A843CEF3E /* RobotStateEvent.swift in Sources */,
 				8223FDB23639200130F934DF /* DockComponentChipsView.swift in Sources */,
 				0C6898A2E427A1F4DB944811 /* ErrorRouter.swift in Sources */,
 				6CE25D859DBD613963C741F8 /* EventsSectionView.swift in Sources */,
@@ -674,7 +682,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = de.simonluthe.ValetudiOS;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -732,7 +740,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.5;
+				MARKETING_VERSION = 1.1.6;
 				PRODUCT_BUNDLE_IDENTIFIER = de.simonluthe.ValetudiOS;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;

@@ -33,14 +33,14 @@ targets:
         ITSAppUsesNonExemptEncryption: false
         UIRequiresFullScreen: true
         CFBundleIconName: AppIcon
-        NSLocalNetworkUsageDescription: "Access local network to communicate with Valetudo robots"
+        NSLocalNetworkUsageDescription: "Access local network to communicate with your vacuum robots"
         NSBonjourServices:
           - _valetudo._tcp
         BGTaskSchedulerPermittedIdentifiers:
           - de.simonluthe.ValetudiOS.backgroundRefresh
     settings:
       base:
-        MARKETING_VERSION: "1.1.5"
+        MARKETING_VERSION: "1.1.6"
         CURRENT_PROJECT_VERSION: "108"
         PRODUCT_BUNDLE_IDENTIFIER: de.simonluthe.ValetudiOS
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
