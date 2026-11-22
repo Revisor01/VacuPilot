@@ -10,6 +10,8 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 > (v2.0.0–v4.0.1) sind keine ausgelieferten Versionen — sie sind unten den
 > jeweiligen Store-Builds zugeordnet.
 
+## [Unreleased] - 1.1.6
+
 ## [1.1.5] - 2026-11-17
 
 ### Hinzugefügt
