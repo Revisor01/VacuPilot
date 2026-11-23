@@ -56,22 +56,75 @@ struct EndpointSelector: Equatable, Sendable {
     }
 }
 
-/// Counts network path changes, so an address choice is redone after switching between Wi-Fi and cellular.
+/// Counts network changes, so an address choice is redone after switching between Wi-Fi and cellular.
 final class NetworkPathWatcher: @unchecked Sendable {
     static let shared = NetworkPathWatcher()
 
+    private struct State {
+        var generation = 0
+        var signature: PathSignature?
+        var subscribers: [UUID: AsyncStream<Int>.Continuation] = [:]
+    }
+
     private let monitor = NWPathMonitor()
-    private let counter = OSAllocatedUnfairLock(initialState: 0)
+    private let state = OSAllocatedUnfairLock(initialState: State())
 
     private init() {
-        let counter = counter
-        monitor.pathUpdateHandler = { _ in
-            counter.withLock { $0 += 1 }
+        let state = state
+        monitor.pathUpdateHandler = { path in
+            let signature = PathSignature(path)
+            let (changed, generation, subscribers) = state.withLock { current -> (Bool, Int, [AsyncStream<Int>.Continuation]) in
+                // The monitor also reports minor updates; only a different link counts as a change.
+                guard current.signature != signature else { return (false, current.generation, []) }
+                current.signature = signature
+                current.generation += 1
+                return (true, current.generation, Array(current.subscribers.values))
+            }
+            guard changed else { return }
+            subscribers.forEach { $0.yield(generation) }
         }
         monitor.start(queue: DispatchQueue(label: "NetworkPathWatcher", qos: .utility))
     }
 
     var generation: Int {
-        counter.withLock { $0 }
+        state.withLock { $0.generation }
+    }
+
+    /// Yields the new generation after each network change.
+    func changes() -> AsyncStream<Int> {
+        AsyncStream { continuation in
+            let id = UUID()
+            state.withLock { $0.subscribers[id] = continuation }
+            continuation.onTermination = { [state] _ in
+                state.withLock { $0.subscribers[id] = nil }
+            }
+        }
+    }
+}
+
+/// The parts of a network path that decide which address is reachable.
+struct PathSignature: Equatable, Sendable {
+    let satisfied: Bool
+    let wifi: Bool
+    let cellular: Bool
+    let wired: Bool
+    let other: Bool
+
+    init(satisfied: Bool, wifi: Bool, cellular: Bool, wired: Bool, other: Bool) {
+        self.satisfied = satisfied
+        self.wifi = wifi
+        self.cellular = cellular
+        self.wired = wired
+        self.other = other
+    }
+
+    init(_ path: NWPath) {
+        self.init(
+            satisfied: path.status == .satisfied,
+            wifi: path.usesInterfaceType(.wifi),
+            cellular: path.usesInterfaceType(.cellular),
+            wired: path.usesInterfaceType(.wiredEthernet),
+            other: path.usesInterfaceType(.other)
+        )
     }
 }

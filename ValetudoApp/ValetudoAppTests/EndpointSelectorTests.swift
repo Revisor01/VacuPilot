@@ -143,6 +143,33 @@ final class EndpointSelectorTests: XCTestCase {
         XCTAssertEqual(decoded.host, "192.168.1.10")
     }
 
+    // MARK: - Network change detection
+
+    func testWifiToCellularIsAChange() {
+        let wifi = PathSignature(satisfied: true, wifi: true, cellular: false, wired: false, other: false)
+        let cellular = PathSignature(satisfied: true, wifi: false, cellular: true, wired: false, other: false)
+        XCTAssertNotEqual(wifi, cellular)
+    }
+
+    func testSameLinkIsNoChange() {
+        let a = PathSignature(satisfied: true, wifi: true, cellular: false, wired: false, other: false)
+        let b = PathSignature(satisfied: true, wifi: true, cellular: false, wired: false, other: false)
+        XCTAssertEqual(a, b)
+    }
+
+    func testVPNOnTopIsAChange() {
+        let wifi = PathSignature(satisfied: true, wifi: true, cellular: false, wired: false, other: false)
+        let vpn = PathSignature(satisfied: true, wifi: true, cellular: false, wired: false, other: true)
+        XCTAssertNotEqual(wifi, vpn)
+    }
+
+    func testNetworkChangeForcesNewChoiceAtHome() {
+        var selector = EndpointSelector(hasRemote: true)
+        selector.resolve(homeReachable: true, now: start, pathGeneration: 1)
+        XCTAssertFalse(selector.needsResolve(now: start.addingTimeInterval(5), pathGeneration: 1))
+        XCTAssertTrue(selector.needsResolve(now: start.addingTimeInterval(5), pathGeneration: 2))
+    }
+
     // MARK: - Encryption warning
 
     func testRemoteHTTPSIsEncryptedEvenIfHomeIsHTTP() {

@@ -116,6 +116,7 @@ final class MapViewModel {
 
     // MARK: - Task Management
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private var networkTask: Task<Void, Never>?
 
     // MARK: - Computed Properties
     var api: ValetudoAPI? {
@@ -212,6 +213,7 @@ final class MapViewModel {
     }
 
     func startMapRefresh() {
+        watchNetworkChanges()
         refreshTask?.cancel()
         refreshTask = Task { [weak self] in
             guard let self else { return }
@@ -298,7 +300,22 @@ final class MapViewModel {
         }
     }
 
+    /// The map stream can stay open without data after Wi-Fi drops; start it over on the new link.
+    private func watchNetworkChanges() {
+        guard networkTask == nil else { return }
+        networkTask = Task { [weak self] in
+            for await generation in NetworkPathWatcher.shared.changes() {
+                try? await Task.sleep(for: .seconds(1))
+                guard NetworkPathWatcher.shared.generation == generation,
+                      let self, self.refreshTask != nil else { continue }
+                self.startMapRefresh()
+            }
+        }
+    }
+
     func stopMapRefresh() {
+        networkTask?.cancel()
+        networkTask = nil
         refreshTask?.cancel()
         refreshTask = nil
     }

@@ -9,10 +9,6 @@ struct RobotStatusHeaderView: View {
                 .fill(viewModel.status?.isOnline == true ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            if viewModel.status?.isOnline == true, let endpoint = viewModel.endpoint {
-                EndpointBadge(endpoint: endpoint)
-            }
-
             if let error = viewModel.currentError {
                 Text(error.explanation.title)
                     .font(.subheadline)
@@ -25,6 +21,8 @@ struct RobotStatusHeaderView: View {
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundStyle(statusColor(statusValue))
+                    .lineLimit(1)
+                    .layoutPriority(1)
             } else {
                 Text(String(localized: "robot.offline"))
                     .font(.subheadline)
@@ -48,6 +46,10 @@ struct RobotStatusHeaderView: View {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)
+            }
+
+            if viewModel.status?.isOnline == true, let endpoint = viewModel.endpoint {
+                EndpointBadge(endpoint: endpoint)
             }
 
             // HTTP connection warning
