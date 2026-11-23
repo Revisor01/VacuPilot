@@ -64,17 +64,23 @@ class NotificationService {
         scheduleNotification(content: content, identifier: "cleaning_complete_\(UUID().uuidString)")
     }
 
-    func notifyRobotError(robotName: String, error: String) {
+    func notifyRobotError(robotId: UUID, robotName: String, error: RobotErrorInfo?) {
         guard isAuthorized && notifyRobotError else { return }
 
         let content = UNMutableNotificationContent()
         content.title = String(localized: "notification.error.title \(robotName)")
-        content.body = error
+        content.body = Self.errorBody(for: error)
         content.sound = .defaultCritical
         content.categoryIdentifier = "ROBOT_ERROR"
         content.interruptionLevel = .critical
 
-        scheduleNotification(content: content, identifier: "error_\(UUID().uuidString)")
+        // One identifier per robot: a more precise message replaces the earlier one instead of stacking up.
+        scheduleNotification(content: content, identifier: "error_\(robotId.uuidString)")
+    }
+
+    nonisolated static func errorBody(for error: RobotErrorInfo?) -> String {
+        let explanation = (error ?? RobotErrorInfo()).explanation
+        return "\(explanation.title). \(explanation.help)"
     }
 
     func notifyRobotStuck(robotName: String) {

@@ -46,6 +46,11 @@ struct RobotDetailView: View {
                 RobotStatusHeaderView(viewModel: viewModel)
                     .listRowSeparator(.hidden)
 
+                if let error = viewModel.currentError {
+                    RobotErrorCardView(error: error)
+                        .listRowSeparator(.hidden)
+                }
+
                 if viewModel.status?.isOnline == true {
                     MapPreviewView(robot: viewModel.robot, showFullMap: $showFullMap)
                         .listRowSeparator(.hidden)

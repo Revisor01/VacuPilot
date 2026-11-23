@@ -23,7 +23,7 @@ final class StateEventTests: XCTestCase {
     }
 
     func testStuckAndErrorOnlyOnEntry() {
-        XCTAssertEqual(status("error", flag: "stuck").stateEvents(since: status("cleaning")), [.stuck, .error("stuck")])
+        XCTAssertEqual(status("error", flag: "stuck").stateEvents(since: status("cleaning")), [.stuck, .error(nil)])
         XCTAssertEqual(status("error", flag: "stuck").stateEvents(since: status("error", flag: "stuck")), [])
     }
 

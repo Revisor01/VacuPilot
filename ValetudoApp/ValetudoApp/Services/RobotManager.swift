@@ -9,6 +9,7 @@ class RobotManager {
     var robots: [RobotConfig] = []
     var robotStates: [UUID: RobotStatus] = [:]
     var robotUpdateAvailable: [UUID: Bool] = [:]
+    var robotErrors: [UUID: RobotErrorInfo] = [:]
 
     // MARK: - Active Robot
     var activeRobotId: UUID? {
@@ -109,6 +110,7 @@ class RobotManager {
         robots.removeAll { $0.id == id }
         apis.removeValue(forKey: id)
         robotStates.removeValue(forKey: id)
+        robotErrors.removeValue(forKey: id)
         stateTracker.forget(id)
         saveRobots()
         MapCacheService.shared.deleteCache(for: id)
@@ -225,7 +227,8 @@ class RobotManager {
             // Erfolgreicher Poll — Fehlerzähler zurücksetzen
             consecutiveFailures[id] = 0
 
-            notifyStateEvents(stateTracker.apply(newStatus, for: id), robotName: robotName)
+            notifyStateEvents(stateTracker.apply(newStatus, for: id), robotId: id, robotName: robotName)
+            updateDisplayedError(for: id)
             checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
 
             if robotStates[id] != newStatus {
@@ -250,6 +253,7 @@ class RobotManager {
             // Schwellwert erreicht — jetzt als offline markieren
             let offlineStatus = RobotStatus(isOnline: false)
             _ = stateTracker.apply(offlineStatus, for: id)
+            updateDisplayedError(for: id)
             if robotStates[id] != offlineStatus {
                 robotStates[id] = offlineStatus
             }
@@ -266,7 +270,8 @@ class RobotManager {
             info: existingInfo
         )
         let robotName = getRobotName(for: id)
-        notifyStateEvents(stateTracker.apply(newStatus, for: id), robotName: robotName)
+        notifyStateEvents(stateTracker.apply(newStatus, for: id), robotId: id, robotName: robotName)
+        updateDisplayedError(for: id)
         checkDockComponents(robotName: robotName, previous: robotStates[id], current: newStatus)
         if robotStates[id] != newStatus {
             robotStates[id] = newStatus
@@ -298,15 +303,22 @@ class RobotManager {
     }
 
     // MARK: - State Change Notifications
-    private func notifyStateEvents(_ events: [RobotStateEvent], robotName: String) {
+    private func updateDisplayedError(for id: UUID) {
+        let error = stateTracker.displayedError(for: id)
+        if robotErrors[id] != error {
+            robotErrors[id] = error
+        }
+    }
+
+    private func notifyStateEvents(_ events: [RobotStateEvent], robotId: UUID, robotName: String) {
         for event in events {
             switch event {
             case .cleaningComplete(let area):
                 notificationService.notifyCleaningComplete(robotName: robotName, area: area)
             case .stuck:
                 notificationService.notifyRobotStuck(robotName: robotName)
-            case .error(let flag):
-                notificationService.notifyRobotError(robotName: robotName, error: flag ?? String(localized: "status.error"))
+            case .error(let error):
+                notificationService.notifyRobotError(robotId: robotId, robotName: robotName, error: error)
             }
         }
     }

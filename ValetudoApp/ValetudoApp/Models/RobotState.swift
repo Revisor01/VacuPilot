@@ -22,10 +22,25 @@ struct RobotAttribute: Codable, Equatable {
     let value: String?
     let level: Int?
     let flag: String?
+    var error: RobotErrorInfo? = nil
 
     enum CodingKeys: String, CodingKey {
         case `__class`
-        case type, subType, value, level, flag
+        case type, subType, value, level, flag, error
+    }
+}
+
+extension RobotAttribute {
+    // A malformed error object must not drop the whole attribute list.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.__class = try container.decode(String.self, forKey: .__class)
+        self.type = try container.decodeIfPresent(String.self, forKey: .type)
+        self.subType = try container.decodeIfPresent(String.self, forKey: .subType)
+        self.value = try container.decodeIfPresent(String.self, forKey: .value)
+        self.level = try container.decodeIfPresent(Int.self, forKey: .level)
+        self.flag = try container.decodeIfPresent(String.self, forKey: .flag)
+        self.error = (try? container.decodeIfPresent(RobotErrorInfo.self, forKey: .error)) ?? nil
     }
 }
 

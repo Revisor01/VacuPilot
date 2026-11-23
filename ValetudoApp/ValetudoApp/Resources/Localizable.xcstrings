@@ -6751,6 +6751,2122 @@
         }
       }
     },
+    "robot_error.animal_excrement.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Roboter hat angehalten, um nichts zu verteilen. Die Stelle reinigen und den Roboter von dort wegstellen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The robot stopped so it does not spread anything. Clean the spot and move the robot away from it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot s'est arrêté pour ne rien étaler. Nettoyez l'endroit et éloignez le robot."
+          }
+        }
+      }
+    },
+    "robot_error.animal_excrement.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tierkot erkannt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pet waste detected"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déjections animales détectées"
+          }
+        }
+      }
+    },
+    "robot_error.battery_temperature.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter bei Zimmertemperatur abkühlen oder aufwärmen lassen und dann neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Let the robot cool down or warm up at room temperature, then restart it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laissez le robot revenir à température ambiante, puis redémarrez-le."
+          }
+        }
+      }
+    },
+    "robot_error.battery_temperature.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akku zu warm oder zu kalt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery too hot or too cold"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batterie trop chaude ou trop froide"
+          }
+        }
+      }
+    },
+    "robot_error.bumper_stuck.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Stoßfänger vorn mehrmals eindrücken, bis er frei zurückfedert, und Fremdkörper aus dem Spalt entfernen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Press the front bumper several times until it springs back freely, and remove anything caught in the gap."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appuyez plusieurs fois sur le pare-chocs avant jusqu'à ce qu'il revienne librement et retirez ce qui est coincé dans la fente."
+          }
+        }
+      }
+    },
+    "robot_error.bumper_stuck.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorderer Stoßfänger klemmt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Front bumper stuck"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pare-chocs avant coincé"
+          }
+        }
+      }
+    },
+    "robot_error.camera_dirty.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Kameralinse vorn am Roboter vorsichtig mit einem weichen Tuch reinigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gently clean the camera lens at the front of the robot with a soft cloth."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nettoyez délicatement l'objectif de la caméra à l'avant du robot avec un chiffon doux."
+          }
+        }
+      }
+    },
+    "robot_error.camera_dirty.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kamera verschmutzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera dirty"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caméra sale"
+          }
+        }
+      }
+    },
+    "robot_error.carpet.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter vom Teppich nehmen oder das Wischmodul abnehmen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move the robot off the carpet or remove the mop module."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirez le robot du tapis ou enlevez le module de lavage."
+          }
+        }
+      }
+    },
+    "robot_error.carpet.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start auf Teppich nicht möglich"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cannot start on carpet"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrage impossible sur un tapis"
+          }
+        }
+      }
+    },
+    "robot_error.charging_contacts_dirty.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Ladekontakte an Roboter und Station mit einem trockenen Tuch reinigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean the charging contacts on robot and dock with a dry cloth."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nettoyez les contacts de charge du robot et de la station avec un chiffon sec."
+          }
+        }
+      }
+    },
+    "robot_error.charging_contacts_dirty.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ladekontakte verschmutzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charging contacts dirty"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contacts de charge encrassés"
+          }
+        }
+      }
+    },
+    "robot_error.charging_error.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfen, ob die Station Strom hat und der Roboter richtig auf den Ladekontakten steht. Die Kontakte an Roboter und Station reinigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check that the dock has power and the robot sits correctly on the charging contacts. Clean the contacts on robot and dock."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez que la station est alimentée et que le robot est bien posé sur les contacts. Nettoyez les contacts du robot et de la station."
+          }
+        }
+      }
+    },
+    "robot_error.charging_error.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ladefehler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charging error"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur de charge"
+          }
+        }
+      }
+    },
+    "robot_error.clean_water_tank.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Frischwassertank füllen und richtig einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fill the clean water tank and insert it properly."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplissez le réservoir d'eau propre et remettez-le correctement."
+          }
+        }
+      }
+    },
+    "robot_error.clean_water_tank.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Frischwassertank leer oder nicht eingesetzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean water tank empty or missing"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réservoir d'eau propre vide ou absent"
+          }
+        }
+      }
+    },
+    "robot_error.cliff_sensor.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sensoren an der Unterseite mit einem trockenen, weichen Tuch reinigen. Steht der Roboter an einer Treppe oder Kante, ihn dort wegstellen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean the sensors on the underside with a soft, dry cloth. If the robot is at a stair or ledge, move it away."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nettoyez les capteurs sous le robot avec un chiffon doux et sec. S'il se trouve au bord d'un escalier, éloignez-le."
+          }
+        }
+      }
+    },
+    "robot_error.cliff_sensor.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absturzsensoren verschmutzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliff sensors dirty"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteurs de vide encrassés"
+          }
+        }
+      }
+    },
+    "robot_error.dock_dust_bag_missing.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Staubbeutel in die Absaugstation einsetzen und den Deckel schließen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insert the dust bag into the auto-empty dock and close the lid."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insérez le sac dans la station d'auto-vidage et fermez le couvercle."
+          }
+        }
+      }
+    },
+    "robot_error.dock_dust_bag_missing.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staubbeutel der Station fehlt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock dust bag missing"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sac à poussière de la station absent"
+          }
+        }
+      }
+    },
+    "robot_error.dock_dust_clogged.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Staubbeutel wechseln und den Absaugkanal zwischen Station und Roboter auf Verstopfungen prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace the dust bag and check the duct between dock and robot for clogs."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changez le sac et vérifiez que le conduit entre la station et le robot n'est pas bouché."
+          }
+        }
+      }
+    },
+    "robot_error.dock_dust_clogged.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Absaugstation voll oder verstopft"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-empty dock full or clogged"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Station d'auto-vidage pleine ou bouchée"
+          }
+        }
+      }
+    },
+    "robot_error.dock_tray.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Reinigungswanne der Station herausnehmen, leeren und reinigen, Bürste und Abfluss freimachen und wieder einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take out the dock's washing tray, empty and clean it, clear the brush and drain, and put it back."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirez le bac de lavage de la station, videz-le et nettoyez-le, dégagez la brosse et l'évacuation, puis remettez-le."
+          }
+        }
+      }
+    },
+    "robot_error.dock_tray.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reinigungswanne der Station"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock washing tray"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bac de lavage de la station"
+          }
+        }
+      }
+    },
+    "robot_error.dock_water_filter.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Wasserfilter der Station einsetzen oder reinigen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insert or clean the dock's water filter."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insérez ou nettoyez le filtre à eau de la station."
+          }
+        }
+      }
+    },
+    "robot_error.dock_water_filter.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wasserfilter der Station"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock water filter"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtre à eau de la station"
+          }
+        }
+      }
+    },
+    "robot_error.dock_without_power.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzteil, Kabel und Steckdose der Ladestation prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the dock's power supply, cable and socket."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez l'alimentation, le câble et la prise de la station."
+          }
+        }
+      }
+    },
+    "robot_error.dock_without_power.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ladestation ohne Strom"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock has no power"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Station sans alimentation"
+          }
+        }
+      }
+    },
+    "robot_error.dustbin_full.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Staubbehälter leeren und den Filter ausklopfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty the dustbin and tap out the filter."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videz le bac à poussière et tapotez le filtre."
+          }
+        }
+      }
+    },
+    "robot_error.dustbin_full.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staubbehälter voll"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dustbin full"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bac à poussière plein"
+          }
+        }
+      }
+    },
+    "robot_error.dustbin_missing.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Staubbehälter einsetzen, bis er hörbar einrastet."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insert the dustbin until it clicks into place."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insérez le bac à poussière jusqu'à ce qu'il s'enclenche."
+          }
+        }
+      }
+    },
+    "robot_error.dustbin_missing.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staubbehälter fehlt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dustbin missing"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bac à poussière absent"
+          }
+        }
+      }
+    },
+    "robot_error.fan_fault.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staubbehälter und Filter prüfen und reinigen, den Luftweg freimachen und den Roboter neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check and clean the dustbin and filter, clear the air path and restart the robot."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez et nettoyez le bac et le filtre, dégagez le passage d'air et redémarrez le robot."
+          }
+        }
+      }
+    },
+    "robot_error.fan_fault.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Störung am Saugmotor"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suction fan fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut du moteur d'aspiration"
+          }
+        }
+      }
+    },
+    "robot_error.filter_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Filter herausnehmen, ausklopfen und trocken wieder einsetzen. Ist er feucht oder alt, ersetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take out the filter, tap it clean and refit it dry. Replace it if it is damp or worn."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirez le filtre, tapotez-le et remettez-le bien sec. Remplacez-le s'il est humide ou usé."
+          }
+        }
+      }
+    },
+    "robot_error.filter_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter verstopft"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter clogged"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtre colmaté"
+          }
+        }
+      }
+    },
+    "robot_error.lds_bumper_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Kappe des Laserturms muss sich leicht eindrücken lassen und zurückfedern. Eingeklemmte Gegenstände entfernen und den Roboter frei hinstellen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The cap of the laser tower must press in easily and spring back. Remove anything caught under it and place the robot in an open spot."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le capot de la tourelle laser doit s'enfoncer facilement et revenir. Retirez ce qui est coincé et posez le robot dans un endroit dégagé."
+          }
+        }
+      }
+    },
+    "robot_error.lds_bumper_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abdeckung des Lasersensors klemmt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laser sensor cover stuck"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capot du capteur laser coincé"
+          }
+        }
+      }
+    },
+    "robot_error.lds_fault.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter neu starten. War es sehr warm oder kalt, ihn erst auf Zimmertemperatur kommen lassen. Bleibt der Fehler, ist der Lasersensor vermutlich defekt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart the robot. If it was very warm or cold, let it reach room temperature first. If the error persists, the laser sensor is probably faulty."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redémarrez le robot. S'il faisait très chaud ou froid, laissez-le d'abord revenir à température ambiante. Si l'erreur persiste, le capteur laser est probablement défectueux."
+          }
+        }
+      }
+    },
+    "robot_error.lds_fault.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Störung am Lasersensor"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laser sensor fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut du capteur laser"
+          }
+        }
+      }
+    },
+    "robot_error.lds_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Laserturm oben auf dem Roboter prüfen: Haare oder Fremdkörper entfernen und den Turm vorsichtig von Hand drehen, er muss sich leicht bewegen. Den Roboter danach neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the laser tower on top of the robot: remove hair or debris and gently turn the tower by hand, it should spin freely. Then restart the robot."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez la tourelle laser sur le dessus du robot : retirez cheveux ou corps étrangers et tournez-la doucement à la main, elle doit tourner librement. Redémarrez ensuite le robot."
+          }
+        }
+      }
+    },
+    "robot_error.lds_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lasersensor blockiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laser sensor jammed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteur laser bloqué"
+          }
+        }
+      }
+    },
+    "robot_error.low_battery.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter in die Ladestation stellen und laden lassen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Put the robot on the dock and let it charge."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posez le robot sur la station et laissez-le se recharger."
+          }
+        }
+      }
+    },
+    "robot_error.low_battery.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akku fast leer"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery low"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batterie faible"
+          }
+        }
+      }
+    },
+    "robot_error.magnetic_interference.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In der Nähe liegt ein Magnetstreifen oder ein starker Magnet. Den Roboter wegstellen oder den Magneten entfernen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A magnetic strip or strong magnet is nearby. Move the robot away or remove the magnet."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une bande magnétique ou un aimant puissant se trouve à proximité. Éloignez le robot ou retirez l'aimant."
+          }
+        }
+      }
+    },
+    "robot_error.magnetic_interference.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magnetische Störung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Magnetic interference"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interférence magnétique"
+          }
+        }
+      }
+    },
+    "robot_error.main_brush_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Hauptbürste herausnehmen, Haare und Fäden entfernen, auch an den Lagern an beiden Enden, und sie wieder einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take out the main brush, remove hair and threads, including at the bearings on both ends, and put it back."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirez la brosse principale, enlevez cheveux et fils, y compris aux paliers des deux côtés, puis remettez-la."
+          }
+        }
+      }
+    },
+    "robot_error.main_brush_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hauptbürste blockiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Main brush jammed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brosse principale bloquée"
+          }
+        }
+      }
+    },
+    "robot_error.mop_module.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wischmodul und Wischpads prüfen: richtig eingesetzt und nichts eingeklemmt. Danach neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the mop module and pads: properly attached and nothing caught. Then restart."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez le module et les patins : bien fixés et rien de coincé. Redémarrez ensuite."
+          }
+        }
+      }
+    },
+    "robot_error.mop_module.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problem mit dem Wischmodul"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mop module problem"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problème de module de lavage"
+          }
+        }
+      }
+    },
+    "robot_error.navigation_failed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hindernisse wegräumen, die Station frei zugänglich stellen und den Roboter neu starten. Hilft das nicht, die Karte prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear obstacles, make the dock freely accessible and restart the robot. If that does not help, check the map."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégagez les obstacles, rendez la station accessible et redémarrez le robot. Sinon, vérifiez la carte."
+          }
+        }
+      }
+    },
+    "robot_error.navigation_failed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roboter findet den Weg nicht"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot cannot find its way"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot ne trouve pas son chemin"
+          }
+        }
+      }
+    },
+    "robot_error.original %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldung des Roboters: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot message: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Message du robot : %@"
+          }
+        }
+      }
+    },
+    "robot_error.placeholder.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Roboter hat keine genauere Meldung geschickt. Nachsehen, ob er festhängt oder eine Bürste blockiert ist, und ihn neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The robot sent no details. Check whether it is stuck or a brush is blocked, and restart it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot n'a pas envoyé de détails. Vérifiez s'il est coincé ou si une brosse est bloquée, puis redémarrez-le."
+          }
+        }
+      }
+    },
+    "robot_error.reboot_required.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter aus- und wieder einschalten. Bleibt der Fehler, Seitenbürste und Lüfter auf Blockaden prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch the robot off and on again. If the error persists, check the side brush and fan for blockages."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Éteignez puis rallumez le robot. Si l'erreur persiste, vérifiez la brosse latérale et le ventilateur."
+          }
+        }
+      }
+    },
+    "robot_error.reboot_required.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neustart nötig"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restart required"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redémarrage nécessaire"
+          }
+        }
+      }
+    },
+    "robot_error.restricted_area.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Roboter steht in oder zwischen Sperrzonen. Ihn außerhalb hinstellen oder die Sperrzonen in der Karte anpassen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The robot is inside or between no-go zones. Place it outside or adjust the zones on the map."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot se trouve dans ou entre des zones interdites. Posez-le à l'extérieur ou ajustez les zones sur la carte."
+          }
+        }
+      }
+    },
+    "robot_error.restricted_area.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Sperrzone gefangen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trapped in a no-go zone"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Piégé dans une zone interdite"
+          }
+        }
+      }
+    },
+    "robot_error.sensor_dirty.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sensorfenster am Roboter, vor allem seitlich und vorn, mit einem trockenen, weichen Tuch abwischen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wipe the sensor windows on the robot, especially at the side and front, with a soft, dry cloth."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essuyez les fenêtres des capteurs du robot, surtout sur le côté et à l'avant, avec un chiffon doux et sec."
+          }
+        }
+      }
+    },
+    "robot_error.sensor_dirty.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor verschmutzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor dirty"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capteur encrassé"
+          }
+        }
+      }
+    },
+    "robot_error.side_brush_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Seitenbürste abnehmen, Haare von Bürste und Achse entfernen und sie wieder aufstecken."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove the side brush, clear hair from the brush and its axle, and put it back on."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirez la brosse latérale, enlevez les cheveux de la brosse et de son axe, puis remettez-la."
+          }
+        }
+      }
+    },
+    "robot_error.side_brush_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seitenbürste blockiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Side brush jammed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brosse latérale bloquée"
+          }
+        }
+      }
+    },
+    "robot_error.stuck.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter aus der engen Stelle holen und frei hinstellen. Kabel oder Stuhlbeine beiseiteräumen oder die Stelle mit einer Sperrzone ausnehmen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free the robot from the tight spot and place it in the open. Move cables or chair legs aside, or exclude the spot with a no-go zone."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégagez le robot et posez-le dans un endroit libre. Écartez câbles ou pieds de chaise, ou excluez la zone avec une zone interdite."
+          }
+        }
+      }
+    },
+    "robot_error.stuck.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roboter steckt fest"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot stuck"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot coincé"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.attachments.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staubbehälter, Wassertank und Wischmodul prüfen und richtig einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the dustbin, water tank and mop module, and insert them properly."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez le bac, le réservoir et le module de lavage, et remettez-les correctement."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.attachments.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problem mit Zubehör"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attachment problem"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problème d'accessoire"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.core.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter frei hinstellen, Räder und Bürsten prüfen und ihn neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place the robot in the open, check wheels and brushes, and restart it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posez le robot dans un endroit dégagé, vérifiez roues et brosses, puis redémarrez-le."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.core.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Störung am Roboter"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut du robot"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.dock.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tanks, Staubbeutel und Wanne der Station prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the dock's tanks, dust bag and tray."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez les réservoirs, le sac et le bac de la station."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.dock.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problem an der Station"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dock problem"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problème de station"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.motors.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bürsten, Räder und Lüfter auf Haare und Blockaden prüfen und den Roboter neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check brushes, wheels and fan for hair and blockages, and restart the robot."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez brosses, roues et ventilateur, puis redémarrez le robot."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.motors.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Störung an Motor oder Bürste"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motor or brush fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut de moteur ou de brosse"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.navigation.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hindernisse wegräumen, den Roboter frei hinstellen und neu starten. Hilft das nicht, die Karte prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear obstacles, place the robot in the open and restart it. If that does not help, check the map."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dégagez les obstacles, posez le robot dans un endroit libre et redémarrez-le. Sinon, vérifiez la carte."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.navigation.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Navigationsproblem"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Navigation problem"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problème de navigation"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.power.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Station, Netzteil und Ladekontakte prüfen und den Roboter laden lassen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the dock, power supply and charging contacts, and let the robot charge."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez la station, l'alimentation et les contacts, puis laissez le robot se recharger."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.power.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Störung bei Akku oder Laden"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery or charging fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut de batterie ou de charge"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.sensors.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sensoren mit einem trockenen Tuch reinigen, den Laserturm auf Blockaden prüfen und den Roboter neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clean the sensors with a dry cloth, check the laser tower for blockages and restart the robot."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nettoyez les capteurs avec un chiffon sec, vérifiez la tourelle laser et redémarrez le robot."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.sensors.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensorstörung"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sensor fault"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défaut de capteur"
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.unknown.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Roboter meldet einen Fehler, den die App nicht kennt. Den Roboter ansehen und neu starten; die Valetudo-Weboberfläche zeigt eventuell mehr."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The robot reports an error the app does not know. Check the robot and restart it; the Valetudo web interface may show more."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot signale une erreur que l'app ne connaît pas. Vérifiez le robot et redémarrez-le ; l'interface web de Valetudo peut en dire plus."
+          }
+        }
+      }
+    },
+    "robot_error.subsystem.unknown.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannter Fehler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown error"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur inconnue"
+          }
+        }
+      }
+    },
+    "robot_error.tilted.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Roboter auf eine ebene Fläche stellen und neu starten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Place the robot on a flat surface and restart it."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posez le robot sur une surface plane et redémarrez-le."
+          }
+        }
+      }
+    },
+    "robot_error.tilted.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roboter steht schief"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot tilted"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Robot incliné"
+          }
+        }
+      }
+    },
+    "robot_error.unknown.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannter Fehler"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown error"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erreur inconnue"
+          }
+        }
+      }
+    },
+    "robot_error.vendor_code %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlercode des Herstellers: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manufacturer error code: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code d'erreur du fabricant : %@"
+          }
+        }
+      }
+    },
+    "robot_error.wastewater_tank.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Schmutzwassertank leeren, ausspülen und richtig einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty and rinse the dirty water tank, then insert it properly."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Videz et rincez le réservoir d'eau sale, puis remettez-le correctement."
+          }
+        }
+      }
+    },
+    "robot_error.wastewater_tank.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schmutzwassertank voll oder nicht eingesetzt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dirty water tank full or missing"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réservoir d'eau sale plein ou absent"
+          }
+        }
+      }
+    },
+    "robot_error.water_tank_missing.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den Wassertank des Roboters einsetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insert the robot's water tank."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Insérez le réservoir d'eau du robot."
+          }
+        }
+      }
+    },
+    "robot_error.water_tank_missing.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wassertank fehlt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Water tank missing"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réservoir d'eau absent"
+          }
+        }
+      }
+    },
+    "robot_error.wheel_jammed.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Antriebsräder auf Haare, Fäden und eingeklemmte Gegenstände prüfen und von Hand drehen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the drive wheels for hair, threads and trapped objects, and turn them by hand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez que les roues ne sont pas entravées par des cheveux, fils ou objets, et tournez-les à la main."
+          }
+        }
+      }
+    },
+    "robot_error.wheel_jammed.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rad blockiert"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wheel jammed"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roue bloquée"
+          }
+        }
+      }
+    },
+    "robot_error.wheel_lost_floor_contact.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Roboter hängt fest oder wurde angehoben. Ihn auf eine ebene Fläche stellen und die Räder auf Haare und Schmutz prüfen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The robot is stuck or was lifted. Place it on a flat surface and check the wheels for hair and dirt."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le robot est coincé ou a été soulevé. Posez-le sur une surface plane et vérifiez que les roues sont exemptes de cheveux et de saletés."
+          }
+        }
+      }
+    },
+    "robot_error.wheel_lost_floor_contact.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rad ohne Bodenkontakt"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wheel lost floor contact"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roue sans contact avec le sol"
+          }
+        }
+      }
+    },
     "robot_properties.firmware": {
       "extractionState": "manual",
       "localizations": {

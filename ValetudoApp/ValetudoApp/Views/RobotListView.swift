@@ -23,6 +23,7 @@ struct RobotListView: View {
                         RobotRowView(
                             robot: robot,
                             status: robotManager.robotStates[robot.id],
+                            error: robotManager.robotErrors[robot.id],
                             hasUpdate: robotManager.robotUpdateAvailable[robot.id] ?? false
                         )
                     }
@@ -69,7 +70,13 @@ struct RobotListView: View {
 struct RobotRowView: View {
     let robot: RobotConfig
     let status: RobotStatus?
+    var error: RobotErrorInfo? = nil
     var hasUpdate: Bool = false
+
+    private var currentError: RobotErrorInfo? {
+        guard status?.isOnline == true, status?.statusValue?.lowercased() == "error" else { return nil }
+        return error ?? status?.robotError ?? RobotErrorInfo()
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -110,6 +117,14 @@ struct RobotRowView: View {
                         .foregroundStyle(batteryColor(level: battery))
                         .fixedSize(horizontal: true, vertical: false)
                     }
+                }
+
+                if let currentError {
+                    Label(currentError.explanation.title, systemImage: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundStyle(RobotErrorCardView.color(for: currentError))
+                        .lineLimit(2)
                 }
             }
 

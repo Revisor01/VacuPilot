@@ -9,7 +9,14 @@ struct RobotStatusHeaderView: View {
                 .fill(viewModel.status?.isOnline == true ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
-            if let statusValue = viewModel.status?.statusValue {
+            if let error = viewModel.currentError {
+                Text(error.explanation.title)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(RobotErrorCardView.color(for: error))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            } else if let statusValue = viewModel.status?.statusValue {
                 Text(localizedStatus(statusValue))
                     .font(.subheadline)
                     .fontWeight(.medium)
