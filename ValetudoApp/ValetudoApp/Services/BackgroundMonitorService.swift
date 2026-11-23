@@ -7,7 +7,6 @@ final class BackgroundMonitorService {
     static let taskIdentifier = "de.simonluthe.ValetudiOS.backgroundRefresh"
 
     private let logger = Logger(subsystem: "de.simonluthe.ValetudiOS", category: "BackgroundMonitor")
-    private let robotConfigsKey = "valetudo_robots"
 
     private init() {}
 
@@ -113,10 +112,7 @@ final class BackgroundMonitorService {
     }
 
     private func loadRobotConfigs() -> [RobotConfig] {
-        guard let data = UserDefaults.standard.data(forKey: robotConfigsKey),
-              let configs = try? JSONDecoder().decode([RobotConfig].self, from: data)
-        else { return [] }
-        return configs
+        RobotConfigStore.robotsForBackgroundCheck()
     }
 
     private func loadPersistedStatus(for robotId: UUID) -> PersistedRobotStatus? {

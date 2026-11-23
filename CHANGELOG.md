@@ -20,6 +20,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 - Wechselt der Roboter in kurzer Folge zwischen Fehler und Pause, kommt für denselben Fehler nur noch eine Benachrichtigung; eine genauere Meldung ersetzt eine vorherige ohne Angaben.
 
 ### Behoben
+- Bei geschlossener App kamen keine Benachrichtigungen, weil die Prüfung im Hintergrund die gespeicherten Roboter nicht fand; sie liest die Roboter jetzt am selben Ort wie die App.
 - Nach einer Reinigung kam die Meldung „Reinigung abgeschlossen“ bei laufender App teils doppelt; jeder Statuswechsel wird jetzt genau einmal gemeldet.
 
 ## [1.1.5] - 2026-11-17

@@ -55,8 +55,8 @@ class RobotManager {
     @ObservationIgnored private var consecutiveFailures: [UUID: Int] = [:]
     private let offlineFailureThreshold = 3
     @ObservationIgnored private var lastConsumableCheck: [UUID: Date] = [:]
-    private let storageKey = "valetudo_robots"
-    private let robotIdsKey = "valetudo_robot_ids"
+    private let storageKey = RobotConfigStore.legacyKey
+    private let robotIdsKey = RobotConfigStore.idsKey
     private let notificationService = NotificationService.shared
     @ObservationIgnored private let sseManager = SSEConnectionManager()
 
@@ -360,23 +360,11 @@ class RobotManager {
 
     // MARK: - Persistence
     private func loadRobots() {
-        var loadedRobots: [RobotConfig] = []
-
-        // Primaerer Pfad: Lade aus Keychain via ID-Liste
-        if let idsData = UserDefaults.standard.data(forKey: robotIdsKey),
-           let ids = try? JSONDecoder().decode([UUID].self, from: idsData) {
-            let configs = ids.compactMap { KeychainStore.robotConfig(for: $0) }
-            // Wenn IDs vorhanden aber keine Configs gefunden: ID-Liste ist stale, ignorieren
-            if !ids.isEmpty && !configs.isEmpty {
-                loadedRobots = configs
-            }
-        }
+        var loadedRobots = RobotConfigStore.savedRobots()
 
         // Fallback: Migration von UserDefaults (bestehende Installs)
-        if loadedRobots.isEmpty,
-           let data = UserDefaults.standard.data(forKey: storageKey),
-           let decoded = try? JSONDecoder().decode([RobotConfig].self, from: data) {
-
+        let decoded = loadedRobots.isEmpty ? RobotConfigStore.legacyRobots() : []
+        if !decoded.isEmpty {
             var migratedRobots = decoded
             for (index, robot) in decoded.enumerated() {
                 // Passwort in Keychain migrieren (falls noch nicht geschehen)
