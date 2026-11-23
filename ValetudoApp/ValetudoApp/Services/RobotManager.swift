@@ -388,6 +388,7 @@ class RobotManager {
 
         robots = loadedRobots
         for robot in robots {
+            KeychainStore.migrateAccessibility(for: robot.id)
             apis[robot.id] = ValetudoAPI(config: robot)
         }
     }

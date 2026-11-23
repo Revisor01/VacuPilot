@@ -4,6 +4,8 @@ import Security
 
 struct KeychainStore {
     private static let service = "com.valetudio.robot.password"
+    // The background check runs while the phone is locked; WhenUnlocked would hide password and config from it.
+    static let accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "VacuPilot", category: "KeychainStore")
 
     static func password(for robotId: UUID) -> String? {
@@ -37,7 +39,7 @@ struct KeychainStore {
             kSecAttrService: service,
             kSecAttrAccount: robotId.uuidString,
             kSecValueData: Data(password.utf8),
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            kSecAttrAccessible: accessibility
         ]
         return SecItemAdd(addQuery as CFDictionary, nil) == errSecSuccess
     }
@@ -52,6 +54,46 @@ struct KeychainStore {
         if deleteStatus != errSecSuccess && deleteStatus != errSecItemNotFound {
             logger.error("SecItemDelete (delete) failed: \(deleteStatus, privacy: .public)")
         }
+    }
+
+    // MARK: - Accessibility
+
+    /// Hebt Einträge älterer Versionen auf die Klasse, die auch bei gesperrtem Gerät lesbar ist.
+    static func migrateAccessibility(for robotId: UUID) {
+        for itemService in [service, configService] {
+            let query: [CFString: Any] = [
+                kSecClass: kSecClassGenericPassword,
+                kSecAttrService: itemService,
+                kSecAttrAccount: robotId.uuidString
+            ]
+            let update: [CFString: Any] = [kSecAttrAccessible: accessibility]
+            let status = SecItemUpdate(query as CFDictionary, update as CFDictionary)
+            if status != errSecSuccess && status != errSecItemNotFound {
+                logger.error("SecItemUpdate (accessibility) failed: \(status, privacy: .public)")
+            }
+        }
+    }
+
+    static func passwordAccessibility(for robotId: UUID) -> String? {
+        accessibilityValue(service: service, robotId: robotId)
+    }
+
+    static func configAccessibility(for robotId: UUID) -> String? {
+        accessibilityValue(service: configService, robotId: robotId)
+    }
+
+    private static func accessibilityValue(service itemService: String, robotId: UUID) -> String? {
+        let query: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: itemService,
+            kSecAttrAccount: robotId.uuidString,
+            kSecReturnAttributes: true,
+            kSecMatchLimit: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess,
+              let attributes = result as? [String: Any] else { return nil }
+        return attributes[kSecAttrAccessible as String] as? String
     }
 
     // MARK: - Robot Config Storage
@@ -103,7 +145,7 @@ struct KeychainStore {
             kSecAttrService: configService,
             kSecAttrAccount: robotId.uuidString,
             kSecValueData: data,
-            kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+            kSecAttrAccessible: accessibility
         ]
         let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
         if addStatus != errSecSuccess {
