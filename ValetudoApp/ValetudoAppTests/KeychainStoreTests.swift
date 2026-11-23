@@ -10,6 +10,7 @@ final class KeychainStoreTests: XCTestCase {
         super.tearDown()
         for uuid in testUUIDs {
             KeychainStore.delete(for: uuid)
+            KeychainStore.deleteRobotConfig(for: uuid)
         }
         testUUIDs.removeAll()
     }
@@ -71,5 +72,50 @@ final class KeychainStoreTests: XCTestCase {
         // Should not throw or crash
         KeychainStore.delete(for: robotId)
         XCTAssertNil(KeychainStore.password(for: robotId))
+    }
+
+    // MARK: - Accessibility (background check runs while the phone is locked)
+
+    private var afterFirstUnlock: String { KeychainStore.accessibility as String }
+
+    func testNewPasswordIsReadableAfterFirstUnlock() {
+        let robotId = makeUUID()
+        KeychainStore.save(password: "pw", for: robotId)
+
+        XCTAssertEqual(KeychainStore.passwordAccessibility(for: robotId), afterFirstUnlock)
+        XCTAssertEqual(afterFirstUnlock, kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly as String)
+    }
+
+    func testNewRobotConfigIsReadableAfterFirstUnlock() {
+        let robotId = makeUUID()
+        KeychainStore.saveRobotConfig(RobotConfig(id: robotId, name: "Staubi", host: "robot.local"), for: robotId)
+
+        XCTAssertEqual(KeychainStore.configAccessibility(for: robotId), afterFirstUnlock)
+    }
+
+    func testMigrationLiftsItemsFromWhenUnlocked() {
+        let robotId = makeUUID()
+        let addQuery: [CFString: Any] = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrService: "com.valetudio.robot.password",
+            kSecAttrAccount: robotId.uuidString,
+            kSecValueData: Data("legacy".utf8),
+            kSecAttrAccessible: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        XCTAssertEqual(SecItemAdd(addQuery as CFDictionary, nil), errSecSuccess)
+        XCTAssertEqual(KeychainStore.passwordAccessibility(for: robotId), kSecAttrAccessibleWhenUnlockedThisDeviceOnly as String)
+
+        KeychainStore.migrateAccessibility(for: robotId)
+
+        XCTAssertEqual(KeychainStore.passwordAccessibility(for: robotId), afterFirstUnlock)
+        XCTAssertEqual(KeychainStore.password(for: robotId), "legacy")
+    }
+
+    func testMigrationWithoutItemsDoesNothing() {
+        let robotId = makeUUID()
+        KeychainStore.migrateAccessibility(for: robotId)
+
+        XCTAssertNil(KeychainStore.passwordAccessibility(for: robotId))
+        XCTAssertNil(KeychainStore.configAccessibility(for: robotId))
     }
 }

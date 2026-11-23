@@ -15,6 +15,7 @@
 		1932127BBDCC8FBE2645FC31 /* RobotSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698C8F9BC11A4FCCF9D99923 /* RobotSettingsView.swift */; };
 		1D20363A8F2119925CB2DC8B /* BackgroundMonitorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47F4D17ACA9DC7007F05B9E /* BackgroundMonitorService.swift */; };
 		1F0534502B3DB53D433509DD /* KeychainStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */; };
+		A4E0BCA7BC5A177536250ED1 /* RobotConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6418908A1F7B9B62C3A935A3 /* RobotConfigStoreTests.swift */; };
 		21831384B60A49CF9536027A /* MapOverlayViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDE57BDF736246CD4F42B244 /* MapOverlayViews.swift */; };
 		227BE68A1514D604CA149F78 /* DockComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69BAB34C07120E0EF349A3C /* DockComponent.swift */; };
 		09AD419537058D77429BF7FD /* RobotError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C351C14F7550E1EBA61B742B /* RobotError.swift */; };
@@ -77,6 +78,7 @@
 		D20FA57F529017D6027F3C71 /* RoomsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075F2DE6ED60C5F11921459D /* RoomsManagementView.swift */; };
 		D4ACB8D36AF5B70E720588DE /* TimersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D74E6E7081C7AE4DA22B562 /* TimersView.swift */; };
 		D692854F2D2227501DA43AF6 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21BF56FF46BA4144DBD73CA4 /* KeychainStore.swift */; };
+		5C20F67F96508024EA27F998 /* RobotConfigStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990D1C4F1BDC884E2D48309 /* RobotConfigStore.swift */; };
 		D919418DE4EA629CDA129AFA /* TimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29662D61BFED0893E6E573CB /* TimerTests.swift */; };
 		DA136B4862BD6BD33702E71A /* IntensityControlView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 172B1FB7678A953A4655A3EE /* IntensityControlView.swift */; };
 		DB3194EBB4566F919E12A364 /* NWBrowserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B65C57A11EEEF91115F0C845 /* NWBrowserService.swift */; };
@@ -125,6 +127,7 @@
 		1B5589AF6019A8A237268523 /* RobotConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotConfig.swift; sourceTree = "<group>"; };
 		207A76A1020CA2C1DEB44125 /* RobotDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotDetailViewModelTests.swift; sourceTree = "<group>"; };
 		21BF56FF46BA4144DBD73CA4 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		0990D1C4F1BDC884E2D48309 /* RobotConfigStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotConfigStore.swift; sourceTree = "<group>"; };
 		276033B5B7CFD4CEB45479EA /* MapGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapGeometry.swift; sourceTree = "<group>"; };
 		28A30679F5032173015E8B86 /* ObstaclePhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObstaclePhotoView.swift; sourceTree = "<group>"; };
 		29662D61BFED0893E6E573CB /* TimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTests.swift; sourceTree = "<group>"; };
@@ -174,6 +177,7 @@
 		BC9669E5B86C35BACAFA25CF /* RobotControlSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotControlSectionView.swift; sourceTree = "<group>"; };
 		BDFE1B37CB17CC446C036D73 /* MapLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerTests.swift; sourceTree = "<group>"; };
 		C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStoreTests.swift; sourceTree = "<group>"; };
+		6418908A1F7B9B62C3A935A3 /* RobotConfigStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotConfigStoreTests.swift; sourceTree = "<group>"; };
 		C3BEF0FC2A1B164BA6099BBC /* AddRobotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRobotView.swift; sourceTree = "<group>"; };
 		C8B03A26DDEE040E1800C512 /* RobotDetailSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotDetailSections.swift; sourceTree = "<group>"; };
 		CB4E4824159FC4CC51EB9AC8 /* ErrorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRouter.swift; sourceTree = "<group>"; };
@@ -336,6 +340,7 @@
 			children = (
 				B47F4D17ACA9DC7007F05B9E /* BackgroundMonitorService.swift */,
 				21BF56FF46BA4144DBD73CA4 /* KeychainStore.swift */,
+				0990D1C4F1BDC884E2D48309 /* RobotConfigStore.swift */,
 				9BF4588FA1C92BE6B69DEEFE /* MapCacheService.swift */,
 				048B373C4CE7F9EF571625D6 /* NetworkScanner.swift */,
 				4C082534D8ADAC8160B2405F /* NotificationService.swift */,
@@ -380,6 +385,7 @@
 				9D6583CF2262BFCC9F81211F /* RobotErrorTests.swift */,
 				3921D7C153D6928B7A76563E /* StateEventTests.swift */,
 				C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */,
+				6418908A1F7B9B62C3A935A3 /* RobotConfigStoreTests.swift */,
 				512D53EA1BD64BF36BFAA74A /* MapCacheServiceTests.swift */,
 				DF2ECD98AE2E9729767F4CE8 /* MapGeometryTests.swift */,
 				BDFE1B37CB17CC446C036D73 /* MapLayerTests.swift */,
@@ -512,6 +518,7 @@
 				924117992D8EE7A8389C1336 /* RobotErrorTests.swift in Sources */,
 				AD15FD1A10FA650B06CD0F24 /* StateEventTests.swift in Sources */,
 				1F0534502B3DB53D433509DD /* KeychainStoreTests.swift in Sources */,
+				A4E0BCA7BC5A177536250ED1 /* RobotConfigStoreTests.swift in Sources */,
 				FB8C5E78715AEBEF5B4A7BE4 /* MapCacheServiceTests.swift in Sources */,
 				8F6D7422E6348F6AF68FADD7 /* MapGeometryTests.swift in Sources */,
 				BD5D356EA599C51A65452FA2 /* MapLayerTests.swift in Sources */,
@@ -550,6 +557,7 @@
 				6CE25D859DBD613963C741F8 /* EventsSectionView.swift in Sources */,
 				DA136B4862BD6BD33702E71A /* IntensityControlView.swift in Sources */,
 				D692854F2D2227501DA43AF6 /* KeychainStore.swift in Sources */,
+				5C20F67F96508024EA27F998 /* RobotConfigStore.swift in Sources */,
 				34DC3761C40E68B72F34E077 /* LiveStatsChipView.swift in Sources */,
 				E0D9225810327799920C33B4 /* MQTTSettingsView.swift in Sources */,
 				A2F93F458EDD354944B50689 /* ManualControlView.swift in Sources */,
