@@ -81,6 +81,12 @@ final class RobotDetailViewModel {
         status?.statusValue?.lowercased() == "cleaning"
     }
 
+    /// Fehler, den der Roboter gerade meldet; nil, solange er keinen Fehlerstatus hat.
+    var currentError: RobotErrorInfo? {
+        guard status?.isOnline == true, status?.statusValue?.lowercased() == "error" else { return nil }
+        return robotManager.robotErrors[robot.id] ?? status?.robotError ?? RobotErrorInfo()
+    }
+
     var isPaused: Bool {
         status?.statusValue?.lowercased() == "paused"
     }

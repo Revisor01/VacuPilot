@@ -60,14 +60,14 @@ final class BackgroundMonitorService {
             let attributes = try await api.getAttributes()
             let newStatus = PersistedRobotStatus(attributes: attributes)
             let previous = loadPersistedStatus(for: config.id)
-            checkStateChanges(robotName: config.name, previous: previous, current: newStatus)
+            checkStateChanges(robotId: config.id, robotName: config.name, previous: previous, current: newStatus)
             saveStatus(newStatus, for: config.id)
         } catch {
             logger.warning("Background check failed for \(config.name, privacy: .public): \(error.localizedDescription, privacy: .public)")
         }
     }
 
-    private func checkStateChanges(robotName: String, previous: PersistedRobotStatus?, current: PersistedRobotStatus) {
+    private func checkStateChanges(robotId: UUID, robotName: String, previous: PersistedRobotStatus?, current: PersistedRobotStatus) {
         guard let prevStatus = previous?.statusValue else { return }
         let currentStatus = current.statusValue ?? ""
 
@@ -84,9 +84,9 @@ final class BackgroundMonitorService {
         }
 
         if currentStatus == "error" && prevStatus != "error" {
-            let errorMsg = current.statusFlag ?? String(localized: "status.error")
+            let error = current.error
             Task { @MainActor in
-                NotificationService.shared.notifyRobotError(robotName: robotName, error: errorMsg)
+                NotificationService.shared.notifyRobotError(robotId: robotId, robotName: robotName, error: error)
             }
         }
     }
@@ -96,12 +96,14 @@ final class BackgroundMonitorService {
     private struct PersistedRobotStatus: Codable {
         let statusValue: String?
         let statusFlag: String?
+        let error: RobotErrorInfo?
         let timestamp: Date
 
         init(attributes: [RobotAttribute]) {
             let statusAttr = attributes.first { $0.__class == "StatusStateAttribute" }
             statusValue = statusAttr?.value
             statusFlag = statusAttr?.flag
+            error = statusAttr?.error
             timestamp = Date()
         }
     }
