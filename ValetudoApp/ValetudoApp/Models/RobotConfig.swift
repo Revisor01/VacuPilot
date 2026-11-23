@@ -8,10 +8,35 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
     var password: String?
     var useSSL: Bool
     var ignoreCertificateErrors: Bool
+    /// Second address for use away from home, e.g. behind a reverse proxy.
+    var remoteURL: String?
 
     var baseURL: URL? {
         let scheme = useSSL ? "https" : "http"
         return URL(string: "\(scheme)://\(host)")
+    }
+
+    /// Base URL of the address away from home; without a scheme it is https, a path is dropped.
+    var remoteBaseURL: URL? {
+        Self.parseRemoteURL(remoteURL)
+    }
+
+    var hasRemoteAddress: Bool {
+        remoteBaseURL != nil
+    }
+
+    static func parseRemoteURL(_ text: String?) -> URL? {
+        let trimmed = (text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let withScheme = trimmed.contains("://") ? trimmed : "https://\(trimmed)"
+        guard let parsed = URLComponents(string: withScheme),
+              let scheme = parsed.scheme?.lowercased(), scheme == "http" || scheme == "https",
+              let host = parsed.host, !host.isEmpty else { return nil }
+        var base = URLComponents()
+        base.scheme = scheme
+        base.host = host
+        base.port = parsed.port
+        return base.url
     }
 
     /// Whether this robot is on a local network (private IP or .local mDNS)
@@ -30,7 +55,7 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
         return false
     }
 
-    init(id: UUID = UUID(), name: String, host: String, username: String? = nil, password: String? = nil, useSSL: Bool = false, ignoreCertificateErrors: Bool = false) {
+    init(id: UUID = UUID(), name: String, host: String, username: String? = nil, password: String? = nil, useSSL: Bool = false, ignoreCertificateErrors: Bool = false, remoteURL: String? = nil) {
         self.id = id
         self.name = name
         self.host = host
@@ -38,10 +63,12 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
         self.password = password
         self.useSSL = useSSL
         self.ignoreCertificateErrors = ignoreCertificateErrors
+        let trimmedRemote = remoteURL?.trimmingCharacters(in: .whitespacesAndNewlines)
+        self.remoteURL = (trimmedRemote?.isEmpty ?? true) ? nil : trimmedRemote
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, host, username, useSSL, ignoreCertificateErrors
+        case id, name, host, username, useSSL, ignoreCertificateErrors, remoteURL
     }
 
     // Password is not in CodingKeys: it lives in the Keychain, never in UserDefaults.
@@ -54,5 +81,6 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
         password = nil // Passwords are stored in Keychain, not in UserDefaults JSON
         useSSL = try container.decodeIfPresent(Bool.self, forKey: .useSSL) ?? false
         ignoreCertificateErrors = try container.decodeIfPresent(Bool.self, forKey: .ignoreCertificateErrors) ?? false
+        remoteURL = try container.decodeIfPresent(String.self, forKey: .remoteURL)
     }
 }

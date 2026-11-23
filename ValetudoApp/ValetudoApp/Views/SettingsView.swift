@@ -25,6 +25,12 @@ struct SettingsView: View {
                                     Text(robot.host)
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
+
+                                    if let remote = robot.remoteBaseURL?.host {
+                                        Label(remote, systemImage: "globe")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
                                 }
 
                                 Spacer()
@@ -192,8 +198,9 @@ struct EditRobotView: View {
     @State private var password: String
     @State private var useSSL: Bool
     @State private var ignoreCertificateErrors: Bool
+    @State private var remoteURL: String
     @State private var isTesting = false
-    @State private var testResult: ConnectionTestResult?
+    @State private var testResult: AddressTestResult?
     @State private var showDeleteConfirmation = false
 
     init(robot: RobotConfig) {
@@ -205,6 +212,7 @@ struct EditRobotView: View {
         _password = State(initialValue: KeychainStore.password(for: robot.id) ?? "")
         _useSSL = State(initialValue: robot.useSSL)
         _ignoreCertificateErrors = State(initialValue: robot.ignoreCertificateErrors)
+        _remoteURL = State(initialValue: robot.remoteURL ?? "")
     }
 
     var body: some View {
@@ -216,6 +224,23 @@ struct EditRobotView: View {
                         .textContentType(.URL)
                         .autocapitalization(.none)
                         .keyboardType(.URL)
+                }
+
+                Section {
+                    TextField(String(localized: "robot.remote_url"), text: $remoteURL)
+                        .textContentType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                } header: {
+                    Text(String(localized: "robot.remote_url.header"))
+                } footer: {
+                    if !remoteURL.isEmpty && RobotConfig.parseRemoteURL(remoteURL) == nil {
+                        Text(String(localized: "robot.remote_url.invalid"))
+                            .foregroundStyle(.red)
+                    } else {
+                        Text(String(localized: "robot.remote_url.footer"))
+                    }
                 }
 
                 Section {
@@ -261,8 +286,7 @@ struct EditRobotView: View {
                             if isTesting {
                                 ProgressView()
                             } else if let result = testResult {
-                                Image(systemName: result.success ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                    .foregroundStyle(result.success ? .green : .red)
+                                AddressTestResultView(result: result)
                             }
                         }
                     }
@@ -301,7 +325,7 @@ struct EditRobotView: View {
                     Button(String(localized: "settings.save")) {
                         saveRobot()
                     }
-                    .disabled(name.isEmpty || host.isEmpty)
+                    .disabled(name.isEmpty || host.isEmpty || !remoteURLIsValid)
                 }
             }
         }
@@ -315,7 +339,8 @@ struct EditRobotView: View {
             username: useAuthentication ? username : nil,
             password: useAuthentication ? password : nil,
             useSSL: useSSL,
-            ignoreCertificateErrors: useSSL ? ignoreCertificateErrors : false
+            ignoreCertificateErrors: useSSL ? ignoreCertificateErrors : false,
+            remoteURL: remoteURL
         )
         robotManager.updateRobot(updatedRobot)
         dismiss()
@@ -332,17 +357,18 @@ struct EditRobotView: View {
             username: useAuthentication ? username : nil,
             password: useAuthentication ? password : nil,
             useSSL: useSSL,
-            ignoreCertificateErrors: useSSL ? ignoreCertificateErrors : false
+            ignoreCertificateErrors: useSSL ? ignoreCertificateErrors : false,
+            remoteURL: remoteURL
         )
 
         let api = ValetudoAPI(config: testConfig)
-        let success = await api.checkConnection()
-        testResult = ConnectionTestResult(success: success)
+        let result = await api.checkAddresses()
+        testResult = AddressTestResult(home: result.home, remote: result.remote)
     }
-}
 
-struct ConnectionTestResult {
-    let success: Bool
+    private var remoteURLIsValid: Bool {
+        remoteURL.trimmingCharacters(in: .whitespaces).isEmpty || RobotConfig.parseRemoteURL(remoteURL) != nil
+    }
 }
 
 // MARK: - Notification Settings View

@@ -14,6 +14,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ### Hinzugefügt
 - Meldet ein Roboter einen Fehler, nennen Roboterliste und Roboteransicht jetzt die konkrete Ursache statt nur „Fehler“, mit einer verständlichen Erklärung, was zu tun ist; die Farbe zeigt, wie ernst es ist, und die Originalmeldung des Roboters steht klein darunter.
+- Ein Roboter kann neben der Heimadresse eine zweite Adresse für unterwegs bekommen. Die App nimmt automatisch die erreichbare und prüft nach jedem Netzwechsel neu; ein Symbol in der Roboterliste zeigt, ob sie über Zuhause oder Unterwegs verbunden ist. Name, Orte und Benachrichtigungen bleiben dabei dieselben, ein zweiter Eintrag für denselben Roboter ist nicht mehr nötig.
 
 ### Geändert
 - Fehler unter „Ereignisse“ in der Roboteransicht stehen jetzt auf Deutsch mit derselben Erklärung wie die Fehlerkarte, dazu mit lesbarem Datum statt Zeitstempel.
@@ -23,6 +24,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 ### Behoben
 - Bei geschlossener App kamen keine Benachrichtigungen, weil die Prüfung im Hintergrund die gespeicherten Roboter nicht fand; sie liest die Roboter jetzt am selben Ort wie die App und kommt auch bei gesperrtem Gerät an die Zugangsdaten.
 - Nach einer Reinigung kam die Meldung „Reinigung abgeschlossen“ bei laufender App teils doppelt; jeder Statuswechsel wird jetzt genau einmal gemeldet.
+- „Verbindung testen“ beim Hinzufügen eines Roboters schlug mit Benutzername und Passwort fehl, obwohl die Angaben stimmten; der Test nutzt jetzt das eingegebene Passwort.
 
 ## [1.1.5] - 2026-11-17
 
