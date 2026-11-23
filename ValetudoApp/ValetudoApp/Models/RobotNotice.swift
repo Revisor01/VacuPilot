@@ -38,7 +38,8 @@ struct RobotNotice: Identifiable, Equatable {
         if let error {
             let explanation = error.explanation
             notices.append(RobotNotice(
-                id: "error_\(explanation.detail ?? explanation.title)",
+                // The robot's own message, not the translated text, so a language change does not make it new again.
+                id: "error_\(error.message ?? error.subsystem ?? "unknown")",
                 kind: error.severityLevel == .warning || error.severityLevel == .info ? .warning : .error,
                 icon: "exclamationmark.triangle.fill",
                 title: explanation.title,
