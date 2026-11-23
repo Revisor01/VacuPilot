@@ -8,6 +8,8 @@ struct RobotDetailView: View {
     @State private var showFullMap = false
     @State private var showUpdateWarning = false
     @State private var showLeaveDuringUpdateWarning = false
+    @State private var showNotices = false
+    @State private var installAfterNotices = false
 
     // The last chip row needs room above the card's rounded bottom edge, or it looks cut off.
     nonisolated static func chipRowBottomInset(isLastRow: Bool) -> CGFloat {
@@ -45,11 +47,6 @@ struct RobotDetailView: View {
             Section {
                 RobotStatusHeaderView(viewModel: viewModel)
                     .listRowSeparator(.hidden)
-
-                if let error = viewModel.currentError {
-                    RobotErrorCardView(error: error)
-                        .listRowSeparator(.hidden)
-                }
 
                 if viewModel.status?.isOnline == true {
                     MapPreviewView(robot: viewModel.robot, showFullMap: $showFullMap)
@@ -149,7 +146,24 @@ struct RobotDetailView: View {
         .animation(.easeInOut(duration: 0.3), value: showUpdateOverlay)
         .navigationBarBackButtonHidden(updateInProgress)
         .interactiveDismissDisabled(updateInProgress)
+        .sheet(isPresented: $showNotices, onDismiss: {
+            // The update alert can only appear once the sheet is gone.
+            if installAfterNotices {
+                installAfterNotices = false
+                showUpdateWarning = true
+            }
+        }) {
+            RobotNoticesView(viewModel: viewModel) {
+                installAfterNotices = true
+                showNotices = false
+            }
+        }
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NoticeBellButton(notices: viewModel.notices, newKind: viewModel.newNoticeKind) {
+                    showNotices = true
+                }
+            }
             if updateInProgress {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button {

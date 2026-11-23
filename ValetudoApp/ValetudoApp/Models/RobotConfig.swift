@@ -25,6 +25,14 @@ struct RobotConfig: Codable, Identifiable, Equatable, Hashable {
         remoteBaseURL != nil
     }
 
+    /// Whether the connection over `endpoint` is encrypted; without a known endpoint the home address counts.
+    func isEncrypted(via endpoint: EndpointSelector.Endpoint?) -> Bool {
+        if endpoint == .remote, let remote = remoteBaseURL {
+            return remote.scheme == "https"
+        }
+        return useSSL
+    }
+
     static func parseRemoteURL(_ text: String?) -> URL? {
         let trimmed = (text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return nil }

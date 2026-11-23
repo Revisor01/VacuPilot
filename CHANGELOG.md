@@ -14,9 +14,11 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 
 ### Hinzugefügt
 - Meldet ein Roboter einen Fehler, nennen Roboterliste und Roboteransicht jetzt die konkrete Ursache statt nur „Fehler“, mit einer verständlichen Erklärung, was zu tun ist; die Farbe zeigt, wie ernst es ist, und die Originalmeldung des Roboters steht klein darunter.
-- Ein Roboter kann neben der Heimadresse eine zweite Adresse für unterwegs bekommen. Die App nimmt automatisch die erreichbare und prüft nach jedem Netzwechsel neu; ein Symbol in der Roboterliste zeigt, ob sie über Zuhause oder Unterwegs verbunden ist. Name, Orte und Benachrichtigungen bleiben dabei dieselben, ein zweiter Eintrag für denselben Roboter ist nicht mehr nötig.
+- Ein Roboter kann neben der Heimadresse eine zweite Adresse für unterwegs bekommen. Die App nimmt automatisch die erreichbare und prüft nach jedem Netzwechsel neu; ein Symbol in der Roboterliste zeigt, ob sie über Zuhause oder Unterwegs verbunden ist. Name, Orte und Benachrichtigungen bleiben dabei dieselben, ein zweiter Eintrag für denselben Roboter ist nicht mehr nötig. Das Symbol steht auch in der Roboteransicht in der Statuszeile unter dem Namen.
+- In der Roboteransicht sammelt eine Glocke oben rechts alle Meldungen des Roboters an einem Ort: Fehler mit Erklärung und Abhilfe, fast leere Verbrauchsteile, Stationsteile, offene Ereignisse und Firmware-Updates. Ein Punkt an der Glocke zeigt, dass etwas neu ist: rot für Fehler, orange für Warnungen, blau für Updates. Ereignisse lassen sich dort als erledigt markieren, ein Update lässt sich direkt starten.
 
 ### Geändert
+- Die ausführliche Fehlerkarte steht jetzt in der Meldungsglocke; die Roboteransicht nennt den Fehler weiter kurz in der Statuszeile.
 - Fehler unter „Ereignisse“ in der Roboteransicht stehen jetzt auf Deutsch mit derselben Erklärung wie die Fehlerkarte, dazu mit lesbarem Datum statt Zeitstempel.
 - Die Benachrichtigung bei einem Fehler sagt jetzt, was los ist und was hilft, statt nur den Statuswert zu nennen.
 - Wechselt der Roboter in kurzer Folge zwischen Fehler und Pause, kommt für denselben Fehler nur noch eine Benachrichtigung; eine genauere Meldung ersetzt eine vorherige ohne Angaben.
@@ -25,6 +27,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 - Bei geschlossener App kamen keine Benachrichtigungen, weil die Prüfung im Hintergrund die gespeicherten Roboter nicht fand; sie liest die Roboter jetzt am selben Ort wie die App und kommt auch bei gesperrtem Gerät an die Zugangsdaten.
 - Nach einer Reinigung kam die Meldung „Reinigung abgeschlossen“ bei laufender App teils doppelt; jeder Statuswechsel wird jetzt genau einmal gemeldet.
 - „Verbindung testen“ beim Hinzufügen eines Roboters schlug mit Benutzername und Passwort fehl, obwohl die Angaben stimmten; der Test nutzt jetzt das eingegebene Passwort.
+- Das orange Schloss für eine unverschlüsselte Verbindung richtet sich jetzt nach der gerade genutzten Adresse; unterwegs über https erscheint es nicht mehr.
 
 ## [1.1.5] - 2026-11-17
 

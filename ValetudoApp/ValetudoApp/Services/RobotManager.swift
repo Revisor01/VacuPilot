@@ -118,6 +118,7 @@ class RobotManager {
         saveRobots()
         MapCacheService.shared.deleteCache(for: id)
         SkippedUpdateStore(robotId: id).clear()
+        NoticeSeenStore(robotId: id).clear()
     }
 
     func getAPI(for id: UUID) -> ValetudoAPI? {

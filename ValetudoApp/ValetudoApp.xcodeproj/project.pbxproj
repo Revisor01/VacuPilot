@@ -28,6 +28,7 @@
 		34B0559E0C4C96150C6F7076 /* MapControlBarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2387AE1CFE8B8462ACDDB6 /* MapControlBarsView.swift */; };
 		34DC3761C40E68B72F34E077 /* LiveStatsChipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D559CA5D58E9A1A13784EF /* LiveStatsChipView.swift */; };
 		3692C118EEE4D844F681DC5A /* MapCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BF4588FA1C92BE6B69DEEFE /* MapCacheService.swift */; };
+		44FEA49C33164DE08AC68B9C /* RobotNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0EAE3FAAB868EFDF80A5F63 /* RobotNotice.swift */; };
 		463715B3BAE62493A0D01D8B /* MapInteractiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A7ADB46F356027F35DDE05 /* MapInteractiveView.swift */; };
 		48E82472B522893504594AC9 /* RobotState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602023483884AA7FC99EE28A /* RobotState.swift */; };
 		4A3C03AEB557F35B191CDFAC /* UpdateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE7E999A8E259B168B2F9D7 /* UpdateServiceTests.swift */; };
@@ -61,6 +62,7 @@
 		8F8EB3702AA2ADAC6889DC0D /* RobotConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B5589AF6019A8A237268523 /* RobotConfig.swift */; };
 		917714F6E87C37D7D8407513 /* EndpointSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D435714904E7C6192E0587D /* EndpointSelectorTests.swift */; };
 		9207AFBD4FCBC7AAFE751181 /* RobotListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5713E6238AD5A3F2420EE02B /* RobotListView.swift */; };
+		94DDF19D3710FCEEC3AE2CA9 /* RobotNoticeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0787096D76DE44A79B6D222 /* RobotNoticeTests.swift */; };
 		96B67D0CED1BE53C4F832F75 /* RobotControlSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9669E5B86C35BACAFA25CF /* RobotControlSectionView.swift */; };
 		9915F2CF384824DB664D1A6F /* QuirksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F893E9F6A5B785C70CE83CED /* QuirksView.swift */; };
 		9D838AA7BAF39BAFAFD9DA5E /* CleanRouteSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD057316CCE7CBBCAFF5FB2C /* CleanRouteSectionView.swift */; };
@@ -77,6 +79,7 @@
 		BD5D356EA599C51A65452FA2 /* MapLayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFE1B37CB17CC446C036D73 /* MapLayerTests.swift */; };
 		BDECD717380DC7168DFC0ED7 /* ObstaclePhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A30679F5032173015E8B86 /* ObstaclePhotoView.swift */; };
 		C51D8291FD9CFE191FA9557D /* NetworkScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048B373C4CE7F9EF571625D6 /* NetworkScanner.swift */; };
+		C920CD31F77405CA076F341B /* RobotNoticesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6982399438FFE612758724AF /* RobotNoticesView.swift */; };
 		CB68130A422E30CC0C51BF78 /* MapMiniMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7F28A2DBB899F9E33AB726E /* MapMiniMapView.swift */; };
 		CCBC215DDADA4447287E24D6 /* RobotConfigStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E65F8612BB1798CE99775F6 /* RobotConfigStoreTests.swift */; };
 		D20FA57F529017D6027F3C71 /* RoomsManagementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 075F2DE6ED60C5F11921459D /* RoomsManagementView.swift */; };
@@ -154,6 +157,7 @@
 		64246C264548879C55FFC34D /* ObstaclesSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObstaclesSectionView.swift; sourceTree = "<group>"; };
 		6678441378EF302B280D8F45 /* UpdateStatusBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateStatusBannerView.swift; sourceTree = "<group>"; };
 		67E063E08AD679C61BFC04E6 /* ValetudoAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValetudoAPITests.swift; sourceTree = "<group>"; };
+		6982399438FFE612758724AF /* RobotNoticesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotNoticesView.swift; sourceTree = "<group>"; };
 		698C8F9BC11A4FCCF9D99923 /* RobotSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotSettingsView.swift; sourceTree = "<group>"; };
 		6CD7F92D155B6F61F11FAD35 /* MapSheetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSheetsView.swift; sourceTree = "<group>"; };
 		70B675F7989A2AC884174105 /* AutoEmptyDockSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoEmptyDockSettingsView.swift; sourceTree = "<group>"; };
@@ -170,6 +174,7 @@
 		9CE190343F9A001718954371 /* RobotErrorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotErrorTests.swift; sourceTree = "<group>"; };
 		9D2944F811E75D2A18C7A192 /* ValetudoAppTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ValetudoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FD244AAC28A5D50E6DF9E55 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		A0787096D76DE44A79B6D222 /* RobotNoticeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotNoticeTests.swift; sourceTree = "<group>"; };
 		A3D559CA5D58E9A1A13784EF /* LiveStatsChipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveStatsChipView.swift; sourceTree = "<group>"; };
 		A7F28A2DBB899F9E33AB726E /* MapMiniMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapMiniMapView.swift; sourceTree = "<group>"; };
 		A7F8D53EAFED098327775431 /* NTPSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NTPSettingsView.swift; sourceTree = "<group>"; };
@@ -185,6 +190,7 @@
 		BC9669E5B86C35BACAFA25CF /* RobotControlSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotControlSectionView.swift; sourceTree = "<group>"; };
 		BDFE1B37CB17CC446C036D73 /* MapLayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerTests.swift; sourceTree = "<group>"; };
 		C06AD3C1B9A930E3DFF22B33 /* KeychainStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStoreTests.swift; sourceTree = "<group>"; };
+		C0EAE3FAAB868EFDF80A5F63 /* RobotNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotNotice.swift; sourceTree = "<group>"; };
 		C3BEF0FC2A1B164BA6099BBC /* AddRobotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRobotView.swift; sourceTree = "<group>"; };
 		C8B03A26DDEE040E1800C512 /* RobotDetailSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RobotDetailSections.swift; sourceTree = "<group>"; };
 		CB4E4824159FC4CC51EB9AC8 /* ErrorRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRouter.swift; sourceTree = "<group>"; };
@@ -280,6 +286,7 @@
 				64246C264548879C55FFC34D /* ObstaclesSectionView.swift */,
 				BC9669E5B86C35BACAFA25CF /* RobotControlSectionView.swift */,
 				3D3B3EDD21145E373B02C5BE /* RobotErrorCardView.swift */,
+				6982399438FFE612758724AF /* RobotNoticesView.swift */,
 				81D82B708C9E0DA24CF922B2 /* RobotStatusHeaderView.swift */,
 				F46636E74EA5413B0AFDBEFC /* RoomsSectionView.swift */,
 				04055048E2A96D3B89FE48A4 /* StatisticsSectionView.swift */,
@@ -367,6 +374,7 @@
 				1B5589AF6019A8A237268523 /* RobotConfig.swift */,
 				63D4C75CE66246A989141676 /* RobotError.swift */,
 				F6096D4E41E9DA4B4A7CB36A /* RobotMap.swift */,
+				C0EAE3FAAB868EFDF80A5F63 /* RobotNotice.swift */,
 				602023483884AA7FC99EE28A /* RobotState.swift */,
 				5698A89A0EED5B395A161587 /* RobotStateEvent.swift */,
 				D8827C015A536153957BA6AC /* Timer.swift */,
@@ -396,6 +404,7 @@
 				4E65F8612BB1798CE99775F6 /* RobotConfigStoreTests.swift */,
 				207A76A1020CA2C1DEB44125 /* RobotDetailViewModelTests.swift */,
 				9CE190343F9A001718954371 /* RobotErrorTests.swift */,
+				A0787096D76DE44A79B6D222 /* RobotNoticeTests.swift */,
 				01D16364C1588D7F0AEB5FEE /* RobotSettingsViewModelTests.swift */,
 				83A69B28F35CD8F684A2FF5F /* SSEConnectionManagerTests.swift */,
 				AE60852AA35F24843A6D04DB /* StateEventTests.swift */,
@@ -530,6 +539,7 @@
 				CCBC215DDADA4447287E24D6 /* RobotConfigStoreTests.swift in Sources */,
 				E729DF2F6C2B31C596133D84 /* RobotDetailViewModelTests.swift in Sources */,
 				65F1F61FCBA26C4746A7C8A9 /* RobotErrorTests.swift in Sources */,
+				94DDF19D3710FCEEC3AE2CA9 /* RobotNoticeTests.swift in Sources */,
 				B729DD529A0445E3996DD614 /* RobotSettingsViewModelTests.swift in Sources */,
 				661AF0186DA3BD4B78F1842A /* SSEConnectionManagerTests.swift in Sources */,
 				56A957CA43B5A6921CCEDA2D /* StateEventTests.swift in Sources */,
@@ -596,6 +606,8 @@
 				9207AFBD4FCBC7AAFE751181 /* RobotListView.swift in Sources */,
 				E3B89B8282E352373120510B /* RobotManager.swift in Sources */,
 				7B4C873365DACB44A3E2AD41 /* RobotMap.swift in Sources */,
+				44FEA49C33164DE08AC68B9C /* RobotNotice.swift in Sources */,
+				C920CD31F77405CA076F341B /* RobotNoticesView.swift in Sources */,
 				1932127BBDCC8FBE2645FC31 /* RobotSettingsView.swift in Sources */,
 				F733B7BBDFCBC3B580936D5B /* RobotSettingsViewModel.swift in Sources */,
 				48E82472B522893504594AC9 /* RobotState.swift in Sources */,

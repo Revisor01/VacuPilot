@@ -118,6 +118,50 @@ final class RobotDetailViewModel {
         })?.value
     }
 
+    /// Address in use, only for robots with an address away from home.
+    var endpoint: EndpointSelector.Endpoint? {
+        robotManager.robotEndpoints[robot.id]
+    }
+
+    var isConnectionEncrypted: Bool {
+        robot.isEncrypted(via: endpoint)
+    }
+
+    // MARK: - Notices
+
+    @ObservationIgnored private lazy var noticeSeenStore = NoticeSeenStore(robotId: robot.id)
+    private(set) var seenNoticeIds: Set<String> = []
+
+    /// Update the robot offers and the user has not skipped, or one already downloaded.
+    var pendingUpdateVersion: String? {
+        guard let service = updateService else { return nil }
+        if service.showsUpdateAvailableBanner || service.phase == .readyToApply {
+            return service.pendingVersion
+        }
+        return nil
+    }
+
+    var notices: [RobotNotice] {
+        let online = status?.isOnline == true
+        return RobotNotice.collect(
+            error: currentError,
+            consumables: online ? consumables : [],
+            dockComponents: online ? (status?.dockComponents ?? []) : [],
+            events: online && hasEvents ? events : [],
+            pendingUpdate: pendingUpdateVersion
+        )
+    }
+
+    var newNoticeKind: RobotNotice.Kind? {
+        NoticeSeenStore.newestKind(of: notices, seen: seenNoticeIds)
+    }
+
+    func markNoticesSeen() {
+        let current = notices
+        noticeSeenStore.markSeen(current)
+        seenNoticeIds = Set(current.map(\.id))
+    }
+
     var hasConsumableWarning: Bool {
         consumables.contains { $0.remainingPercent < 20 }
     }
@@ -129,6 +173,7 @@ final class RobotDetailViewModel {
         self.robotManager = robotManager
         self.selectedSegments = robotManager.selectedRooms(for: robot.id)
         self.selectedIterations = robotManager.selectedIterationCount(for: robot.id)
+        self.seenNoticeIds = NoticeSeenStore(robotId: robot.id).seenIds
     }
 
     // MARK: - Data Loading
