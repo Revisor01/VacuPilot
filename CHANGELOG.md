@@ -16,6 +16,7 @@ dieses Projekt folgt [Semantic Versioning 2.0.0](https://semver.org/lang/de/).
 - Meldet ein Roboter einen Fehler, nennen Roboterliste und Roboteransicht jetzt die konkrete Ursache statt nur „Fehler“, mit einer verständlichen Erklärung, was zu tun ist; die Farbe zeigt, wie ernst es ist, und die Originalmeldung des Roboters steht klein darunter.
 
 ### Geändert
+- Fehler unter „Ereignisse“ in der Roboteransicht stehen jetzt auf Deutsch mit derselben Erklärung wie die Fehlerkarte, dazu mit lesbarem Datum statt Zeitstempel.
 - Die Benachrichtigung bei einem Fehler sagt jetzt, was los ist und was hilft, statt nur den Statuswert zu nennen.
 - Wechselt der Roboter in kurzer Folge zwischen Fehler und Pause, kommt für denselben Fehler nur noch eine Benachrichtigung; eine genauere Meldung ersetzt eine vorherige ohne Angaben.
 

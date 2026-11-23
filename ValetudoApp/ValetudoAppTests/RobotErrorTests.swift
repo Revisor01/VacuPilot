@@ -301,4 +301,38 @@ final class RobotErrorTests: XCTestCase {
 
         XCTAssertNil(tracker.displayedError(for: id))
     }
+
+    // MARK: - Error events
+
+    private func event(_ json: String) throws -> ValetudoEvent {
+        try JSONDecoder().decode(ValetudoEvent.self, from: Data(json.utf8))
+    }
+
+    func testErrorEventGetsSameExplanationAsErrorCard() throws {
+        let lds = try event(#"{"__class":"ErrorStateValetudoEvent","id":"a","timestamp":"2026-11-23T09:00:24.193Z","processed":false,"message":"LDS jammed"}"#)
+        XCTAssertEqual(lds.errorExplanation, RobotErrorInfo(message: "LDS jammed").explanation)
+        XCTAssertEqual(lds.errorExplanation?.title, RobotErrorKind.ldsJammed.title)
+
+        let wheel = try event(#"{"__class":"ErrorStateValetudoEvent","id":"b","timestamp":"2026-11-23T09:10:52.502Z","processed":false,"message":"Wheel lost floor contact"}"#)
+        XCTAssertEqual(wheel.errorExplanation?.title, RobotErrorKind.wheelLostFloorContact.title)
+    }
+
+    func testOtherEventsAndPlaceholdersGetNoExplanation() throws {
+        let dustbin = try event(#"{"__class":"DustBinFullValetudoEvent","id":"c","timestamp":"2026-11-23T09:00:00Z","processed":false}"#)
+        XCTAssertNil(dustbin.errorExplanation)
+
+        let placeholder = try event(#"{"__class":"ErrorStateValetudoEvent","id":"d","timestamp":"2026-11-23T09:00:00Z","processed":false,"message":"Unknown error undefined"}"#)
+        XCTAssertNil(placeholder.errorExplanation)
+    }
+
+    func testEventTimestampParsesWithAndWithoutFraction() throws {
+        let withFraction = try event(#"{"__class":"DustBinFullValetudoEvent","id":"e","timestamp":"2026-11-23T09:00:24.193Z","processed":true}"#)
+        XCTAssertEqual(withFraction.date?.timeIntervalSince1970 ?? 0, 1_795_424_424.193, accuracy: 0.001)
+
+        let plain = try event(#"{"__class":"DustBinFullValetudoEvent","id":"f","timestamp":"2026-11-23T09:00:24Z","processed":true}"#)
+        XCTAssertEqual(plain.date?.timeIntervalSince1970, 1_795_424_424)
+
+        let broken = try event(#"{"__class":"DustBinFullValetudoEvent","id":"g","timestamp":"gestern","processed":true}"#)
+        XCTAssertNil(broken.date)
+    }
 }
