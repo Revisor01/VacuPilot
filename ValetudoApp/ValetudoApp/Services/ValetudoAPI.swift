@@ -25,6 +25,12 @@ actor ValetudoAPI {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "API")
     private let decoder: JSONDecoder
     private let sessionDelegate: SSLSessionDelegate?
+    private let homeBaseURL: URL?
+    private let remoteBaseURL: URL?
+    private var endpoints: EndpointSelector
+    private var resolveTask: Task<Void, Never>?
+    // Short timeout: probing the home address away from home must not hold up the request.
+    private let probeSession: URLSession
     // Separate SSE sessions for state and map, so one hanging stream does not block the other.
     private var _sseStateSession: URLSession?
     private var _sseMapSession: URLSession?
@@ -68,12 +74,23 @@ actor ValetudoAPI {
         configuration.timeoutIntervalForRequest = 10
         configuration.timeoutIntervalForResource = 30
 
+        self.homeBaseURL = config.baseURL
+        self.remoteBaseURL = config.remoteBaseURL
+        self.endpoints = EndpointSelector(hasRemote: config.remoteBaseURL != nil)
+
+        let probeConfiguration = URLSessionConfiguration.default
+        probeConfiguration.timeoutIntervalForRequest = 2
+        probeConfiguration.timeoutIntervalForResource = 3
+
         if config.useSSL && config.ignoreCertificateErrors {
-            self.sessionDelegate = SSLSessionDelegate()
-            self.session = URLSession(configuration: configuration, delegate: sessionDelegate, delegateQueue: nil)
+            let delegate = SSLSessionDelegate(trustedHost: config.baseURL?.host)
+            self.sessionDelegate = delegate
+            self.session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+            self.probeSession = URLSession(configuration: probeConfiguration, delegate: delegate, delegateQueue: nil)
         } else {
             self.sessionDelegate = nil
             self.session = URLSession(configuration: configuration)
+            self.probeSession = URLSession(configuration: probeConfiguration)
         }
 
         self.decoder = JSONDecoder()
@@ -81,9 +98,17 @@ actor ValetudoAPI {
 }
 
 // MARK: - SSL Session Delegate for Self-Signed Certificates
-private class SSLSessionDelegate: NSObject, URLSessionDelegate {
+private final class SSLSessionDelegate: NSObject, URLSessionDelegate, Sendable {
+    // Only the home address may have a self-signed certificate; the address away from home is checked normally.
+    private let trustedHost: String?
+
+    init(trustedHost: String?) {
+        self.trustedHost = trustedHost
+    }
+
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         if challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
+           challenge.protectionSpace.host == trustedHost,
            let serverTrust = challenge.protectionSpace.serverTrust {
             let credential = URLCredential(trust: serverTrust)
             completionHandler(.useCredential, credential)
@@ -95,87 +120,164 @@ private class SSLSessionDelegate: NSObject, URLSessionDelegate {
 
 extension ValetudoAPI {
 
-    // MARK: - Base Request
-    private func request<T: Decodable>(_ endpoint: String, method: String = "GET", body: Data? = nil) async throws -> T {
-        guard let baseURL = config.baseURL,
-              let url = URL(string: "/api/v2\(endpoint)", relativeTo: baseURL) else {
-            throw APIError.invalidURL
-        }
+    // MARK: - Address Selection
 
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    /// Address the last request went to.
+    func activeEndpoint() -> EndpointSelector.Endpoint {
+        endpoints.active
+    }
 
-        if let username = config.username, !username.isEmpty,
-           let password = KeychainStore.password(for: config.id) {
-            let credentials = "\(username):\(password)"
-            if let data = credentials.data(using: .utf8) {
-                request.setValue("Basic \(data.base64EncodedString())", forHTTPHeaderField: "Authorization")
+    var hasRemoteAddress: Bool {
+        endpoints.hasRemote
+    }
+
+    private func baseURL(for endpoint: EndpointSelector.Endpoint) -> URL? {
+        endpoint == .remote ? remoteBaseURL : homeBaseURL
+    }
+
+    private func currentEndpoint() async -> EndpointSelector.Endpoint {
+        let generation = NetworkPathWatcher.shared.generation
+        if endpoints.needsResolve(now: Date(), pathGeneration: generation) {
+            if let running = resolveTask {
+                await running.value
+            } else {
+                let task = Task { await self.resolveEndpoint(pathGeneration: generation) }
+                resolveTask = task
+                await task.value
+                resolveTask = nil
             }
         }
+        return endpoints.active
+    }
 
-        if let body = body {
+    private func resolveEndpoint(pathGeneration: Int) async {
+        let homeReachable = await isReachable(homeBaseURL, session: probeSession)
+        let previous = endpoints.active
+        endpoints.resolve(homeReachable: homeReachable, now: Date(), pathGeneration: pathGeneration)
+        if endpoints.active != previous {
+            logger.info("Address switched to \(self.endpoints.active.rawValue, privacy: .public)")
+        }
+    }
+
+    /// Any HTTP answer counts: a 401 still means the robot is there.
+    private func isReachable(_ base: URL?, session: URLSession) async -> Bool {
+        guard let base, let request = try? makeRequest("/robot", base: base) else { return false }
+        do {
+            let (_, response) = try await session.data(for: request)
+            return response is HTTPURLResponse
+        } catch {
+            return false
+        }
+    }
+
+    private func makeRequest(_ path: String, base: URL, method: String = "GET") throws -> URLRequest {
+        guard let url = URL(string: "/api/v2\(path)", relativeTo: base) else {
+            throw APIError.invalidURL
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        if let authorization = Self.basicAuthorization(for: config, keychainPassword: KeychainStore.password(for: config.id)) {
+            request.setValue(authorization, forHTTPHeaderField: "Authorization")
+        }
+        return request
+    }
+
+    /// An unsaved robot (connection test) still carries its password; saved ones keep it in the Keychain.
+    static func basicAuthorization(for config: RobotConfig, keychainPassword: String?) -> String? {
+        guard let username = config.username, !username.isEmpty,
+              let password = config.password ?? keychainPassword,
+              let data = "\(username):\(password)".data(using: .utf8) else { return nil }
+        return "Basic \(data.base64EncodedString())"
+    }
+
+    /// Sends on the active address; if it cannot be reached, once more on the other one.
+    private func send<T>(
+        _ path: String,
+        method: String = "GET",
+        prepare: (inout URLRequest) -> Void = { _ in },
+        _ perform: (URLRequest) async throws -> T
+    ) async throws -> T {
+        let endpoint = await currentEndpoint()
+        guard let base = baseURL(for: endpoint) else { throw APIError.invalidURL }
+        var request = try makeRequest(path, base: base, method: method)
+        prepare(&request)
+        do {
+            return try await perform(request)
+        } catch where EndpointSelector.isUnreachable(error) {
+            guard let next = endpoints.failover(from: endpoint, now: Date(), pathGeneration: NetworkPathWatcher.shared.generation),
+                  next != endpoint,
+                  let otherBase = baseURL(for: next) else { throw error }
+            logger.info("Address \(endpoint.rawValue, privacy: .public) unreachable, retrying on \(next.rawValue, privacy: .public)")
+            var retry = try makeRequest(path, base: otherBase, method: method)
+            prepare(&retry)
+            return try await perform(retry)
+        }
+    }
+
+    /// Tests each configured address on its own, for the connection test in the settings.
+    func checkAddresses() async -> (home: Bool, remote: Bool?) {
+        async let home = isReachableWithLogin(homeBaseURL)
+        async let remote: Bool? = remoteBaseURL == nil ? nil : isReachableWithLogin(remoteBaseURL)
+        return await (home, remote)
+    }
+
+    private func isReachableWithLogin(_ base: URL?) async -> Bool {
+        guard let base, let request = try? makeRequest("/robot", base: base) else { return false }
+        do {
+            let (data, response) = try await session.data(for: request)
+            guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else { return false }
+            _ = try decoder.decode(RobotInfo.self, from: data)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    // MARK: - Base Request
+    private func request<T: Decodable>(_ endpoint: String, method: String = "GET", body: Data? = nil) async throws -> T {
+        let data = try await send(endpoint, method: method, prepare: { request in
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = body
-        }
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.httpError(httpResponse.statusCode)
+        }) { request in
+            let (data, response) = try await self.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
+            }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                throw APIError.httpError(httpResponse.statusCode)
+            }
+            return data
         }
 
         do {
-            let result = try decoder.decode(T.self, from: data)
-            return result
+            return try decoder.decode(T.self, from: data)
         } catch {
             throw APIError.decodingError(error)
         }
     }
 
     private func requestVoid(_ endpoint: String, method: String = "PUT", body: Data? = nil) async throws {
-        guard let baseURL = config.baseURL,
-              let url = URL(string: "/api/v2\(endpoint)", relativeTo: baseURL) else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-
-        logger.info("Request: \(method, privacy: .public) \(url.absoluteString, privacy: .public)")
         if let body = body, let bodyString = String(data: body, encoding: .utf8) {
-            logger.info("Request body: \(bodyString, privacy: .public)")
-        }
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        if let username = config.username, !username.isEmpty,
-           let password = KeychainStore.password(for: config.id) {
-            let credentials = "\(username):\(password)"
-            if let data = credentials.data(using: .utf8) {
-                request.setValue("Basic \(data.base64EncodedString())", forHTTPHeaderField: "Authorization")
-            }
+            logger.info("Request: \(method, privacy: .public) \(endpoint, privacy: .public) body: \(bodyString, privacy: .public)")
+        } else {
+            logger.info("Request: \(method, privacy: .public) \(endpoint, privacy: .public)")
         }
 
-        if let body = body {
+        try await send(endpoint, method: method, prepare: { request in
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = body
-        }
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        logger.info("Response: \(httpResponse.statusCode, privacy: .public) for \(method, privacy: .public) \(url.path, privacy: .public)")
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            if let responseBody = String(data: data, encoding: .utf8), !responseBody.isEmpty {
-                logger.error("Response body (\(httpResponse.statusCode, privacy: .public)): \(responseBody, privacy: .public)")
+        }) { request in
+            let (data, response) = try await self.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
             }
-            throw APIError.httpError(httpResponse.statusCode)
+            self.logger.info("Response: \(httpResponse.statusCode, privacy: .public) for \(method, privacy: .public) \(endpoint, privacy: .public)")
+            guard (200...299).contains(httpResponse.statusCode) else {
+                if let responseBody = String(data: data, encoding: .utf8), !responseBody.isEmpty {
+                    self.logger.error("Response body (\(httpResponse.statusCode, privacy: .public)): \(responseBody, privacy: .public)")
+                }
+                throw APIError.httpError(httpResponse.statusCode)
+            }
         }
     }
 
@@ -700,63 +802,29 @@ extension ValetudoAPI {
 
     // MARK: - SSE Streaming
     func streamStateLines() async throws -> URLSession.AsyncBytes {
-        guard let baseURL = config.baseURL,
-              let url = URL(string: "/api/v2/robot/state/attributes/sse", relativeTo: baseURL) else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
-        if let username = config.username, !username.isEmpty,
-           let password = KeychainStore.password(for: config.id) {
-            let credentials = "\(username):\(password)"
-            if let data = credentials.data(using: .utf8) {
-                request.setValue("Basic \(data.base64EncodedString())", forHTTPHeaderField: "Authorization")
+        try await send("/robot/state/attributes/sse") { request in
+            let (bytes, response) = try await self.sseStateSession.bytes(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
             }
+            guard httpResponse.statusCode == 200 else {
+                throw APIError.httpError(httpResponse.statusCode)
+            }
+            return bytes
         }
-
-        let (bytes, response) = try await sseStateSession.bytes(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard httpResponse.statusCode == 200 else {
-            throw APIError.httpError(httpResponse.statusCode)
-        }
-
-        return bytes
     }
 
     func streamMapLines() async throws -> URLSession.AsyncBytes {
-        guard let baseURL = config.baseURL,
-              let url = URL(string: "/api/v2/robot/state/map/sse", relativeTo: baseURL) else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
-        if let username = config.username, !username.isEmpty,
-           let password = KeychainStore.password(for: config.id) {
-            let credentials = "\(username):\(password)"
-            if let data = credentials.data(using: .utf8) {
-                request.setValue("Basic \(data.base64EncodedString())", forHTTPHeaderField: "Authorization")
+        try await send("/robot/state/map/sse") { request in
+            let (bytes, response) = try await self.sseMapSession.bytes(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
             }
+            guard httpResponse.statusCode == 200 else {
+                throw APIError.httpError(httpResponse.statusCode)
+            }
+            return bytes
         }
-
-        let (bytes, response) = try await sseMapSession.bytes(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard httpResponse.statusCode == 200 else {
-            throw APIError.httpError(httpResponse.statusCode)
-        }
-
-        return bytes
     }
 
     // MARK: - Map Snapshots
@@ -812,33 +880,16 @@ extension ValetudoAPI {
 
     // MARK: - Obstacle Images
     func getObstacleImage(id: String) async throws -> Data {
-        guard let baseURL = config.baseURL,
-              let url = URL(string: "/api/v2/robot/capabilities/ObstacleImagesCapability/img/\(id)", relativeTo: baseURL) else {
-            throw APIError.invalidURL
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-
-        if let username = config.username, !username.isEmpty,
-           let password = KeychainStore.password(for: config.id) {
-            let credentials = "\(username):\(password)"
-            if let data = credentials.data(using: .utf8) {
-                request.setValue("Basic \(data.base64EncodedString())", forHTTPHeaderField: "Authorization")
+        try await send("/robot/capabilities/ObstacleImagesCapability/img/\(id)") { request in
+            let (data, response) = try await self.session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw APIError.invalidResponse
             }
+            guard (200...299).contains(httpResponse.statusCode) else {
+                throw APIError.httpError(httpResponse.statusCode)
+            }
+            return data
         }
-
-        let (data, response) = try await session.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw APIError.invalidResponse
-        }
-
-        guard (200...299).contains(httpResponse.statusCode) else {
-            throw APIError.httpError(httpResponse.statusCode)
-        }
-
-        return data
     }
 
     // MARK: - Voice Pack

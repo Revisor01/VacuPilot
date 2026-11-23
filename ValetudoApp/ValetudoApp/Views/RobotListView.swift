@@ -24,7 +24,8 @@ struct RobotListView: View {
                             robot: robot,
                             status: robotManager.robotStates[robot.id],
                             error: robotManager.robotErrors[robot.id],
-                            hasUpdate: robotManager.robotUpdateAvailable[robot.id] ?? false
+                            hasUpdate: robotManager.robotUpdateAvailable[robot.id] ?? false,
+                            endpoint: robotManager.robotEndpoints[robot.id]
                         )
                     }
                     .buttonStyle(.plain)
@@ -66,12 +67,25 @@ struct RobotListView: View {
     }
 }
 
+// MARK: - Endpoint Badge
+struct EndpointBadge: View {
+    let endpoint: EndpointSelector.Endpoint
+
+    var body: some View {
+        Image(systemName: endpoint == .home ? "house.fill" : "globe")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .accessibilityLabel(String(localized: endpoint == .home ? "robot.endpoint.home" : "robot.endpoint.remote"))
+    }
+}
+
 // MARK: - Robot Row
 struct RobotRowView: View {
     let robot: RobotConfig
     let status: RobotStatus?
     var error: RobotErrorInfo? = nil
     var hasUpdate: Bool = false
+    var endpoint: EndpointSelector.Endpoint? = nil
 
     private var currentError: RobotErrorInfo? {
         guard status?.isOnline == true, status?.statusValue?.lowercased() == "error" else { return nil }
@@ -95,6 +109,10 @@ struct RobotRowView: View {
                         Image(systemName: "arrow.down.circle.fill")
                             .font(.caption)
                             .foregroundStyle(.orange)
+                    }
+
+                    if status?.isOnline == true, let endpoint {
+                        EndpointBadge(endpoint: endpoint)
                     }
                 }
 

@@ -10,6 +10,8 @@ class RobotManager {
     var robotStates: [UUID: RobotStatus] = [:]
     var robotUpdateAvailable: [UUID: Bool] = [:]
     var robotErrors: [UUID: RobotErrorInfo] = [:]
+    /// Address in use, only for robots with an address away from home.
+    var robotEndpoints: [UUID: EndpointSelector.Endpoint] = [:]
 
     // MARK: - Active Robot
     var activeRobotId: UUID? {
@@ -111,6 +113,7 @@ class RobotManager {
         apis.removeValue(forKey: id)
         robotStates.removeValue(forKey: id)
         robotErrors.removeValue(forKey: id)
+        robotEndpoints.removeValue(forKey: id)
         stateTracker.forget(id)
         saveRobots()
         MapCacheService.shared.deleteCache(for: id)
@@ -163,7 +166,8 @@ class RobotManager {
                         await sseManager.connect(
                             robotId: robotId,
                             api: api,
-                            isLocalNetwork: robot.isLocalNetwork,
+                            // With an address away from home the robot is reachable without Wi-Fi.
+                            isLocalNetwork: robot.isLocalNetwork && !robot.hasRemoteAddress,
                             // The SSE manager keeps these callbacks; a strong reference would form a cycle.
                             onAttributesUpdate: { [weak manager = self] attrs in
                                 Task { @MainActor [weak manager] in
@@ -196,8 +200,23 @@ class RobotManager {
                     }
                 }
 
+                await updateEndpoints()
+
                 // 15 s in the background, SSE carries the live updates.
                 try? await Task.sleep(for: .seconds(15))
+            }
+        }
+    }
+
+    private func updateEndpoints() async {
+        for robot in robots {
+            guard robot.hasRemoteAddress, let api = apis[robot.id] else {
+                if robotEndpoints[robot.id] != nil { robotEndpoints[robot.id] = nil }
+                continue
+            }
+            let endpoint = await api.activeEndpoint()
+            if robotEndpoints[robot.id] != endpoint {
+                robotEndpoints[robot.id] = endpoint
             }
         }
     }

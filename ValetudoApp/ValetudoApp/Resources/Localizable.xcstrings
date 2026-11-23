@@ -6567,6 +6567,98 @@
         }
       }
     },
+    "robot.endpoint.home": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbunden über die Heimadresse"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected via the home address"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté via l'adresse du domicile"
+          }
+        }
+      }
+    },
+    "robot.endpoint.reachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "erreichbar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "reachable"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "joignable"
+          }
+        }
+      }
+    },
+    "robot.endpoint.remote": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbunden über die Adresse von unterwegs"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected via the address away from home"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté via l'adresse hors du domicile"
+          }
+        }
+      }
+    },
+    "robot.endpoint.unreachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nicht erreichbar"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "not reachable"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "injoignable"
+          }
+        }
+      }
+    },
     "robot.host": {
       "extractionState": "stale",
       "localizations": {
@@ -6678,6 +6770,98 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mot de passe"
+          }
+        }
+      }
+    },
+    "robot.remote_url": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse von unterwegs (optional)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Address away from home (optional)"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse hors du domicile (facultatif)"
+          }
+        }
+      }
+    },
+    "robot.remote_url.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Beispiel https://roboter.example.org. Ist der Roboter unter der Heimadresse nicht erreichbar, nutzt die App diese Adresse. Name, Orte und Benachrichtigungen bleiben dieselben."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "For example https://robot.example.org. If the robot cannot be reached at its home address, the app uses this one. Name, places and notifications stay the same."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par exemple https://robot.example.org. Si le robot n'est pas joignable à l'adresse du domicile, l'app utilise celle-ci. Nom, lieux et notifications restent les mêmes."
+          }
+        }
+      }
+    },
+    "robot.remote_url.header": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterwegs"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Away from home"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hors du domicile"
+          }
+        }
+      }
+    },
+    "robot.remote_url.invalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gültige Adresse. Erlaubt sind http:// und https:// mit Hostnamen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not a valid address. Use http:// or https:// with a host name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse non valide. Utilisez http:// ou https:// avec un nom d'hôte."
           }
         }
       }

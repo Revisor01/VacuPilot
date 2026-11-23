@@ -11,8 +11,9 @@ struct AddRobotView: View {
     @State private var password = ""
     @State private var useSSL = false
     @State private var ignoreCertificateErrors = false
+    @State private var remoteURL = ""
     @State private var isTesting = false
-    @State private var testResult: Bool?
+    @State private var testResult: AddressTestResult?
     @State private var showScanner = false
 
     var body: some View {
@@ -46,6 +47,23 @@ struct AddRobotView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .keyboardType(.URL)
+                }
+
+                Section {
+                    TextField(String(localized: "robot.remote_url"), text: $remoteURL)
+                        .textContentType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                } header: {
+                    Text(String(localized: "robot.remote_url.header"))
+                } footer: {
+                    if !remoteURL.isEmpty && RobotConfig.parseRemoteURL(remoteURL) == nil {
+                        Text(String(localized: "robot.remote_url.invalid"))
+                            .foregroundStyle(.red)
+                    } else {
+                        Text(String(localized: "robot.remote_url.footer"))
+                    }
                 }
 
                 Section(String(localized: "settings.auth.optional")) {
@@ -90,8 +108,7 @@ struct AddRobotView: View {
                             if isTesting {
                                 ProgressView()
                             } else if let result = testResult {
-                                Image(systemName: result ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                    .foregroundStyle(result ? .green : .red)
+                                AddressTestResultView(result: result)
                             }
                         }
                     }
@@ -110,7 +127,7 @@ struct AddRobotView: View {
                     Button(String(localized: "settings.save")) {
                         saveRobot()
                     }
-                    .disabled(name.isEmpty || host.isEmpty)
+                    .disabled(name.isEmpty || host.isEmpty || !remoteURLIsValid)
                 }
             }
             .sheet(isPresented: $showScanner) {
@@ -134,17 +151,22 @@ struct AddRobotView: View {
             username: username.isEmpty ? nil : username,
             password: password.isEmpty ? nil : password,
             useSSL: useSSL,
-            ignoreCertificateErrors: ignoreCertificateErrors
+            ignoreCertificateErrors: ignoreCertificateErrors,
+            remoteURL: remoteURL
         )
 
         Task {
             let api = ValetudoAPI(config: config)
-            let result = await api.checkConnection()
+            let result = await api.checkAddresses()
             await MainActor.run {
-                testResult = result
+                testResult = AddressTestResult(home: result.home, remote: result.remote)
                 isTesting = false
             }
         }
+    }
+
+    private var remoteURLIsValid: Bool {
+        remoteURL.trimmingCharacters(in: .whitespaces).isEmpty || RobotConfig.parseRemoteURL(remoteURL) != nil
     }
 
     private func saveRobot() {
@@ -154,10 +176,47 @@ struct AddRobotView: View {
             username: username.isEmpty ? nil : username,
             password: password.isEmpty ? nil : password,
             useSSL: useSSL,
-            ignoreCertificateErrors: ignoreCertificateErrors
+            ignoreCertificateErrors: ignoreCertificateErrors,
+            remoteURL: remoteURL
         )
         robotManager.addRobot(config)
         dismiss()
+    }
+}
+
+// MARK: - Address Test Result
+struct AddressTestResult: Equatable {
+    let home: Bool
+    let remote: Bool?
+
+    var success: Bool { home || remote == true }
+}
+
+struct AddressTestResultView: View {
+    let result: AddressTestResult
+
+    var body: some View {
+        if let remote = result.remote {
+            HStack(spacing: 10) {
+                mark(result.home, symbol: "house.fill", label: "robot.endpoint.home")
+                mark(remote, symbol: "globe", label: "robot.endpoint.remote")
+            }
+        } else {
+            Image(systemName: result.home ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundStyle(result.home ? .green : .red)
+        }
+    }
+
+    private func mark(_ ok: Bool, symbol: String, label: String.LocalizationValue) -> some View {
+        HStack(spacing: 3) {
+            Image(systemName: symbol)
+                .foregroundStyle(.secondary)
+            Image(systemName: ok ? "checkmark.circle.fill" : "xmark.circle.fill")
+                .foregroundStyle(ok ? .green : .red)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(String(localized: label))
+        .accessibilityValue(String(localized: ok ? "robot.endpoint.reachable" : "robot.endpoint.unreachable"))
     }
 }
 
