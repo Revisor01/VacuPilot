@@ -9,7 +9,7 @@ enum RobotConfigStore {
                             loadConfig: (UUID) -> RobotConfig? = KeychainStore.robotConfig(for:)) -> [RobotConfig] {
         guard let data = defaults.data(forKey: idsKey),
               let ids = try? JSONDecoder().decode([UUID].self, from: data) else { return [] }
-        return ids.compactMap(loadConfig)
+        return ids.compactMap { loadConfig($0) }
     }
 
     static func legacyRobots(defaults: UserDefaults = .standard) -> [RobotConfig] {
