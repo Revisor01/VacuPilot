@@ -831,6 +831,19 @@ struct ValetudoEvent: Codable, Identifiable {
         }
     }
 
+    // Error events carry only the robot's English message; they get the same explanation as the error card.
+    var errorExplanation: RobotErrorExplanation? {
+        guard __class == "ErrorStateValetudoEvent" else { return nil }
+        let info = RobotErrorInfo(message: message)
+        return info.isPlaceholder ? nil : info.explanation
+    }
+
+    var date: Date? {
+        let withFraction = ISO8601DateFormatter()
+        withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return withFraction.date(from: timestamp) ?? ISO8601DateFormatter().date(from: timestamp)
+    }
+
     var iconName: String {
         switch __class {
         case "DustBinFullValetudoEvent": return "trash.fill"

@@ -12,15 +12,29 @@ struct EventsSectionView: View {
                             .foregroundStyle(.orange)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(event.displayName)
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                            if let message = event.message {
-                                Text(message)
+                            if let explanation = event.errorExplanation {
+                                Text(explanation.title)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                Text(explanation.help)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                if let detail = explanation.detail {
+                                    Text(detail)
+                                        .font(.caption2)
+                                        .foregroundStyle(.tertiary)
+                                }
+                            } else {
+                                Text(event.displayName)
+                                    .font(.subheadline)
+                                    .fontWeight(.medium)
+                                if let message = event.message {
+                                    Text(message)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
-                            Text(event.timestamp)
+                            Text(event.date?.formatted(date: .abbreviated, time: .shortened) ?? event.timestamp)
                                 .font(.caption2)
                                 .foregroundStyle(.tertiary)
                         }
