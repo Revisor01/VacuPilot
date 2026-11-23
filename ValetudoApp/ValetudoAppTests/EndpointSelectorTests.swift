@@ -143,6 +143,26 @@ final class EndpointSelectorTests: XCTestCase {
         XCTAssertEqual(decoded.host, "192.168.1.10")
     }
 
+    // MARK: - Encryption warning
+
+    func testRemoteHTTPSIsEncryptedEvenIfHomeIsHTTP() {
+        let config = RobotConfig(name: "R", host: "192.168.1.10", useSSL: false, remoteURL: "https://robot.example.org")
+        XCTAssertTrue(config.isEncrypted(via: .remote))
+        XCTAssertFalse(config.isEncrypted(via: .home))
+        XCTAssertFalse(config.isEncrypted(via: nil))
+    }
+
+    func testRemoteHTTPIsNotEncrypted() {
+        let config = RobotConfig(name: "R", host: "192.168.1.10", useSSL: true, remoteURL: "http://robot.example.org")
+        XCTAssertFalse(config.isEncrypted(via: .remote))
+        XCTAssertTrue(config.isEncrypted(via: .home))
+    }
+
+    func testWithoutRemoteFollowsHomeSetting() {
+        let config = RobotConfig(name: "R", host: "192.168.1.10", useSSL: true)
+        XCTAssertTrue(config.isEncrypted(via: .remote))
+    }
+
     // MARK: - Login
 
     func testConnectionTestUsesEnteredPasswordWithoutKeychain() {

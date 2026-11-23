@@ -9,6 +9,10 @@ struct RobotStatusHeaderView: View {
                 .fill(viewModel.status?.isOnline == true ? Color.green : Color.red)
                 .frame(width: 8, height: 8)
 
+            if viewModel.status?.isOnline == true, let endpoint = viewModel.endpoint {
+                EndpointBadge(endpoint: endpoint)
+            }
+
             if let error = viewModel.currentError {
                 Text(error.explanation.title)
                     .font(.subheadline)
@@ -47,7 +51,7 @@ struct RobotStatusHeaderView: View {
             }
 
             // HTTP connection warning
-            if !viewModel.robot.useSSL {
+            if !viewModel.isConnectionEncrypted {
                 Image(systemName: "lock.open.fill")
                     .font(.caption)
                     .foregroundStyle(.orange)

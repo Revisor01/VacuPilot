@@ -118,6 +118,15 @@ final class RobotDetailViewModel {
         })?.value
     }
 
+    /// Address in use, only for robots with an address away from home.
+    var endpoint: EndpointSelector.Endpoint? {
+        robotManager.robotEndpoints[robot.id]
+    }
+
+    var isConnectionEncrypted: Bool {
+        robot.isEncrypted(via: endpoint)
+    }
+
     var hasConsumableWarning: Bool {
         consumables.contains { $0.remainingPercent < 20 }
     }
