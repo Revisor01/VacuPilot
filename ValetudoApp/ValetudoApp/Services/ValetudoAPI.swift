@@ -131,6 +131,11 @@ extension ValetudoAPI {
         endpoints.hasRemote
     }
 
+    /// Chooses the address again if the network changed since the last choice.
+    func refreshEndpoint() async -> EndpointSelector.Endpoint {
+        await currentEndpoint()
+    }
+
     private func baseURL(for endpoint: EndpointSelector.Endpoint) -> URL? {
         endpoint == .remote ? remoteBaseURL : homeBaseURL
     }

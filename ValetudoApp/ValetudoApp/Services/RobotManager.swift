@@ -52,6 +52,7 @@ class RobotManager {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.valetudio", category: "RobotManager")
     @ObservationIgnored private var apis: [UUID: ValetudoAPI] = [:]
     @ObservationIgnored private var refreshTask: Task<Void, Never>?
+    @ObservationIgnored private var networkTask: Task<Void, Never>?
     @ObservationIgnored private let stateTracker = RobotStateTracker()
     // Failed polls in a row; only past the threshold is a robot offline, so a single timeout does not flip it.
     @ObservationIgnored private var consecutiveFailures: [UUID: Int] = [:]
@@ -70,6 +71,7 @@ class RobotManager {
     init() {
         loadRobots()
         startRefreshing()
+        watchNetworkChanges()
         notificationService.setupCategories()
 
         Task {
@@ -79,6 +81,36 @@ class RobotManager {
 
     deinit {
         refreshTask?.cancel()
+        networkTask?.cancel()
+    }
+
+    // MARK: - Network Changes
+
+    private func watchNetworkChanges() {
+        networkTask = Task { [weak self] in
+            for await generation in NetworkPathWatcher.shared.changes() {
+                // Let the new link settle; a burst of changes is handled once.
+                try? await Task.sleep(for: .seconds(1))
+                guard NetworkPathWatcher.shared.generation == generation else { continue }
+                await self?.networkChanged()
+            }
+        }
+    }
+
+    /// A live stream on the old link can stay open without data after Wi-Fi drops, so all streams start over.
+    private func networkChanged() async {
+        logger.info("Network changed, reconnecting robots")
+        for robot in robots {
+            await sseManager.disconnect(robotId: robot.id)
+        }
+        for robot in robots where robot.hasRemoteAddress {
+            guard let api = apis[robot.id] else { continue }
+            let endpoint = await api.refreshEndpoint()
+            if robotEndpoints[robot.id] != endpoint {
+                robotEndpoints[robot.id] = endpoint
+            }
+        }
+        restartRefreshing()
     }
 
     // MARK: - Robot Management
